@@ -10,11 +10,15 @@ npm install -g yo
 npm install -g generator-martinlabs
 ```
 
-Then generate your new project:
+After creating a Java Maven Project and a Mysql Database you can execute this command:
 
 ```bash
 yo martinlabs
 ```
+
+## Beta
+
+This project is currently on beta because it has too much prerequisites, watch us for the next updates.
 
 ## Getting To Know Yeoman
 
