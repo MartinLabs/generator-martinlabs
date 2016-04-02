@@ -1,4 +1,4 @@
-# generator-martinlabs [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url]
+# generator-martinlabs [![NPM version][npm-image]][npm-url]
 > Generates a crud using martinlabs commons based on a mysql table of your choice
 
 ## Installation
