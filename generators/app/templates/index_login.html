@@ -3,7 +3,7 @@
     <head>
         <meta http-equiv="content-type" content="text/html; charset=UTF-8">
         <meta charset="utf-8">
-        <title>Login</title>
+        <title data-localize="login.title"></title>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
         <link href="css/crud.css" rel="stylesheet" type="text/css"/>
     </head>
@@ -12,12 +12,10 @@
         <div class="container">
 
             <form id="form-login">
-                <h2>Please sign in</h2>
-                <label for="input-account" class="sr-only">Email address</label>
-                <input type="text" id="input-account" class="form-control" placeholder="Email address" required autofocus>
-                <label for="input-password" class="sr-only">Password</label>
-                <input type="password" id="input-password" class="form-control" placeholder="Password" required>
-                <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+                <h2 data-localize="login.subtitle"></h2>
+                <input type="text" id="input-account" class="form-control" placeholder="" data-localize="login.account" required autofocus>
+                <input type="password" id="input-password" class="form-control" placeholder="" data-localize="login.password" required>
+                <button class="btn btn-lg btn-primary btn-block" type="submit" data-localize="login.signin"></button>
             </form>
 
         </div>

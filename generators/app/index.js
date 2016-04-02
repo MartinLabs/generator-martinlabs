@@ -295,6 +295,11 @@ module.exports = yeoman.generators.Base.extend({
     },
 
     writeJavaClasses: function () {
+        this.fs.copyTpl(
+            this.templatePath('StringsEn.java'),
+            this.destinationPath(this.props.processFolder+"/StringsEn.java"),
+            this.props);
+
         for (var i in this.props.tables) {
             var table = this.props.tables[i];
 
@@ -374,6 +379,10 @@ module.exports = yeoman.generators.Base.extend({
             this.destinationPath("src/main/webapp/src/crud/js/service/defaultInterface.js"),
             this.props);
 
+        this.fs.copy(
+            this.templatePath('translate.js'),
+            this.destinationPath("src/main/webapp/src/crud/js/service/translate.js"));
+
         this.fs.copyTpl(
             this.templatePath('home.js'),
             this.destinationPath("src/main/webapp/src/crud/js/controller/home.js"),
@@ -448,8 +457,13 @@ module.exports = yeoman.generators.Base.extend({
         }
     },
 
-    writeFontFiles: function() {
+    writeOtherFiles: function() {
         this.directory("fonts", "src/main/webapp/crud/fonts");
+
+        this.fs.copyTpl(
+            this.templatePath('strings-en.json'),
+            this.destinationPath("src/main/webapp/crud/json/strings-en.json"),
+            this.props);
     },
 
     installDependencies: function() {
@@ -463,6 +477,7 @@ module.exports = yeoman.generators.Base.extend({
                 "datatables-bootstrap", 
                 "font-awesome", 
                 "jquery", 
+                "jquery-localize", 
                 "jstify", 
                 "ml-js-commons", 
                 "moment"

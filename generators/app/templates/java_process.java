@@ -53,7 +53,7 @@ public class <%= table.className %>Process extends TransacProcess {
 	    		if (c.is_nullable === "NO" && (c.javaType === "String" || c.javaType === "Date")) { 
 		%>
         if (obj.get<%= c.propertyNameUpper %>() == null) {
-        	throw new RespException(<%= c.ordinal_position %>, "<%= c.propertyNameUpper %> cannot be null");
+        	throw new RespException(<%= c.ordinal_position %>, "<%= c.propertyNameUpper %> " + StringsEn.getInstance().cannotBeNull());
         }
     	<% }} %>
 
@@ -71,7 +71,7 @@ public class <%= table.className %>Process extends TransacProcess {
     		}
 
             if (resp == 0) {
-                throw new RespException("Unexpected Error. Please try again later");
+                throw new RespException(StringsEn.getInstance().unexpectedError());
             }
 
     		return new OpResponse<>(resp);

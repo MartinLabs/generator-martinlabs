@@ -3,15 +3,15 @@
     <head>
         <meta http-equiv="content-type" content="text/html; charset=UTF-8">
         <meta charset="utf-8">
-        <title>List<%= className %></title>
+        <title data-localize="classes.<%= className %>.title"></title>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
         <link href="css/crud.css" rel="stylesheet" type="text/css"/>
     </head>
     <body id="list<%= className %>">
         <div id="main">
-            <a class="pull-right btn btn-success" href="persist<%= className %>.html"><span class="glyphicon glyphicon-plus"></span> Create <%= className %></a>
+            <a class="pull-right btn btn-success" href="persist<%= className %>.html"><span class="glyphicon glyphicon-plus"></span> <span data-localize="app.add"></span></a>
             
-            <strong><i class="glyphicon glyphicon-th-list"></i> <%= className %></strong>
+            <strong><i class="glyphicon glyphicon-th-list"></i> <span data-localize="classes.<%= className %>.title"></span></strong>
             <hr>
             
             <div class="table-responsive">

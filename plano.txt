@@ -27,15 +27,13 @@
 - criar arquivo persistir<nome da tabela>.js dentro do controller, substituir se já existir
 - criar arquivo persistir<nome da tabela>.html
 - criar arquivos para tela home
+- suportar mutiplas linguas
 
+
+FALTA:
+- login mais seguro
 - atualizar Gruntfile para incluir caminhos do crud
 	http://yeoman.io/authoring/gruntfile.html
 - rodar grunt
 	this.spawnCommand('grunt', ['taskname']);
-
-NOVAS IDEIAS:
-- mutiplas linguas
-- login mais seguro
-
-BUG:
-- se a tabela tiver 2 primarykey vai fazer select e update por 1 id só
+- corrigir bug: se a tabela tiver 2 primarykey vai fazer select e update por 1 id só

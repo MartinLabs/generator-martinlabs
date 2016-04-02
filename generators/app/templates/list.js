@@ -4,7 +4,8 @@
         martinlabs = require("ml-js-commons"),
         URL = require("../const/url"),
         <% if (props.loginsys) { %>login = require("../service/login"),
-        <% } %>defaultInterface = require("../service/defaultInterface");
+        <% } %>defaultInterface = require("../service/defaultInterface"),
+        translate = require("../service/translate");
 
     window.jQuery = $;
     require("bootstrap-sass");
@@ -20,6 +21,7 @@
         var init = function() {
             <% if (props.loginsys) { %>login.inHome();
             <% } %>defaultInterface({ active: "<%= table.className %>" });
+            translate();
             request();
         };
         
@@ -68,6 +70,8 @@
                     { title: "<%= c.propertyName %>" }<% } %>
                 ]
             });
+
+            translate.datatable("#list", "<%= table.className %>");
 
             registerInteraction();
         };

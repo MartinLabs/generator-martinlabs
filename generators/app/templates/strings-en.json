@@ -1,0 +1,36 @@
+{
+    "app": {
+        "title": "CRUD",
+        "logout": "Logout",
+        "menu": "Menu",
+        "add": "Add"
+    },
+    
+    "login": {
+        "title": "Login",
+        "subtitle": "Please sign in",
+        "account": "Account",
+        "password": "Password",
+        "signin": "Sign in"
+    },
+    
+    "home": {
+        "title": "Home",
+        "subtitle": "Home"
+    },
+
+    "persist": {
+        "number": "Number",
+        "datetime": "Date and Time",
+        "submit": "Submit"
+    },
+    
+    "classes": {<% for (var i in tables) { var t = tables[i]; %><%= i > 0 ? "," : "" %>
+        "<%= t.className %>": {
+            "title": "<%= t.className %>",
+            "columns": {<% for (var j in t.columns) { var c = t.columns[j]; %><%= j > 0 ? "," : "" %>
+                "<%= c.propertyName %>": "<%= c.propertyName %>"<% } %>
+            }
+        }<% } %>
+    }
+}

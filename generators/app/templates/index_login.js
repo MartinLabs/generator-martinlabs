@@ -1,7 +1,8 @@
 (function(){
 
 	var $ = require("jquery"),
-	    login = require("../service/login");
+	    login = require("../service/login"),
+	    translate = require("../service/translate");
 
     window.jQuery = $;
     require("bootstrap-sass");
@@ -12,10 +13,11 @@
 	    
 	    var init = function(){
 	        login.outHome();
+	        translate();
 	    };
 	    
-	    var loginError = function(){
-	        $.notify({ message: "Invalid Login" },{
+	    var loginError = function(resp){
+	        $.notify({ message: resp.Message },{
                 type: "danger",
                 placement: { align: "center" },
                 delay: 2000
