@@ -1,0 +1,72 @@
+$icon-font-path: "../fonts/";
+
+@import "../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
+@import "../../../node_modules/ml-js-commons/datatables.scss";
+@import "../../../node_modules/ml-js-commons/datetimepicker.scss";
+
+.nav > li.active > a {
+    background-color: $brand-primary;
+    color: white;
+}
+
+body {
+    display: none; //defaultInterface will show again
+}
+
+a {
+  cursor: pointer;
+}
+
+#list tbody tr {
+    cursor: pointer;
+    &:hover {
+        background: #eee !important;
+    }
+
+    td:nth-of-type(1) {
+        text-decoration: underline;
+    }
+}
+
+#index {
+    display: block;
+    background: #eee;
+    
+    .container {  
+        margin-top: 80px;
+      margin-bottom: 80px;
+    }
+
+    #form-login {
+      max-width: 380px;
+      padding: 15px 35px 45px;
+      margin: 0 auto;
+      background-color: #fff;
+      border: 1px solid rgba(0,0,0,0.1);  
+
+        .form-control {
+            position: relative;
+            font-size: 16px;
+            height: auto;
+            padding: 10px;
+            box-sizing: border-box;
+
+            &:focus {
+              z-index: 2;
+            }
+        }
+
+        input[type="text"] {
+          margin-bottom: -1px;
+          border-bottom-left-radius: 0;
+          border-bottom-right-radius: 0;
+        }
+
+        input[type="password"] {
+          margin-bottom: 20px;
+          border-top-left-radius: 0;
+          border-top-right-radius: 0;
+        }
+    }
+
+}
