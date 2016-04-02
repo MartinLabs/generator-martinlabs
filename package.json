@@ -1,6 +1,6 @@
 {
   "name": "generator-martinlabs",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Generates a crud using martinlabs commons based on a mysql table of your choice",
   "homepage": "martinlabs.com.br",
   "author": {
