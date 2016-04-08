@@ -40,7 +40,7 @@ public class LoginServices extends TransacProcess {
     public boolean checkLogin(Connection con, HttpServletRequest request) throws RespException{
         
             LoginServiceDao dao = new LoginServiceDao(con);
-            String cookie = CookieIO.get("loginCrud", request);
+            String cookie = CookieIO.get("login<%= props.modulenameUpper %>", request);
 
             if (cookie == null || cookie.isEmpty()) {
                 return false;
@@ -69,7 +69,7 @@ public class LoginServices extends TransacProcess {
     public long getID(Connection con, HttpServletRequest request) throws RespException{
         
             LoginServiceDao dao = new LoginServiceDao(con);
-            String cookie = CookieIO.get("loginCrud", request);
+            String cookie = CookieIO.get("login<%= props.modulenameUpper %>", request);
 
             if (cookie == null || cookie.isEmpty()) {
                 return 0L;

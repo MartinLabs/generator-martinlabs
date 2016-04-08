@@ -37,3 +37,4 @@ FALTA:
 - rodar grunt
 	this.spawnCommand('grunt', ['taskname']);
 - corrigir bug: se a tabela tiver 2 primarykey vai fazer select e update por 1 id só
+- permitir escolher o nome do modulo em vez de usar sempre "crud"

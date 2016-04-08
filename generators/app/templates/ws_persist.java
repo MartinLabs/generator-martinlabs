@@ -10,7 +10,7 @@ import javax.servlet.annotation.WebServlet;
  *
  * @author gil
  */
-@WebServlet("/Crud/Persist<%= table.className %>")
+@WebServlet("/<%= props.modulenameUpper %>/Persist<%= table.className %>")
 public class Persist<%= table.className %>Servlet extends ServletWrapper {
 
     @Override

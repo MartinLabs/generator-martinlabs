@@ -21,7 +21,7 @@
 
 	            if (resp && resp.Success) {
 
-	                martinlabs.cookie.set("loginCrud", JSON.stringify({
+	                martinlabs.cookie.set("login<%= modulenameUpper %>", JSON.stringify({
 	                    Account: account,
 	                    Password: passwordSha1
 	                }));
@@ -42,7 +42,7 @@
 	    } else if (arguments.length === 1){
 	        var callback = arguments[0];
 
-	        var params = martinlabs.cookie.get("loginCrud");
+	        var params = martinlabs.cookie.get("login<%= modulenameUpper %>");
 	        if (params) {
                     params = JSON.parse(params);
 
@@ -51,7 +51,7 @@
 	                if (resp && resp.Success) {
 	                    callback(true);
 	                } else {
-	                    martinlabs.cookie.del("loginCrud");
+	                    martinlabs.cookie.del("login<%= modulenameUpper %>");
 	                    callback(false);
 	                }
 	            };
@@ -85,11 +85,11 @@
 	};
 
 	login.logout = function(){
-	    martinlabs.cookie.del("loginCrud");
+	    martinlabs.cookie.del("login<%= modulenameUpper %>");
 	};
 
 	login.get = function() {
-	    var params = martinlabs.cookie.get("loginCrud");
+	    var params = martinlabs.cookie.get("login<%= modulenameUpper %>");
 	    if (params) {
 	        return JSON.parse(params);
 	    } else {

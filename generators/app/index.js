@@ -23,6 +23,11 @@ module.exports = yeoman.generators.Base.extend({
 
         var prompts = [{
             type: 'input',
+            name: 'modulename',
+            message: 'What is the name of this module?',
+            default: this.props.modulename || "crud"
+        },{
+            type: 'input',
             name: 'user',
             message: 'Tell me your Mysql User',
             default: this.props.user
@@ -59,6 +64,7 @@ module.exports = yeoman.generators.Base.extend({
         }];
 
         this.prompt(prompts, function (props) {
+            this.props.modulename = props.modulename.replace(/[^a-z0-9]/gi,'').toLowerCase();
             this.props.user = props.user;
             this.props.password = props.password;
             this.props.database = props.database;
@@ -123,7 +129,7 @@ module.exports = yeoman.generators.Base.extend({
         var self = this;
         var done = this.async();
         this.props.urlConstants = {};
-        fs.readFile(this.destinationRoot() + '/src/main/webapp/src/crud/js/const/url.js', "utf-8", function(err, data) {
+        fs.readFile(this.destinationRoot() + '/src/main/webapp/src/' + this.props.modulename + '/js/const/url.js', "utf-8", function(err, data) {
             if (data != null) {
                 var crappyJson = data.split("=")[1];
                 crappyJson = crappyJson.replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:/g, '"$2": ');
@@ -140,15 +146,16 @@ module.exports = yeoman.generators.Base.extend({
     },
 
     generateProjectProps: function() {
-        this.props.javaFolder = "src/main/java/"+this.props.package.replace(/\./g, '\/')+"/crud";
-        this.props.daoPackage = this.props.package + ".crud.dao";
+        this.props.javaFolder = "src/main/java/"+this.props.package.replace(/\./g, '\/')+"/" + this.props.modulename;
+        this.props.daoPackage = this.props.package + "." + this.props.modulename + ".dao";
         this.props.daoFolder = this.props.javaFolder + "/dao";
-        this.props.processPackage = this.props.package + ".crud.process";
+        this.props.processPackage = this.props.package + "." + this.props.modulename + ".process";
         this.props.processFolder = this.props.javaFolder + "/process";
-        this.props.modelPackage = this.props.package + ".crud.model";
+        this.props.modelPackage = this.props.package + "." + this.props.modulename + ".model";
         this.props.modelFolder = this.props.javaFolder + "/model";
-        this.props.wsPackage = this.props.package + ".crud.ws";
+        this.props.wsPackage = this.props.package + "." + this.props.modulename + ".ws";
         this.props.wsFolder = this.props.javaFolder + "/ws";
+        this.props.modulenameUpper = _capitalizeFirstLetter(this.props.modulename);
 
         if (this.props.tables !== "all tables") {
             this.props.tables = [{ name: this.props.tables }];
@@ -261,9 +268,9 @@ module.exports = yeoman.generators.Base.extend({
             table.className = this._upperCamelCase(table.name);
             table.classUpper = table.className.toUpperCase();
 
-            this.props.urlConstants["LIST_"+table.classUpper] = "../Crud/List" + table.className;
-            this.props.urlConstants["GET_"+table.classUpper] = "../Crud/Get" + table.className;
-            this.props.urlConstants["PERSIST_"+table.classUpper] = "../Crud/Persist" + table.className;
+            this.props.urlConstants["LIST_"+table.classUpper] = "../" + this.props.modulenameUpper + "/List" + table.className;
+            this.props.urlConstants["GET_"+table.classUpper] = "../" + this.props.modulenameUpper + "/Get" + table.className;
+            this.props.urlConstants["PERSIST_"+table.classUpper] = "../" + this.props.modulenameUpper + "/Persist" + table.className;
             
             this.props.urlConstants.listPages[table.className] = "list"+table.className+".html";
             this.props.urlConstants.persistPages[table.className] = "persist"+table.className+".html";
@@ -366,26 +373,26 @@ module.exports = yeoman.generators.Base.extend({
     writeJsClasses: function() {
         this.fs.copyTpl(
             this.templatePath('url.js'),
-            this.destinationPath("src/main/webapp/src/crud/js/const/url.js"),
+            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/const/url.js"),
             this.props);
 
         this.fs.copyTpl(
             this.templatePath('index.js'),
-            this.destinationPath("src/main/webapp/src/crud/js/index.js"),
+            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/index.js"),
             this.props);
 
         this.fs.copyTpl(
             this.templatePath('defaultInterface.js'),
-            this.destinationPath("src/main/webapp/src/crud/js/service/defaultInterface.js"),
+            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/service/defaultInterface.js"),
             this.props);
 
         this.fs.copy(
             this.templatePath('translate.js'),
-            this.destinationPath("src/main/webapp/src/crud/js/service/translate.js"));
+            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/service/translate.js"));
 
         this.fs.copyTpl(
             this.templatePath('home.js'),
-            this.destinationPath("src/main/webapp/src/crud/js/controller/home.js"),
+            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/controller/home.js"),
             this.props);
 
         for (var i in this.props.tables) {
@@ -398,71 +405,78 @@ module.exports = yeoman.generators.Base.extend({
 
             this.fs.copyTpl(
                 this.templatePath('list.js'),
-                this.destinationPath("src/main/webapp/src/crud/js/controller/list"+table.className+".js"),
+                this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/controller/list"+table.className+".js"),
                 params);
 
             this.fs.copyTpl(
                 this.templatePath('persist.js'),
-                this.destinationPath("src/main/webapp/src/crud/js/controller/persist"+table.className+".js"),
+                this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/controller/persist"+table.className+".js"),
                 params);
         }
 
         if (this.props.loginsys) {
             this.fs.copy(
                 this.templatePath('index_login.js'),
-                this.destinationPath("src/main/webapp/src/crud/js/controller/index.js"));
+                this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/controller/index.js"));
 
-            this.fs.copy(
+            this.fs.copyTpl(
                 this.templatePath('login.js'),
-                this.destinationPath("src/main/webapp/src/crud/js/service/login.js"));
+                this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/service/login.js"),
+                this.props);
         }
     },
 
     writeScssFiles: function() {
         this.fs.copy(
             this.templatePath('datatables.scss'),
-            this.destinationPath("src/main/webapp/src/crud/scss/datatables.scss"));
+            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/scss/datatables.scss"));
 
         this.fs.copy(
             this.templatePath('crud.scss'),
-            this.destinationPath("src/main/webapp/src/crud/scss/crud.scss"));
+            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/scss/" + this.props.modulename + ".scss"));
     },
 
     writeHtmlFiles: function() {
         this.fs.copy(
             this.templatePath('default.html'),
-            this.destinationPath("src/main/webapp/src/crud/tmpl/default.html"));
+            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/tmpl/default.html"));
 
-        this.fs.copy(
+        this.fs.copyTpl(
             this.templatePath('home.html'),
-            this.destinationPath("src/main/webapp/crud/home.html"));
+            this.destinationPath("src/main/webapp/" + this.props.modulename + "/home.html"),
+            this.props);
 
         for (var i in this.props.tables) {
-            var table = this.props.tables[i];
+            var params = {
+                props: this.props,
+                table: this.props.tables[i]
+            };
+            
             this.fs.copyTpl(
                 this.templatePath('list.html'),
-                this.destinationPath("src/main/webapp/crud/list"+table.className+".html"),
-                table);
+                this.destinationPath("src/main/webapp/" + this.props.modulename + "/list"+table.className+".html"),
+                params);
 
             this.fs.copyTpl(
                 this.templatePath('persist.html'),
-                this.destinationPath("src/main/webapp/crud/persist"+table.className+".html"),
-                table);
+                this.destinationPath("src/main/webapp/" + this.props.modulename + "/persist"+table.className+".html"),
+                params);
         }
 
         if (this.props.loginsys) {
-            this.fs.copy(
+            this.fs.copyTpl(
                 this.templatePath('index_login.html'),
-                this.destinationPath("src/main/webapp/crud/index.html"));
+                this.destinationPath("src/main/webapp/" + this.props.modulename + "/index.html"),
+                this.props);
         }
     },
 
     writeOtherFiles: function() {
-        this.directory("fonts", "src/main/webapp/crud/fonts");
+        this.directory("fonts", "src/main/webapp/" + this.props.modulename + "/fonts");
 
         this.fs.copyTpl(
             this.templatePath('strings-en.json'),
-            this.destinationPath("src/main/webapp/crud/json/strings-en.json"),
+            this.destinationPath("src/main/webapp/" + this.props.modulename + "/json/strings-en.json"),
             this.props);
     },
 

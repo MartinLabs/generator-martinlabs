@@ -9,7 +9,7 @@ import javax.servlet.annotation.WebServlet;
  *
  * @author gil
  */
-@WebServlet("/Crud/List<%= table.className %>")
+@WebServlet("/<%= props.modulenameUpper %>/List<%= table.className %>")
 public class List<%= table.className %>Servlet extends ServletWrapper {
 
     @Override

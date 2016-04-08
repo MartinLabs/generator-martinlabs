@@ -9,7 +9,7 @@ import javax.servlet.annotation.WebServlet;
  *
  * @author gil
  */
-@WebServlet("/Crud/Get<%= table.className %>")
+@WebServlet("/<%= props.modulenameUpper %>/Get<%= table.className %>")
 public class Get<%= table.className %>Servlet extends ServletWrapper {
 
     @Override

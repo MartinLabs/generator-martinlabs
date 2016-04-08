@@ -1,6 +1,6 @@
 {
     "app": {
-        "title": "CRUD",
+        "title": "<%= modulenameUpper %>",
         "logout": "Logout",
         "menu": "Menu",
         "add": "Add"

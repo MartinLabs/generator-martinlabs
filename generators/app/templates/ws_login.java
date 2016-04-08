@@ -9,7 +9,7 @@ import javax.servlet.annotation.WebServlet;
  *
  * @author gil
  */
-@WebServlet("/Crud/Login")
+@WebServlet("/<%= props.modulenameUpper %>/Login")
 public class LoginServlet extends ServletWrapper {
 
     @Override
