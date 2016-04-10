@@ -7,6 +7,7 @@ var parseXml = require('xml2js').parseString;
 var fs = require('fs');
 var mkdirp = require('mkdirp');
 var astQuery = require("ast-query");
+var jsonfile = require('jsonfile');
 
 module.exports = yeoman.generators.Base.extend({
 
@@ -145,6 +146,33 @@ module.exports = yeoman.generators.Base.extend({
         });
     },
 
+    readGruntConfig: function() {
+        var self = this;
+        var done = this.async();
+
+
+        jsonfile.readFile("src/main/webapp/package.json", function(err, obj) {
+            self.props.npmPackage = obj;
+
+            jsonfile.readFile("src/main/webapp/browserify.json", function(err, obj) {
+                self.props.browserify = obj;
+
+                jsonfile.readFile("src/main/webapp/sass.json", function(err, obj) {
+                    self.props.sass = obj;
+
+                    jsonfile.readFile("src/main/webapp/uglify.json", function(err, obj) {
+                        self.props.uglify = obj;
+
+                        jsonfile.readFile("src/main/webapp/cssmin.json", function(err, obj) {
+                            self.props.cssmin = obj;
+                            done();
+                        });
+                    });
+                });
+            });
+        });
+    },
+
     generateProjectProps: function() {
         this.props.javaFolder = "src/main/java/"+this.props.package.replace(/\./g, '\/')+"/" + this.props.modulename;
         this.props.daoPackage = this.props.package + "." + this.props.modulename + ".dao";
@@ -155,12 +183,117 @@ module.exports = yeoman.generators.Base.extend({
         this.props.modelFolder = this.props.javaFolder + "/model";
         this.props.wsPackage = this.props.package + "." + this.props.modulename + ".ws";
         this.props.wsFolder = this.props.javaFolder + "/ws";
-        this.props.modulenameUpper = _capitalizeFirstLetter(this.props.modulename);
+        this.props.modulenameUpper = this._capitalizeFirstLetter(this.props.modulename);
 
         if (this.props.tables !== "all tables") {
             this.props.tables = [{ name: this.props.tables }];
         } else {
             this.props.tables = [];
+        }
+    },
+
+    generateGruntConfig: function() {
+
+        //package
+        if (!this.props.npmPackage) {
+            this.props.npmPackage = {
+                "name": this.props.modulename,
+                "version": "1.0.0",
+                "private": true,
+                "description": this.props.modulename
+            };
+        }
+
+        //browserify
+        if (!this.props.browserify) {
+            this.props.browserify = {
+                "dist": {
+                    "files": {},
+                    "options": {
+                        "browserifyOptions": {
+                            "debug": true
+                        },
+                        "transform": ["jstify"]
+                    }
+
+                }
+            };
+        }
+
+        this.props.browserify.dist.files[this.props.modulename + "/" + this.props.modulename + ".js"] = 
+            "src/" + this.props.modulename + "/js/index.js";
+
+        //sass
+        if (!this.props.sass) {
+            this.props.sass = {
+                "dist": {
+                    "files": []
+                }
+            };
+        }
+
+        var existSassModulePath = false;
+        var sassFiles = this.props.sass.dist.files;
+        var sassPath = "src/" + this.props.modulename + "/scss";
+        for (var i in sassFiles) {
+            var f = sassFiles[i];
+            if (f.cwd === sassPath) {
+                existSassModulePath = true;
+            }
+        }
+
+        if (!existSassModulePath) {
+            sassFiles.push({
+                "expand": true,
+                "cwd": sassPath,
+                "src": ["*.scss"],
+                "dest": this.props.modulename + "/css",
+                "ext": ".css"
+            });
+        }
+
+        //uglify
+        if (!this.props.uglify) {
+            this.props.uglify = {
+                "options": {
+                    "mangle": false
+                },
+                "all": {
+                    "files": {}
+                }
+            };
+        }
+
+        var jsFile = this.props.modulename + "/" + this.props.modulename + ".js";
+        this.props.uglify.all.files[jsFile] = jsFile;
+
+        //cssmin
+        if (!this.props.cssmin) {
+            this.props.cssmin = {
+                "target": {
+                    "files": []
+                }
+            };
+        }
+
+        var existCssModulePath = false;
+        var cssFiles = this.props.cssmin.target.files;
+        var cssPath = this.props.modulename + "/css";
+        for (var i in cssFiles) {
+            var f = cssFiles[i];
+            if (f.cwd === cssPath) {
+                existCssModulePath = true;
+            }
+        }
+
+        if (!existCssModulePath) {
+            cssFiles.push({
+                "expand": true,
+                "cwd": cssPath,
+                "src": ["*.css", "!*.min.css"],
+                "dest": cssPath,
+                "ext": ".min.css"
+            });
         }
     },
 
@@ -395,6 +528,10 @@ module.exports = yeoman.generators.Base.extend({
             this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/controller/home.js"),
             this.props);
 
+        this.fs.copy(
+            this.templatePath('Gruntfile.js'),
+            this.destinationPath("src/main/webapp/Gruntfile.js"));
+
         for (var i in this.props.tables) {
             var table = this.props.tables[i];
             
@@ -454,12 +591,12 @@ module.exports = yeoman.generators.Base.extend({
             
             this.fs.copyTpl(
                 this.templatePath('list.html'),
-                this.destinationPath("src/main/webapp/" + this.props.modulename + "/list"+table.className+".html"),
+                this.destinationPath("src/main/webapp/" + this.props.modulename + "/list"+params.table.className+".html"),
                 params);
 
             this.fs.copyTpl(
                 this.templatePath('persist.html'),
-                this.destinationPath("src/main/webapp/" + this.props.modulename + "/persist"+table.className+".html"),
+                this.destinationPath("src/main/webapp/" + this.props.modulename + "/persist"+params.table.className+".html"),
                 params);
         }
 
@@ -469,6 +606,28 @@ module.exports = yeoman.generators.Base.extend({
                 this.destinationPath("src/main/webapp/" + this.props.modulename + "/index.html"),
                 this.props);
         }
+    },
+
+    writeGruntConfig: function() {
+        var self = this;
+        var done = this.async();
+        jsonfile.spaces = 4;
+
+        jsonfile.writeFile("src/main/webapp/package.json", self.props.npmPackage, function(err) {
+
+            jsonfile.writeFile("src/main/webapp/browserify.json", self.props.browserify, function(err) {
+
+                jsonfile.writeFile("src/main/webapp/sass.json", self.props.sass, function(err) {
+
+                    jsonfile.writeFile("src/main/webapp/uglify.json", self.props.uglify, function(err) {
+
+                        jsonfile.writeFile("src/main/webapp/cssmin.json", self.props.cssmin, function(err) {
+                            done();
+                        });
+                    });
+                });
+            });
+        });
     },
 
     writeOtherFiles: function() {
@@ -483,6 +642,17 @@ module.exports = yeoman.generators.Base.extend({
     installDependencies: function() {
         if (this.props.runNpm) {
             process.chdir("src/main/webapp/");
+
+            this.npmInstall([
+                "browserify",
+                "grunt",
+                "grunt-browserify",
+                "grunt-contrib-sass",
+                "grunt-contrib-uglify",
+                "jstify",
+                "uglify"
+            ], { saveDev: true });
+
             this.npmInstall([
                 "bootstrap-notify", 
                 "bootstrap-sass", 
@@ -496,7 +666,15 @@ module.exports = yeoman.generators.Base.extend({
                 "ml-js-commons", 
                 "moment"
             ], { save: true });
+
+            process.chdir("../../../");
         }
+    },
+
+    runGruntMyDarling: function() {
+        process.chdir("src/main/webapp/");
+        this.spawnCommand('grunt');
+        process.chdir("../../../");
     },
 
     end: function() {
@@ -575,17 +753,4 @@ module.exports = yeoman.generators.Base.extend({
     _normalizeFirstLetter: function(string) {
         return string.charAt(0).toLowerCase() + string.slice(1);
     }
-
-    // _createFolder: function(folder, errMsg) {
-    //     var done = this.async();
-
-    //     mkdirp(folder, function(err) { 
-    //         if (err) {
-    //             console.log(errMsg);
-    //             throw err;
-    //         }
-
-    //         done();
-    //     });
-    // }
 });

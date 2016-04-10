@@ -19,6 +19,7 @@
   "dependencies": {
     "ast-query": "^1.2.0",
     "chalk": "^1.0.0",
+    "jsonfile": "^2.2.3",
     "mkdirp": "^0.5.1",
     "mysql": "^2.10.2",
     "xml2js": "^0.4.16",
