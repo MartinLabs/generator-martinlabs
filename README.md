@@ -16,9 +16,9 @@ After creating a Java Maven Project and a Mysql Database you can execute this co
 yo martinlabs
 ```
 
-## Beta
+## Not public yet
 
-This project is currently on beta because it has too much prerequisites, watch us for the next updates.
+This projects requires a private java dependency that will be public soon
 
 ## Getting To Know Yeoman
 
