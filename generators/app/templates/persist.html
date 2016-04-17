@@ -32,7 +32,7 @@
                             class="control-label" 
                             data-localize="classes.<%= table.className %>.columns.<%= col.propertyName %>"></label>
                         <input id="input-<%= col.propertyName %>" 
-                            type="number" 
+                            type="number" step="<%= (['Double', 'double'].indexOf(col.javaType) > -1) ? 'any' : '1' %>"
                             placeholder="" 
                             data-localize="persist.number" 
                             class="form-control" <%= col.is_nullable !== "YES" ? "required" : "" %>>

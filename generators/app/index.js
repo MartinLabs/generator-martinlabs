@@ -69,6 +69,7 @@ module.exports = yeoman.generators.Base.extend({
             this.props.user = props.user;
             this.props.password = props.password;
             this.props.database = props.database;
+            this.props.tables = props.tables;
             this.props.datasource = props.datasource;
             this.props.runNpm = props.runNpm
             this.props.loginsys = props.loginsys;
@@ -722,8 +723,6 @@ module.exports = yeoman.generators.Base.extend({
         var self = this;
 
         if (this.props.runNpm) {
-            console.log("Installing Dependencies, please wait.");
-
             process.chdir("src/main/webapp/");
 
             this.npmInstall([
@@ -754,15 +753,13 @@ module.exports = yeoman.generators.Base.extend({
                 { save: true },
                 function() {
                     process.chdir("../../../");
-                    self._runGruntRun();
                 });
             });
-        } else {
-            self._runGruntRun();
         }
     },
 
-    _runGruntRun: function() {
+    //everthing after npm install needs to be at `end`
+    end: function() {
         process.chdir("src/main/webapp/");
         this.spawnCommand('grunt');
         process.chdir("../../../");
