@@ -53,9 +53,21 @@ public class <%= table.className %>Process extends TransacProcess {
 	    		if (c.is_nullable === "NO" && (c.javaType === "String" || c.javaType === "Date")) { 
 		%>
         if (obj.get<%= c.propertyNameUpper %>() == null) {
-        	throw new RespException(<%= c.ordinal_position %>, "<%= c.propertyNameUpper %> " + StringsEn.getInstance().cannotBeNull());
+        	throw new RespException(<%= c.ordinal_position %>,  LanguageFactory.getInstance().cannotBeNull("<%= c.propertyNameUpper %>"));
         }
-    	<% }} %>
+    	<% 
+                }
+
+                if (c.javaType === "String") {
+        %>
+
+        if (obj.get<%= c.propertyNameUpper %>().length() > <%= c.character_maximum_length %>) {
+            throw new RespException(<%= c.ordinal_position %>, LanguageFactory.getInstance().lengthCannotBeMoreThan("<%= c.propertyNameUpper %>", <%= c.character_maximum_length %>));
+        }
+        <%
+                }
+            } 
+        %>
 
     	return open(con -> {
         <% if (props.loginsys) { %>
@@ -71,7 +83,7 @@ public class <%= table.className %>Process extends TransacProcess {
     		}
 
             if (resp == 0) {
-                throw new RespException(StringsEn.getInstance().unexpectedError());
+                throw new RespException(LanguageFactory.getInstance().unexpectedError());
             }
 
     		return new OpResponse<>(resp);

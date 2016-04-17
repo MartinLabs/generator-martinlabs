@@ -3,7 +3,7 @@ var yeoman = require('yeoman-generator');
 var chalk = require('chalk');
 var yosay = require('yosay');
 var mysql = require('mysql');
-var parseXml = require('xml2js').parseString;
+var xml2js = require('xml2js');
 var fs = require('fs');
 var mkdirp = require('mkdirp');
 var astQuery = require("ast-query");
@@ -56,12 +56,12 @@ module.exports = yeoman.generators.Base.extend({
             type: 'confirm',
             name: 'runNpm',
             message: 'Install Dependencies?',
-            default: this.props.runNpm !== false
+            default: this.props.runNpm === true
         },{
             type: 'confirm',
             name: 'loginsys',
             message: 'Do you want to include a login system?',
-            default: this.props.loginsys !== false
+            default: this.props.loginsys === true
         }];
 
         this.prompt(prompts, function (props) {
@@ -118,8 +118,21 @@ module.exports = yeoman.generators.Base.extend({
         var done = this.async();
 
         fs.readFile(this.destinationRoot() + '/pom.xml', function(err, data) {
-            parseXml(data, function (err, result) {
+            xml2js.parseString(data, function (err, result) {
                 self.props.package = result.project.groupId[0];
+                done();
+            });
+        });
+
+    },
+
+    readMetaInfCtx: function() {
+        var self = this;
+        var done = this.async();
+
+        fs.readFile(this.destinationRoot() + '/src/main/webapp/META-INF/context.xml', function(err, data) {
+            xml2js.parseString(data, function (err, result) {
+                self.props.metaInfCtx = result;
                 done();
             });
         });
@@ -189,6 +202,61 @@ module.exports = yeoman.generators.Base.extend({
             this.props.tables = [{ name: this.props.tables }];
         } else {
             this.props.tables = [];
+        }
+    },
+
+    generateMetaInfCtx: function() {
+
+        if (!this.props.metaInfCtx) {
+            this.props.metaInfCtx = {};
+        }
+
+        if (!this.props.metaInfCtx.Context) {
+            this.props.metaInfCtx.Context = {
+                "$": {
+                    "antiJARLocking": "true",
+                    "path": "/" + this.props.modulenameUpper
+                }
+            };
+        }
+
+        if (!this.props.metaInfCtx.Context.Resource) {
+            this.props.metaInfCtx.Context.Resource = [];
+        }
+
+        var existDs = false;
+
+        if (this.props.metaInfCtx.Context.Resource.length) {
+            for (var i in this.props.metaInfCtx.Context.Resource) {
+                var r = this.props.metaInfCtx.Context.Resource[i];
+
+                if (r.$ && r.$.name === this.props.datasource) {
+                    existDs = true;
+                }
+            }
+        }
+        
+        if (!existDs) {
+            this.props.metaInfCtx.Context.Resource.push({
+                "$": {
+                    "name": this.props.datasource,
+                    "url": "jdbc:mysql://localhost:3306/" + this.props.database,
+                    "username": this.props.user,
+                    "password": this.props.password,
+                    "auth": "Container",
+                    "driverClassName": "com.mysql.jdbc.Driver",
+                    "factory": "org.apache.commons.dbcp.BasicDataSourceFactory",
+                    "initialSize": "1",
+                    "maxActive": "3",
+                    "maxIdle": "1",
+                    "maxWait": "20000",
+                    "minEvictableIdleTimeMillis": "3000",
+                    "minIdle": "1",
+                    "removeAbandonedTimeout": "5",
+                    "timeBetweenEvictionRunsMillis": "30000",
+                    "type": "javax.sql.DataSource"
+                }
+            });
         }
     },
 
@@ -436,8 +504,8 @@ module.exports = yeoman.generators.Base.extend({
 
     writeJavaClasses: function () {
         this.fs.copyTpl(
-            this.templatePath('StringsEn.java'),
-            this.destinationPath(this.props.processFolder+"/StringsEn.java"),
+            this.templatePath('LanguageFactory.java'),
+            this.destinationPath(this.props.processFolder+"/LanguageFactory.java"),
             this.props);
 
         for (var i in this.props.tables) {
@@ -631,53 +699,73 @@ module.exports = yeoman.generators.Base.extend({
     },
 
     writeOtherFiles: function() {
+        var self = this;
+
         this.directory("fonts", "src/main/webapp/" + this.props.modulename + "/fonts");
 
         this.fs.copyTpl(
             this.templatePath('strings-en.json'),
             this.destinationPath("src/main/webapp/" + this.props.modulename + "/json/strings-en.json"),
             this.props);
+
+        var metaInfCtxAsXml = new xml2js.Builder().buildObject(this.props.metaInfCtx);
+        var xmlPath = this.destinationRoot() + "/src/main/webapp/META-INF/context.xml";
+
+        try {
+            fs.mkdirSync(this.destinationRoot() + "/src/main/webapp/META-INF/");
+        } catch (e) {}
+
+        fs.writeFileSync(xmlPath, metaInfCtxAsXml, "utf8");
     },
 
     installDependencies: function() {
+        var self = this;
+
         if (this.props.runNpm) {
+            console.log("Installing Dependencies, please wait.");
+
             process.chdir("src/main/webapp/");
 
             this.npmInstall([
                 "browserify",
-                "grunt",
+                "grunt@0.4.5",
                 "grunt-browserify",
                 "grunt-contrib-sass",
                 "grunt-contrib-uglify",
                 "jstify",
                 "uglify"
-            ], { saveDev: true });
-
-            this.npmInstall([
-                "bootstrap-notify", 
-                "bootstrap-sass", 
-                "bootstrap-validator", 
-                "datatables@<=1.10.9", 
-                "datatables-bootstrap", 
-                "font-awesome", 
-                "jquery", 
-                "jquery-localize", 
-                "jstify", 
-                "ml-js-commons", 
-                "moment"
-            ], { save: true });
-
-            process.chdir("../../../");
+            ], 
+            { saveDev: true },
+            function () {
+                
+                self.npmInstall([
+                    "bootstrap-notify", 
+                    "bootstrap-sass", 
+                    "bootstrap-validator", 
+                    "datatables@<=1.10.9", 
+                    "datatables-bootstrap", 
+                    "font-awesome", 
+                    "jquery", 
+                    "jquery-localize", 
+                    "jstify", 
+                    "ml-js-commons", 
+                    "moment"
+                ], 
+                { save: true },
+                function() {
+                    process.chdir("../../../");
+                    self._runGruntRun();
+                });
+            });
+        } else {
+            self._runGruntRun();
         }
     },
 
-    runGruntMyDarling: function() {
+    _runGruntRun: function() {
         process.chdir("src/main/webapp/");
         this.spawnCommand('grunt');
         process.chdir("../../../");
-    },
-
-    end: function() {
         process.exit();
     },
 

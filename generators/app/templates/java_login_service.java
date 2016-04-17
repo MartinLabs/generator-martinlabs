@@ -27,7 +27,7 @@ public class LoginServices extends TransacProcess {
             if (checkLogin(con, account, password)) {
                 return new OpResponse(true);
             } else {
-                return new OpResponse(false, StringsEn.getInstance().invalidLogin());
+                return new OpResponse(false, LanguageFactory.getInstance().invalidLogin());
             }
         });
     }
@@ -62,7 +62,7 @@ public class LoginServices extends TransacProcess {
     
     public void allowAccess(Connection con, HttpServletRequest request) throws RespException{
         if (!checkLogin(con, request)) {
-            throw new RespException(StringsEn.getInstance().pleaseLogin());
+            throw new RespException(LanguageFactory.getInstance().pleaseLogin());
         }
     }
     
