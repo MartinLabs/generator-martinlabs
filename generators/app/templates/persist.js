@@ -4,7 +4,7 @@
         moment = require("moment"),
         martinlabs = require("ml-js-commons"),
         URL = require("../const/url"),
-        <% if (props.loginsys) { %>login = require("../service/login"),
+        <% if (props.loginsys) { %>simpleStorage = require("simpleStorage.js"),
         <% } %>defaultInterface = require("../service/defaultInterface"),
         translate = require("../service/translate");
 
@@ -20,8 +20,7 @@
         var _obj = {};
         
         var init = function() {
-            <% if (props.loginsys) { %>login.inHome();
-            <% } %>defaultInterface({ active: "<%= table.className %>" });
+            defaultInterface({ active: "<%= table.className %>" });
             translate();
             requestContent();
             registerInteraction();
@@ -35,12 +34,15 @@
             }
             
             $.get(URL.GET_<%= table.classUpper %>, {
-                id: id
+                id: id<% if (props.loginsys) { %>, 
+                token: simpleStorage.get("token<%= props.modulenameUpper %>") || null<% } %>
             },
             function(resp){
                 if (resp.Success) {
                     _obj = resp.Data;
-                    render();
+                    render();<% if (props.loginsys) { %>
+                } else if (resp.Code === 33) {
+                    location.href = URL.login;<% } %>
                 } else {
                     $.notify({ message: resp.Message },{
                         type: "danger",
@@ -55,8 +57,10 @@
         var persist = function() {
             extractFromFields();
             
-            martinlabs.bodyRequest(URL.PERSIST_<%= table.classUpper %>, _obj,
-            function(resp){
+            martinlabs.bodyRequest(URL.PERSIST_<%= table.classUpper %>, {
+                <%= table.classLowerCamel %>: _obj<% if (props.loginsys) { %>,
+                token: simpleStorage.get("token<%= props.modulenameUpper %>") || null<% } %>
+            }, function(resp){
                 if (resp.Success) {
                     if (!_obj.<%= table.idColumn.propertyName %>) {
                         _obj.<%= table.idColumn.propertyName %> = resp.Data;
@@ -66,7 +70,9 @@
                         type: "success",
                         placement: { align: "center" },
                         delay: 2000
-                    });
+                    });<% if (props.loginsys) { %>
+                } else if (resp.Code === 33) {
+                    location.href = URL.login;<% } %>
                 } else {
                     $.notify({ message: resp.Message },{
                         type: "danger",

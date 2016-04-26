@@ -3,8 +3,8 @@
     var $ = require("jquery"),
         defaultTpl = require("../../tmpl/default.html"),
         <% if (loginsys) { %>
+            simpleStorage = require("simpleStorage.js"),
             URL = require("../const/url"),
-            login = require("../service/login"),
         <% } %>
         URL = require("../const/url");
 
@@ -22,7 +22,7 @@
 
             <% if (loginsys) { %>
                 $("#logout").click(function(){
-                    login.logout();
+                    simpleStorage.deleteKey("tokenCrud");
                     location.href = URL.login;
                 });
             <% } %>

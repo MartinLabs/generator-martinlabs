@@ -6,9 +6,6 @@ import br.com.martinlabs.commons.OpResponse;
 import br.com.martinlabs.commons.TransacProcess;
 import br.com.martinlabs.commons.exceptions.RespException;
 import java.util.List;
-<% if (props.loginsys) { %>
-import javax.servlet.http.HttpServletRequest;
-<% } %>
 /**
  *
  * @author martinlabs CRUD generator
@@ -23,10 +20,10 @@ public class <%= table.className %>Process extends TransacProcess {
         super("<%= props.datasource %>");
     }
 
-    public OpResponse<<%= table.className %>> get(long id<% if (props.loginsys) { %>, HttpServletRequest req<% } %>) throws RespException {
+    public OpResponse<<%= table.className %>> get(long id<% if (props.loginsys) { %>, String token<% } %>) throws RespException {
     	return open(con -> {
         <% if (props.loginsys) { %>
-            loginS.allowAccess(con, req);
+            loginS.allowAccess(con, token);
         <% } %>
 
     		<%= table.className %>Dao dao = new <%= table.className %>Dao(con);
@@ -35,10 +32,10 @@ public class <%= table.className %>Process extends TransacProcess {
     	});
     }
 
-    public OpResponse<List<<%= table.className %>>> list(<% if (props.loginsys) { %>HttpServletRequest req<% } %>) throws RespException {
+    public OpResponse<List<<%= table.className %>>> list(<% if (props.loginsys) { %>String token<% } %>) throws RespException {
     	return open(con -> {
         <% if (props.loginsys) { %>
-            loginS.allowAccess(con, req);
+            loginS.allowAccess(con, token);
         <% } %>
     		<%= table.className %>Dao dao = new <%= table.className %>Dao(con);
 
@@ -46,7 +43,7 @@ public class <%= table.className %>Process extends TransacProcess {
     	});
     }
 
-    public OpResponse<Long> persist(<%= table.className %> obj<% if (props.loginsys) { %>, HttpServletRequest req<% } %>) throws RespException {
+    public OpResponse<Long> persist(<%= table.className %> obj<% if (props.loginsys) { %>, String token<% } %>) throws RespException {
     	<% 
     		for (var i in table.columns) { 
 	    		var c = table.columns[i]; 
@@ -71,7 +68,7 @@ public class <%= table.className %>Process extends TransacProcess {
 
     	return open(con -> {
         <% if (props.loginsys) { %>
-            loginS.allowAccess(con, req);
+            loginS.allowAccess(con, token);
         <% } %>
     		<%= table.className %>Dao dao = new <%= table.className %>Dao(con);
 

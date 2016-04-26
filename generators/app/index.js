@@ -25,42 +25,42 @@ module.exports = yeoman.generators.Base.extend({
         var prompts = [{
             type: 'input',
             name: 'modulename',
-            message: 'What is the name of this module?',
+            message: 'Input the Module Name',
             default: this.props.modulename || "crud"
         },{
             type: 'input',
             name: 'user',
-            message: 'Tell me your Mysql User',
+            message: 'Input the Mysql User',
             default: this.props.user
         },{
             type: 'password',
             name: 'password',
-            message: 'Tell me your Mysql Password',
+            message: 'Input the Mysql Password',
             default: this.props.password
         },{
             type: 'input',
             name: 'database',
-            message: 'What is the database name?',
+            message: 'Input the Database Name',
             default: this.props.database
         },{
             type: 'input',
             name: 'tables',
-            message: 'What is the table name?',
+            message: 'Input the Table Name - leave empty for: ',
             default: "all tables"
         },{
             type: 'input',
             name: 'datasource',
-            message: 'What is the datasource name?',
+            message: 'Input the Datasource Name',
             default: this.props.datasource
         },{
             type: 'confirm',
             name: 'runNpm',
-            message: 'Install Dependencies?',
+            message: 'Do you want to Install the NPM Dependencies?',
             default: this.props.runNpm === true
         },{
             type: 'confirm',
             name: 'loginsys',
-            message: 'Do you want to include a login system?',
+            message: 'Do you want to include a Login System?',
             default: this.props.loginsys === true
         }];
 
@@ -85,17 +85,17 @@ module.exports = yeoman.generators.Base.extend({
             var prompts = [{
                 type: 'input',
                 name: 'logintablename',
-                message: 'What is the login table name?',
+                message: 'Input the Login Table Name',
                 default: this.props.logintablename
             },{
                 type: 'input',
                 name: 'loginaccountcolumn',
-                message: 'What is the account column name?',
+                message: 'Input the Login Account Column Name',
                 default: this.props.loginaccountcolumn
             },{
                 type: 'input',
                 name: 'loginpasswordcolumn',
-                message: 'What is the password column name?',
+                message: 'Input the Login Password Column Name',
                 default: this.props.loginpasswordcolumn
             }];
 
@@ -469,6 +469,7 @@ module.exports = yeoman.generators.Base.extend({
 
             table.className = this._upperCamelCase(table.name);
             table.classUpper = table.className.toUpperCase();
+            table.classLowerCamel = this._lowerCamelCase(table.name);
 
             this.props.urlConstants["LIST_"+table.classUpper] = "../" + this.props.modulenameUpper + "/List" + table.className;
             this.props.urlConstants["GET_"+table.classUpper] = "../" + this.props.modulenameUpper + "/Get" + table.className;
@@ -621,13 +622,9 @@ module.exports = yeoman.generators.Base.extend({
         }
 
         if (this.props.loginsys) {
-            this.fs.copy(
-                this.templatePath('index_login.js'),
-                this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/controller/index.js"));
-
             this.fs.copyTpl(
-                this.templatePath('login.js'),
-                this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/service/login.js"),
+                this.templatePath('index_login.js'),
+                this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/controller/index.js"),
                 this.props);
         }
     },
@@ -748,7 +745,8 @@ module.exports = yeoman.generators.Base.extend({
                     "jquery-localize", 
                     "jstify", 
                     "ml-js-commons", 
-                    "moment"
+                    "moment",
+                    "simplestorage.js"
                 ], 
                 { save: true },
                 function() {

@@ -14,7 +14,7 @@ public class Get<%= table.className %>Servlet extends ServletWrapper {
 
     @Override
     protected Object process(ServletContent content) throws RespException {
-    	return new <%= table.className %>Process().get(content.getParamLong("id")<% if (props.loginsys) { %>, content.request<% } %>);
+    	return new <%= table.className %>Process().get(content.getParamLong("id")<% if (props.loginsys) { %>, content.getParamString("token")<% } %>);
     }
     
 }

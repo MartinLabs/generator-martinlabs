@@ -3,9 +3,9 @@
     var $ = require("jquery"),
         martinlabs = require("ml-js-commons"),
         URL = require("../const/url"),
-        <% if (props.loginsys) { %>login = require("../service/login"),
-        <% } %>defaultInterface = require("../service/defaultInterface"),
-        translate = require("../service/translate");
+        defaultInterface = require("../service/defaultInterface"),
+        <% if (props.loginsys) { %>simpleStorage = require("simpleStorage.js"),
+        <% } %>translate = require("../service/translate");
 
     window.jQuery = $;
     require("bootstrap-sass");
@@ -19,18 +19,22 @@
             _dataTable;
         
         var init = function() {
-            <% if (props.loginsys) { %>login.inHome();
-            <% } %>defaultInterface({ active: "<%= table.className %>" });
+            defaultInterface({ active: "<%= table.className %>" });
             translate();
             request();
         };
         
         var request = function() {
-            martinlabs.bodyRequest(URL.LIST_<%= table.classUpper %>, {},
+            $.get(URL.LIST_<%= table.classUpper %>, {
+                <% if (props.loginsys) { %> token: simpleStorage.get("token<%= props.modulenameUpper %>") || null
+                <% } %>
+            },
             function(resp){
                 if (resp.Success) {
                     _list = resp.Data;
-                    render(_list);
+                    render(_list);<% if (props.loginsys) { %>
+                } else if (resp.Code === 33) {
+                    location.href = URL.login;<% } %>
                 } else {
                     $.notify({ message: resp.Message },{
                         type: "danger",

@@ -1,3 +1,2 @@
-- login mais seguro
 - corrigir bug: se a tabela tiver 2 primarykey vai fazer select e update por 1 id só
 - atualizar o pom com martinlabs java commons depois que tiver publicado

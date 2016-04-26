@@ -1,6 +1,8 @@
 (function(){
     
     var $ = require("jquery");
+
+    window.jQuery = $;
     require("jquery-localize");
     
     module.exports = function() {
