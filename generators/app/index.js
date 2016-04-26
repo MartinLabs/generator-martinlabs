@@ -45,7 +45,7 @@ module.exports = yeoman.generators.Base.extend({
         },{
             type: 'input',
             name: 'tables',
-            message: 'Input the Table Name - leave empty for: ',
+            message: 'Input the Table Name (or "all tables") ',
             default: "all tables"
         },{
             type: 'input',
@@ -495,10 +495,12 @@ module.exports = yeoman.generators.Base.extend({
                 col.propertyName = this._lowerCamelCase(col.column_name);
                 col.propertyNameUpper = this._capitalizeFirstLetter(col.propertyName);
 
-                if (col.column_name === this.props.loginaccountcolumn) {
-                    this.logintable.accountColumn = col;
-                } else if (col.column_name === this.props.loginpasswordcolumn) {
-                    this.logintable.passwordColumn = col;
+                if (isLoginTable) {
+                    if (col.column_name === this.props.loginaccountcolumn) {
+                        this.logintable.accountColumn = col;
+                    } else if (col.column_name === this.props.loginpasswordcolumn) {
+                        this.logintable.passwordColumn = col;
+                    }
                 }
             }
         }

@@ -22,7 +22,7 @@
 
             <% if (loginsys) { %>
                 $("#logout").click(function(){
-                    simpleStorage.deleteKey("tokenCrud");
+                    simpleStorage.deleteKey("token<%= modulenameUpper %>");
                     location.href = URL.login;
                 });
             <% } %>
