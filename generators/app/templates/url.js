@@ -1,7 +1,7 @@
 module.exports = { 
 <% 
 for (var i in urlConstants) { 
-	if (i !== "listPages" && i != "persistPages") {
+	if (i !== "listPages" && i != "persistPages" && i != "LOGIN" && i != "login" && i != "home") {
 %>
 	<%= i %>: "<%= urlConstants[i] %>",<% 
 	}

@@ -20,12 +20,13 @@
     module.exports.datatable = function(selector, className) {
         $(selector).find("th").each(function(){
             $(this).data("localize", "classes." + className + ".columns." + $(this).html());
+            $(this).localize("strings", {
+                language: "en",
+                pathPrefix: "json"
+            });
         });
 
-        $(selector).localize("strings", {
-            language: "en",
-            pathPrefix: "json"
-        });
+        
     };
     
 })();

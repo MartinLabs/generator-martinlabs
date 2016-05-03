@@ -45,7 +45,7 @@ module.exports = yeoman.generators.Base.extend({
         },{
             type: 'input',
             name: 'tables',
-            message: 'Input the Table Name (or "all tables") ',
+            message: 'Input the Tables Names separated by comma (or "all tables") ',
             default: "all tables"
         },{
             type: 'input',
@@ -200,10 +200,10 @@ module.exports = yeoman.generators.Base.extend({
         this.props.modulenameUpper = this._capitalizeFirstLetter(this.props.modulename);
 
         if (this.props.tables !== "all tables") {
-            this.props.tables = [{ name: this.props.tables }];
-        } else {
-            this.props.tables = [];
+            this.props.crudTables = this.props.tables.replace(/ /g, "").split(",");
         }
+
+        this.props.tables = [];
     },
 
     generateMetaInfCtx: function() {
@@ -377,9 +377,6 @@ module.exports = yeoman.generators.Base.extend({
     },
 
     readTables: function() {
-        if (this.props.tables.length == 1) {
-            return; //this means that only one table will be used
-        }
 
         var self = this;
         var done = this.async();
@@ -399,27 +396,13 @@ module.exports = yeoman.generators.Base.extend({
             self.props.tables = [];
             for (var i in results) {
                 self.props.tables.push({
-                    name: results[i].table_name
+                    name: results[i].table_name,
+                    inCrud: self.props.crudTables.indexOf(results[i].table_name) > -1
                 });
             }
 
             done();
         });
-    },
-
-    includeLoginTable: function() {
-        if (this.props.loginsys) {
-            var listed = false;
-            for (var i in this.props.tables) {
-                if (this.props.tables[i].name === this.props.logintablename) {
-                    listed = true;
-                }
-            }
-
-            if (!listed) {
-                this.props.tables.push({ name: this.props.logintablename });
-            }
-        }
     },
 
     readColumns: function() {
@@ -471,12 +454,14 @@ module.exports = yeoman.generators.Base.extend({
             table.classUpper = table.className.toUpperCase();
             table.classLowerCamel = this._lowerCamelCase(table.name);
 
-            this.props.urlConstants["LIST_"+table.classUpper] = "../" + this.props.modulenameUpper + "/List" + table.className;
-            this.props.urlConstants["GET_"+table.classUpper] = "../" + this.props.modulenameUpper + "/Get" + table.className;
-            this.props.urlConstants["PERSIST_"+table.classUpper] = "../" + this.props.modulenameUpper + "/Persist" + table.className;
-            
-            this.props.urlConstants.listPages[table.className] = "list"+table.className+".html";
-            this.props.urlConstants.persistPages[table.className] = "persist"+table.className+".html";
+            if (table.inCrud) {
+                this.props.urlConstants["LIST_"+table.classUpper] = "../" + this.props.modulenameUpper + "/List" + table.className;
+                this.props.urlConstants["GET_"+table.classUpper] = "../" + this.props.modulenameUpper + "/Get" + table.className;
+                this.props.urlConstants["PERSIST_"+table.classUpper] = "../" + this.props.modulenameUpper + "/Persist" + table.className;
+                
+                this.props.urlConstants.listPages[table.className] = "list"+table.className+".html";
+                this.props.urlConstants.persistPages[table.className] = "persist"+table.className+".html";
+            }
 
             var isLoginTable = false;
             if (table.name === this.props.logintablename) {
@@ -514,6 +499,10 @@ module.exports = yeoman.generators.Base.extend({
 
         for (var i in this.props.tables) {
             var table = this.props.tables[i];
+
+            if (!table.inCrud) {
+                continue;
+            }
 
             var params = {
                 props: this.props,
@@ -606,6 +595,10 @@ module.exports = yeoman.generators.Base.extend({
 
         for (var i in this.props.tables) {
             var table = this.props.tables[i];
+
+            if (!table.inCrud) {
+                continue;
+            }
             
             var params = {
                 props: this.props,
@@ -652,19 +645,25 @@ module.exports = yeoman.generators.Base.extend({
             this.props);
 
         for (var i in this.props.tables) {
+            var table = this.props.tables[i];
+
+            if (!table.inCrud) {
+                continue;
+            }
+
             var params = {
                 props: this.props,
-                table: this.props.tables[i]
+                table: table
             };
             
             this.fs.copyTpl(
                 this.templatePath('list.html'),
-                this.destinationPath("src/main/webapp/" + this.props.modulename + "/list"+params.table.className+".html"),
+                this.destinationPath("src/main/webapp/" + this.props.modulename + "/list"+table.className+".html"),
                 params);
 
             this.fs.copyTpl(
                 this.templatePath('persist.html'),
-                this.destinationPath("src/main/webapp/" + this.props.modulename + "/persist"+params.table.className+".html"),
+                this.destinationPath("src/main/webapp/" + this.props.modulename + "/persist"+table.className+".html"),
                 params);
         }
 
