@@ -1,11 +1,13 @@
 (function(){
     
     var $ = require("jquery"),
-        defaultTpl = require("../../tmpl/default.html"),
-        <% if (loginsys) { %>
-            simpleStorage = require("simpleStorage.js"),
-            URL = require("../const/url"),
-        <% } %>
+        defaultTpl = require("../../tmpl/default.html"),<% 
+    if (loginsys) { 
+        %>
+        simpleStorage = require("simpleStorage.js"),
+        URL = require("../const/url"),<% 
+    } 
+    %>
         URL = require("../const/url");
 
     module.exports = function(opt){
@@ -19,13 +21,12 @@
             self.appendTo("#defaultInner");
 
             $("body").show();
-
-            <% if (loginsys) { %>
-                $("#logout").click(function(){
-                    simpleStorage.deleteKey("token<%= modulenameUpper %>");
-                    location.href = URL.login;
-                });
-            <% } %>
+        <% if (loginsys) { %>
+            $("#logout").click(function(){
+                simpleStorage.deleteKey("token<%= modulenameUpper %>");
+                location.href = URL.login;
+            });
+        <% } %>
         };
 
         init();

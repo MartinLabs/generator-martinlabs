@@ -13,58 +13,68 @@
             <hr>
 
             <form data-toggle="validator" role="form" class="col-sm-8">
-    	<% for (var i in table.columns) { var col = table.columns[i]; %>
+	<% for (var i in table.columns) { var col = table.columns[i];
 
-            <% if (col.extra !== "auto_increment") { %>
+        if (col.extra !== "auto_increment") {
 
-            	<% if (col.javaType === "String") { %>
-                    <div class="form-group">
-                        <label for="input-<%= col.propertyName %>" 
-                            class="control-label" 
-                            data-localize="classes.<%= table.className %>.columns.<%= col.propertyName %>"></label>
-                        <input id="input-<%= col.propertyName %>" 
-                            type="text" 
-                            class="form-control" <%= col.is_nullable !== "YES" ? "required" : "" %>>
-                    </div>
-                <% } else if (["Double", "double", "Long", "long"].indexOf(col.javaType) > -1) { %>
-                    <div class="form-group">
-                        <label for="input-<%= col.propertyName %>" 
-                            class="control-label" 
-                            data-localize="classes.<%= table.className %>.columns.<%= col.propertyName %>"></label>
-                        <input id="input-<%= col.propertyName %>" 
-                            type="number" step="<%= (['Double', 'double'].indexOf(col.javaType) > -1) ? 'any' : '1' %>"
+            if (col.referencedTable) { %>
+                <div class="form-group">
+                    <label for="input-<%= col.propertyName %>" 
+                        class="control-label" 
+                        data-localize="classes.<%= col.referencedTable.className %>.title"></label>
+                    <select id="input-<%= col.propertyName %>" 
+                        class="form-control" required>
+                        <option value="" selected="true">Selecione</option>
+                    </select>
+                </div>
+        	<% } else if (col.javaType === "String") { %>
+                <div class="form-group">
+                    <label for="input-<%= col.propertyName %>" 
+                        class="control-label" 
+                        data-localize="classes.<%= table.className %>.columns.<%= col.propertyName %>"></label>
+                    <input id="input-<%= col.propertyName %>" 
+                        type="text" 
+                        class="form-control" <%= col.is_nullable !== "YES" ? "required" : "" %>>
+                </div>
+            <% } else if (["Double", "double", "Long", "long"].indexOf(col.javaType) > -1) { %>
+                <div class="form-group">
+                    <label for="input-<%= col.propertyName %>" 
+                        class="control-label" 
+                        data-localize="classes.<%= table.className %>.columns.<%= col.propertyName %>"></label>
+                    <input id="input-<%= col.propertyName %>" 
+                        type="number" step="<%= (['Double', 'double'].indexOf(col.javaType) > -1) ? 'any' : '1' %>"
+                        placeholder="" 
+                        data-localize="persist.number" 
+                        class="form-control" <%= col.is_nullable !== "YES" ? "required" : "" %>>
+                </div>
+            <% } else if (col.javaType === "Date") { %>
+                <div class="form-group">
+                    <label class="control-label"
+                        data-localize="classes.<%= table.className %>.columns.<%= col.propertyName %>"></label>
+                    <div id="input-<%= col.propertyName %>" 
+                        class='input-group datetime'>
+                        <input 
+                            type='text' 
                             placeholder="" 
-                            data-localize="persist.number" 
-                            class="form-control" <%= col.is_nullable !== "YES" ? "required" : "" %>>
+                            data-localize="persist.datetime" 
+                            class="form-control" <%= col.is_nullable !== "YES" ? "required" : "" %>/>
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
                     </div>
-                <% } else if (col.javaType === "Date") { %>
-                    <div class="form-group">
-                        <label class="control-label"
-                            data-localize="classes.<%= table.className %>.columns.<%= col.propertyName %>"></label>
-                        <div id="input-<%= col.propertyName %>" 
-                            class='input-group datetime'>
-                            <input 
-                                type='text' 
-                                placeholder="" 
-                                data-localize="persist.datetime" 
-                                class="form-control" <%= col.is_nullable !== "YES" ? "required" : "" %>/>
-                            <span class="input-group-addon">
-                                <span class="glyphicon glyphicon-calendar"></span>
-                            </span>
-                        </div>
+                </div>
+            <% } else { %>
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" id="input-<%= col.propertyName %>">
+                            <span data-localize="classes.<%= table.className %>.columns.<%= col.propertyName %>"></span>
+                        </label>
                     </div>
-                <% } else { %>
-                    <div class="form-group">
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" id="input-<%= col.propertyName %>">
-                                <span data-localize="classes.<%= table.className %>.columns.<%= col.propertyName %>"></span>
-                            </label>
-                        </div>
-                    </div>
-                <% } %>
-        	<% } %>
-        <% } %>
+                </div>
+            <% }
+    	}
+    } %>
                 <div class="form-group">
                     <button type="submit" class="btn btn-primary" data-localize="persist.submit"></button>
                 </div>

@@ -46,7 +46,7 @@ module.exports = yeoman.generators.Base.extend({
             type: 'input',
             name: 'tables',
             message: 'Input the Tables Names separated by comma (or "all tables") ',
-            default: "all tables"
+            default: this.props.tables ? this.props.tables : "all tables"
         },{
             type: 'input',
             name: 'datasource',
@@ -409,15 +409,21 @@ module.exports = yeoman.generators.Base.extend({
         var self = this;
         var done = this.async();
 
+        this.props.referencedTables = new Set();
+
         var recursive = function(index) {
             var table = self.props.tables[index];
 
             self.connection.query(
                 "SELECT "
-                + "column_name, is_nullable, data_type, character_maximum_length, column_key, ordinal_position, extra "
-                + "FROM columns "
-                + "WHERE table_schema = ? "
-                + "AND table_name = ? ",
+                + "c.column_name, is_nullable, data_type, character_maximum_length, "
+                + "column_key, c.ordinal_position, extra, referenced_table_name "
+                + "FROM columns c "
+                + "LEFT JOIN key_column_usage k ON c.table_schema = k.table_schema "
+                + "AND c.table_name = k.table_name AND c.column_name = k.column_name "
+                + "AND referenced_table_name IS NOT NULL "
+                + "WHERE c.table_schema = ? "
+                + "AND c.table_name = ? ",
                 [self.props.database, table.name],
             function(err, results, fields) {
                 if (err) {
@@ -426,6 +432,16 @@ module.exports = yeoman.generators.Base.extend({
                 }
 
                 table.columns = results;
+
+                if (table.inCrud) {
+                    //adding referencedtables (tables that are referenced in foreign keys)
+                    for (var i in table.columns) {
+                        var c = table.columns[i];
+                        if (c.referenced_table_name) {
+                            self.props.referencedTables.add(c.referenced_table_name);
+                        }
+                    }
+                }
 
                 if (index + 1 < self.props.tables.length) {
                     recursive(index + 1);
@@ -454,8 +470,13 @@ module.exports = yeoman.generators.Base.extend({
             table.classUpper = table.className.toUpperCase();
             table.classLowerCamel = this._lowerCamelCase(table.name);
 
-            if (table.inCrud) {
+            table.inListWS = this.props.referencedTables.has(table.name);
+
+            if (table.inCrud || table.inListWS) {
                 this.props.urlConstants["LIST_"+table.classUpper] = "../" + this.props.modulenameUpper + "/List" + table.className;
+            }
+
+            if (table.inCrud) {
                 this.props.urlConstants["GET_"+table.classUpper] = "../" + this.props.modulenameUpper + "/Get" + table.className;
                 this.props.urlConstants["PERSIST_"+table.classUpper] = "../" + this.props.modulenameUpper + "/Persist" + table.className;
                 
@@ -480,6 +501,16 @@ module.exports = yeoman.generators.Base.extend({
                 col.propertyName = this._lowerCamelCase(col.column_name);
                 col.propertyNameUpper = this._capitalizeFirstLetter(col.propertyName);
 
+                if (col.referenced_table_name) {
+
+                    for (var j in this.props.tables) {
+                        var rt = this.props.tables[j];
+                        if (col.referenced_table_name === rt.name) {
+                            col.referencedTable = rt;
+                        }
+                    }
+                }
+
                 if (isLoginTable) {
                     if (col.column_name === this.props.loginaccountcolumn) {
                         this.logintable.accountColumn = col;
@@ -500,7 +531,7 @@ module.exports = yeoman.generators.Base.extend({
         for (var i in this.props.tables) {
             var table = this.props.tables[i];
 
-            if (!table.inCrud) {
+            if (!table.inCrud && !table.inListWS) {
                 continue;
             }
 
@@ -529,15 +560,19 @@ module.exports = yeoman.generators.Base.extend({
                 this.destinationPath(this.props.wsFolder+"/List"+table.className+"Servlet.java"),
                 params);
 
-            this.fs.copyTpl(
-                this.templatePath('ws_get.java'),
-                this.destinationPath(this.props.wsFolder+"/Get"+table.className+"Servlet.java"),
-                params);
+            if (table.inCrud) {
 
-            this.fs.copyTpl(
-                this.templatePath('ws_persist.java'),
-                this.destinationPath(this.props.wsFolder+"/Persist"+table.className+"Servlet.java"),
-                params);
+                this.fs.copyTpl(
+                    this.templatePath('ws_get.java'),
+                    this.destinationPath(this.props.wsFolder+"/Get"+table.className+"Servlet.java"),
+                    params);
+
+                this.fs.copyTpl(
+                    this.templatePath('ws_persist.java'),
+                    this.destinationPath(this.props.wsFolder+"/Persist"+table.className+"Servlet.java"),
+                    params);
+
+            }
         }        
 
         if (this.props.loginsys) {

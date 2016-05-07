@@ -1,6 +1,4 @@
-- corrigir bugs quando crio cruds individuais (no strings-en.json, index.js e url) 
 - colocar select onde tem foreign key
-- não gerar crud da tabela de login se não for requisitado
 - corrigir bug: se a tabela tiver 2 primarykey vai fazer select e update por 1 id só
 - atualizar o pom com martinlabs java commons depois que tiver publicado
 - bug pra usar datatables não está usando 1.10.9 (está colocando o ^)

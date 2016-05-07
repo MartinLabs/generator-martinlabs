@@ -25,9 +25,8 @@
         };
         
         var request = function() {
-            $.get(URL.LIST_<%= table.classUpper %>, {
-                <% if (props.loginsys) { %> token: simpleStorage.get("token<%= props.modulenameUpper %>") || null
-                <% } %>
+            $.get(URL.LIST_<%= table.classUpper %>, {<% if (props.loginsys) { %>
+                token: simpleStorage.get("token<%= props.modulenameUpper %>") || null<% } %>
             },
             function(resp){
                 if (resp.Success) {

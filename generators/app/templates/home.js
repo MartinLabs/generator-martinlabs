@@ -1,7 +1,7 @@
 (function() {
 
     var defaultInterface = require("../service/defaultInterface"),
-	    translate = require("../service/translate");
+    	translate = require("../service/translate");
     
     module.exports = function() {
         
