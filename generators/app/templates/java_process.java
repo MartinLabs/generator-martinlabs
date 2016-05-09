@@ -2,6 +2,8 @@ package <%= props.processPackage %>;
 
 import <%= props.modelPackage %>.<%= table.className %>;
 import <%= props.daoPackage %>.<%= table.className %>Dao;
+<% for (var i in table.NtoNcolumns) { var c = table.NtoNcolumns[i]; %>
+import <%= props.daoPackage %>.<%= c.NtoNtable.className %>Dao;<% } %>
 import br.com.martinlabs.commons.OpResponse;
 import br.com.martinlabs.commons.TransacProcess;
 import br.com.martinlabs.commons.exceptions.RespException;
@@ -40,7 +42,7 @@ public class <%= table.className %>Process extends TransacProcess {
         });
     }
 
-    public OpResponse<Long> persist(<%= table.className %> obj<% if (props.loginsys) { %>, String token<% } %>) throws RespException {<% 
+    public OpResponse<Long> persist(<%= table.className %> obj<% for (var i in table.NtoNcolumns) { %>, List<Long> ids<%= table.NtoNcolumns[i].otherTable.className %><% } %><% if (props.loginsys) { %>, String token<% } %>) throws RespException {<% 
 for (var i in table.columns) { 
     var c = table.columns[i]; 
     if (c.is_nullable === "NO" && (c.javaType === "String" || c.javaType === "Date")) { 
@@ -64,18 +66,35 @@ for (var i in table.columns) {
         <% } %>
             <%= table.className %>Dao dao = new <%= table.className %>Dao(con);
 
-            long resp;
+            long id<%= table.className %>;
             if (obj.get<%= table.idColumn.propertyNameUpper %>() > 0) {
-                resp = dao.update(obj);
+                id<%= table.className %> = dao.update(obj);
             } else {
-                resp = dao.insert(obj);
+                id<%= table.className %> = dao.insert(obj);
+                obj.set<%= table.idColumn.propertyNameUpper %>(id<%= table.className %>);
             }
 
-            if (resp == 0) {
+            if (id<%= table.className %> == 0) {
                 throw new RespException(LanguageFactory.getInstance().unexpectedError());
             }
 
-            return new OpResponse<>(resp);
+        <% for (var i in table.NtoNcolumns) { var col = table.NtoNcolumns[i]; %>
+            <%= col.NtoNtable.className %>Dao <%= col.NtoNtable.classLowerCamel %>Dao = new <%= col.NtoNtable.className %>Dao(con);
+        
+            <%= col.NtoNtable.classLowerCamel %>Dao.removeAllFrom<%= table.className %>(id<%= table.className %>);
+            
+            if (ids<%= col.otherTable.className %> != null) {
+                for (Long id<%= col.otherTable.className.charAt(0) %> : ids<%= col.otherTable.className %>) {
+                    int affectedRows = <%= col.NtoNtable.classLowerCamel %>Dao.insert(id<%= col.otherTable.className.charAt(0) %>, id<%= table.className %>);
+                    
+                    if (affectedRows == 0) {
+                        throw new RespException(LanguageFactory.getInstance().unexpectedError());
+                    }
+                }
+            }
+        <% } %>
+
+            return new OpResponse<>(id<%= table.className %>);
         });
     }
 

@@ -74,7 +74,14 @@
                 </div>
             <% }
     	}
-    } %>
+    }
+
+    for (var i in table.NtoNcolumns) { var col = table.NtoNcolumns[i]; %>
+                <div class="form-group">
+                    <label data-localize="classes.<%= col.NtoNtable.className %>.title"><%= col.NtoNtable.className %></label>
+                    <div id="input-<%= col.NtoNtable.classLowerCamel %>"></div>
+                </div>
+    <% } %>
                 <div class="form-group">
                     <button type="submit" class="btn btn-primary" data-localize="persist.submit"></button>
                 </div>

@@ -22,19 +22,33 @@
         var init = function() {
             defaultInterface({ active: "<%= table.className %>" });
             translate();
-            requestContent();
             registerInteraction();<% 
 
     for (var i in table.columns) { 
         var c = table.columns[i]; 
-        if (c.referencedTable) {%>
+        if (c.referencedTable) { %>
             populate<%= c.propertyNameUpper %>();<%
         }
     }
-    %>
+
+    if (!table.NtoNcolumns) { %>
+            requestContent();
+    <% } else { %>
+
+        <% for (var i in table.NtoNcolumns) { var col = table.NtoNcolumns[i]; %>
+            populateAll<%= col.NtoNtable.className %>Checkbox();
+        <% } %>
+
+            requestContent(function() {
+            <% for (var i in table.NtoNcolumns) { var col = table.NtoNcolumns[i]; %>
+                populateThis<%= col.NtoNtable.className %>();
+            <% } %>
+            });
+
+    <% } %>
         };
         
-        var requestContent = function() {
+        var requestContent = function(cb) {
             var id = martinlabs.getParam("id");
             
             if (!id) {
@@ -48,7 +62,8 @@
             function(resp){
                 if (resp.Success) {
                     _obj = resp.Data;
-                    render();<% if (props.loginsys) { %>
+                    render();
+                    cb && cb();<% if (props.loginsys) { %>
                 } else if (resp.Code === 33) {
                     location.href = URL.login;<% } %>
                 } else {
@@ -62,11 +77,11 @@
             });
         };
 
-        <% for (var i in table.columns) { 
-            var c = table.columns[i]; 
-            if (c.referencedTable) {
+<% for (var i in table.columns) { 
+    var c = table.columns[i]; 
+    if (c.referencedTable) {
 
-        %>
+%>
         var populate<%= c.propertyNameUpper %> = function() {
             $.get(URL.LIST_<%= c.referencedTable.classUpper %>, {<% if (props.loginsys) { %> 
                 token: simpleStorage.get("token<%= props.modulenameUpper %>") || null<% } %>
@@ -99,16 +114,74 @@
 
             });
         };
-        <% 
-            }
-        } 
-        %>
+<% 
+    }
+} 
+%>
+
+    <% for (var i in table.NtoNcolumns) { var col = table.NtoNcolumns[i]; %>
+        var populateAll<%= col.NtoNtable.className %>Checkbox = function() {
+            $.get(URL.LIST_<%= col.otherTable.classUpper %>, { 
+                token: simpleStorage.get("token<%= props.modulenameUpper %>") || null
+            }, function(resp){
+                if (resp.Success) {
+                    var groupV = $("#input-<%= col.NtoNtable.classLowerCamel %>");
+                    for (var i in resp.Data) {
+                        var item = resp.Data[i];
+                        groupV.append("<div class='checkbox'><label><input type='checkbox' data-id='"+item.<%= col.otherTable.idColumn.propertyName %>+"'>"<% 
+
+                            for (var j in col.otherTable.columns) { var r = col.otherTable.columns[j]; %>
+                                + (item.<%= r.propertyName %> === undefined ? "" : item.<%= r.propertyName %> + "; ")<% 
+                            } %>+"</label></div>");
+                    }
+                    
+                    render<%= col.NtoNtable.className %>();
+                <% if (props.loginsys) { %>
+                } else if (resp.Code === 33) {
+                    location.href = URL.login;<% } %>
+                } else {
+                    $.notify({ message: resp.Message },{
+                        type: "danger",
+                        placement: { align: "center" },
+                        delay: 2000
+                    });
+                }
+
+            });
+        };
+
+        var populateThis<%= col.NtoNtable.className %> = function() {
+            $.get(URL.LIST_<%= col.otherTable.classUpper %>FROM<%= col.NtoNtable.classUpper %>, { 
+                <%= col.column.propertyName %>: _obj.<%= table.idColumn.propertyName %>,
+                token: simpleStorage.get("token<%= props.modulenameUpper %>") || null
+            }, function(resp){
+                if (resp.Success) {
+                    _obj.<%= col.NtoNtable.classLowerCamel %> = resp.Data;
+                    render<%= col.NtoNtable.className %>();
+                <% if (props.loginsys) { %>
+                } else if (resp.Code === 33) {
+                    location.href = URL.login;<% } %>
+                } else {
+                    $.notify({ message: resp.Message },{
+                        type: "danger",
+                        placement: { align: "center" },
+                        delay: 2000
+                    });
+                }
+
+            });
+        };
+    <% } %>
         
         var persist = function() {
             extractFromFields();
             
             martinlabs.bodyRequest(URL.PERSIST_<%= table.classUpper %>, {
-                <%= table.classLowerCamel %>: _obj<% if (props.loginsys) { %>,
+                <%= table.classLowerCamel %>: _obj<% 
+            for (var i in table.NtoNcolumns) { var col = table.NtoNcolumns[i]; %>,
+                ids<%= col.otherTable.className %>: extractIds<%= col.NtoNtable.className %>()<% 
+            } 
+            if (props.loginsys) { %>,
                 token: simpleStorage.get("token<%= props.modulenameUpper %>") || null<% } %>
             }, function(resp){
                 if (resp.Success) {
@@ -162,7 +235,17 @@ for (var i in table.columns) {
 } 
 %>
         };
-        
+    <% for (var i in table.NtoNcolumns) { var col = table.NtoNcolumns[i]; %>
+        var extractIds<%= col.NtoNtable.className %> = function() {
+            var ids = [];
+            
+            $("#input-<%= col.NtoNtable.classLowerCamel %> input[type=checkbox]:checked").each(function(){
+                ids.push($(this).data("id"));
+            });
+            
+            return ids;
+        };
+    <% } %>
         var render = function() {
 <% for (var i in table.columns) { 
     var c = table.columns[i]; 
@@ -183,7 +266,19 @@ for (var i in table.columns) {
             
             translate();
         };
-        
+    <% for (var i in table.NtoNcolumns) { var col = table.NtoNcolumns[i]; %>
+
+        var render<%= col.NtoNtable.className %> = function() {
+            if (!$("#input-<%= col.NtoNtable.classLowerCamel %> input[type=checkbox]").length){
+                return;
+            }
+            
+            for (var i in _obj.<%= col.NtoNtable.classLowerCamel %>) {
+                var item = _obj.<%= col.NtoNtable.classLowerCamel %>[i];
+                $("#input-<%= col.NtoNtable.classLowerCamel %> input[type=checkbox][data-id='"+item.<%= col.otherTable.idColumn.propertyName %>+"']").prop("checked", true);
+            }
+        };
+    <% } %>
         var registerInteraction = function() {
             $("form").validator().on("submit", function(e){
                 if (!e.isDefaultPrevented()) {

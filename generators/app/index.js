@@ -201,6 +201,8 @@ module.exports = yeoman.generators.Base.extend({
 
         if (this.props.tables !== "all tables") {
             this.props.crudTables = this.props.tables.replace(/ /g, "").split(",");
+        } else {
+            this.props.crudTables = [];
         }
 
         this.props.tables = [];
@@ -366,7 +368,7 @@ module.exports = yeoman.generators.Base.extend({
         }
     },
 
-    connect: function(){
+    connectToDatabase: function(){
         this.connection = mysql.createConnection({
             user: this.props.user,
             password: this.props.password,
@@ -394,10 +396,20 @@ module.exports = yeoman.generators.Base.extend({
             }
 
             self.props.tables = [];
+
+            var alltables = false;
+            if (self.props.crudTables.length == 0) {
+                alltables = true;
+            }
+
             for (var i in results) {
+                if (alltables) {
+                    self.props.crudTables.push(results[i].table_name);
+                }
+
                 self.props.tables.push({
                     name: results[i].table_name,
-                    inCrud: self.props.crudTables.indexOf(results[i].table_name) > -1
+                    inCrud: alltables || self.props.crudTables.indexOf(results[i].table_name) > -1
                 });
             }
 
@@ -410,6 +422,7 @@ module.exports = yeoman.generators.Base.extend({
         var done = this.async();
 
         this.props.referencedTables = new Set();
+        this.props.NtoNreferencedTables = {};
 
         var recursive = function(index) {
             var table = self.props.tables[index];
@@ -433,16 +446,60 @@ module.exports = yeoman.generators.Base.extend({
 
                 table.columns = results;
 
-                if (table.inCrud) {
-                    //adding referencedtables (tables that are referenced in foreign keys)
-                    for (var i in table.columns) {
-                        var c = table.columns[i];
-                        if (c.referenced_table_name) {
+                //adding referencedtables (tables that are referenced in foreign keys)
+                //and N-to-N tables
+
+                var refs = [];
+                var connectedToCrud = false;
+                for (var i in table.columns) {
+                    var c = table.columns[i];
+                    if (c.referenced_table_name) {
+                        if (self.props.crudTables.indexOf(c.referenced_table_name) > -1) {
+                            connectedToCrud = true;
+                        }
+
+                        refs.push({
+                            col: c,
+                            ref: c.referenced_table_name
+                        });
+
+                        if (table.inCrud) {
                             self.props.referencedTables.add(c.referenced_table_name);
                         }
                     }
                 }
 
+                if (table.columns.length == 2 && refs.length == 2 && connectedToCrud) {
+                    //is N to N when only have 2 fields and both are foreign keys
+                    //and one of them is connected to CRUD
+                    table.isNtoNtable = true;
+
+                    //add in a map of [referenced table name ; N to N table, column, and other table name]
+                    var r = refs[0];
+                    if (!self.props.NtoNreferencedTables[r.ref]) {
+                        self.props.NtoNreferencedTables[r.ref] = [];
+                    }
+
+                    self.props.NtoNreferencedTables[r.ref].push({
+                        column: r.col,
+                        NtoNtable: table,
+                        otherTableName: refs[1].ref
+                    });
+
+                    var r = refs[1];
+                    if (!self.props.NtoNreferencedTables[r.ref]) {
+                        self.props.NtoNreferencedTables[r.ref] = [];
+                    }
+
+                    self.props.NtoNreferencedTables[r.ref].push({
+                        column: r.col,
+                        NtoNtable: table,
+                        otherTableName: refs[0].ref
+                    });
+                    
+                }
+
+                //search in the next table
                 if (index + 1 < self.props.tables.length) {
                     recursive(index + 1);
                 } else {
@@ -455,10 +512,12 @@ module.exports = yeoman.generators.Base.extend({
     },
 
     generateTableProps: function() {
+        //web pages that lists content
         if (!this.props.urlConstants.listPages) {
             this.props.urlConstants.listPages = {};
         }
 
+        //web pages that persists content
         if (!this.props.urlConstants.persistPages) {
             this.props.urlConstants.persistPages = {};
         }
@@ -470,19 +529,8 @@ module.exports = yeoman.generators.Base.extend({
             table.classUpper = table.className.toUpperCase();
             table.classLowerCamel = this._lowerCamelCase(table.name);
 
+            //marks that this table should have List WS even if it's not choosen to be CRUD
             table.inListWS = this.props.referencedTables.has(table.name);
-
-            if (table.inCrud || table.inListWS) {
-                this.props.urlConstants["LIST_"+table.classUpper] = "../" + this.props.modulenameUpper + "/List" + table.className;
-            }
-
-            if (table.inCrud) {
-                this.props.urlConstants["GET_"+table.classUpper] = "../" + this.props.modulenameUpper + "/Get" + table.className;
-                this.props.urlConstants["PERSIST_"+table.classUpper] = "../" + this.props.modulenameUpper + "/Persist" + table.className;
-                
-                this.props.urlConstants.listPages[table.className] = "list"+table.className+".html";
-                this.props.urlConstants.persistPages[table.className] = "persist"+table.className+".html";
-            }
 
             var isLoginTable = false;
             if (table.name === this.props.logintablename) {
@@ -490,17 +538,29 @@ module.exports = yeoman.generators.Base.extend({
                 isLoginTable = true;
             }
 
-            for (var i = table.columns.length - 1; i >= 0; i--) {
-                var col = table.columns[i];
+            for (var k = table.columns.length - 1; k >= 0; k--) {
+                var col = table.columns[k];
 
+                //primary key
                 if (col.column_key === "PRI") {
                     table.idColumn = col;
                 }
+
                 col.javaType = this._generateJavaType(col);
                 col.resultSetGetter = this._generateResultSetGetter(col);
                 col.propertyName = this._lowerCamelCase(col.column_name);
                 col.propertyNameUpper = this._capitalizeFirstLetter(col.propertyName);
 
+                //putting column information on logintable
+                if (isLoginTable) {
+                    if (col.column_name === this.props.loginaccountcolumn) {
+                        this.logintable.accountColumn = col;
+                    } else if (col.column_name === this.props.loginpasswordcolumn) {
+                        this.logintable.passwordColumn = col;
+                    }
+                }
+
+                //if the column is a foreign key we will save the referenced table inside the column
                 if (col.referenced_table_name) {
 
                     for (var j in this.props.tables) {
@@ -510,14 +570,51 @@ module.exports = yeoman.generators.Base.extend({
                         }
                     }
                 }
+            }
 
-                if (isLoginTable) {
-                    if (col.column_name === this.props.loginaccountcolumn) {
-                        this.logintable.accountColumn = col;
-                    } else if (col.column_name === this.props.loginpasswordcolumn) {
-                        this.logintable.passwordColumn = col;
+            //if the table is referenced in a N to N table
+            //we will put the 'virtual' columns with the N to N table information
+            //and the other side of N to N table information
+            if (this.props.NtoNreferencedTables[table.name]) {
+                table.NtoNcolumns = this.props.NtoNreferencedTables[table.name];
+
+                for (var m in table.NtoNcolumns) {
+                    var nc = table.NtoNcolumns[m];
+
+                    for (var n in this.props.tables) {
+                        var nt = this.props.tables[n];
+                        if (nt.name === nc.otherTableName) {
+                            nt.inListWS = true;
+                            nc.otherTable = nt;
+                        }
                     }
                 }
+            }
+        }
+    },
+
+    generateUrlConstants: function() {
+        for (var i in this.props.tables) {
+                    var table = this.props.tables[i];
+
+            if (!table.isNtoNtable) {
+                if (table.inCrud || table.inListWS) {
+                    this.props.urlConstants["LIST_"+table.classUpper] = "../" + this.props.modulenameUpper + "/List" + table.className;
+                }
+
+                if (table.inCrud) {
+                    this.props.urlConstants["GET_"+table.classUpper] = "../" + this.props.modulenameUpper + "/Get" + table.className;
+                    this.props.urlConstants["PERSIST_"+table.classUpper] = "../" + this.props.modulenameUpper + "/Persist" + table.className;
+                    
+                    this.props.urlConstants.listPages[table.className] = "list"+table.className+".html";
+                    this.props.urlConstants.persistPages[table.className] = "persist"+table.className+".html";
+                }
+            }
+
+            for (var m in table.NtoNcolumns) {
+                var nc = table.NtoNcolumns[m];
+
+                this.props.urlConstants["LIST_" + nc.otherTable.classUpper + "FROM" + nc.NtoNtable.classUpper] = "../" + this.props.modulenameUpper + "/List" + nc.otherTable.className + "From" + nc.NtoNtable.className;
             }
         }
     },
@@ -531,47 +628,77 @@ module.exports = yeoman.generators.Base.extend({
         for (var i in this.props.tables) {
             var table = this.props.tables[i];
 
-            if (!table.inCrud && !table.inListWS) {
-                continue;
-            }
-
             var params = {
                 props: this.props,
                 table: table
             };
 
-            this.fs.copyTpl(
-                this.templatePath('java_model.java'),
-                this.destinationPath(this.props.modelFolder+"/"+table.className+".java"),
-                params);
-
-            this.fs.copyTpl(
-                this.templatePath('java_dao.java'),
-                this.destinationPath(this.props.daoFolder+"/"+table.className+"Dao.java"),
-                params);
-
-            this.fs.copyTpl(
-                this.templatePath('java_process.java'),
-                this.destinationPath(this.props.processFolder+"/"+table.className+"Process.java"),
-                params);
-
-            this.fs.copyTpl(
-                this.templatePath('ws_list.java'),
-                this.destinationPath(this.props.wsFolder+"/List"+table.className+"Servlet.java"),
-                params);
-
-            if (table.inCrud) {
+            if (table.isNtoNtable) {
 
                 this.fs.copyTpl(
-                    this.templatePath('ws_get.java'),
-                    this.destinationPath(this.props.wsFolder+"/Get"+table.className+"Servlet.java"),
+                    this.templatePath('java_dao_NtoN.java'),
+                    this.destinationPath(this.props.daoFolder+"/"+table.className+"Dao.java"),
                     params);
 
                 this.fs.copyTpl(
-                    this.templatePath('ws_persist.java'),
-                    this.destinationPath(this.props.wsFolder+"/Persist"+table.className+"Servlet.java"),
+                    this.templatePath('java_process_NtoN.java'),
+                    this.destinationPath(this.props.processFolder+"/"+table.className+"Process.java"),
                     params);
 
+                params.column = table.columns[0];
+                params.otherColumn = table.columns[1];
+
+                this.fs.copyTpl(
+                    this.templatePath('ws_list_NtoN.java'),
+                    this.destinationPath(this.props.wsFolder+"/List"+params.column.referencedTable.className+"From"+table.className+"Servlet.java"),
+                    params);
+
+                params.column = table.columns[1];
+                params.otherColumn = table.columns[0];
+
+                this.fs.copyTpl(
+                    this.templatePath('ws_list_NtoN.java'),
+                    this.destinationPath(this.props.wsFolder+"/List"+params.column.referencedTable.className+"From"+table.className+"Servlet.java"),
+                    params);
+
+            } else { 
+
+                if (table.inCrud || table.inListWS) {
+
+                    this.fs.copyTpl(
+                        this.templatePath('java_model.java'),
+                        this.destinationPath(this.props.modelFolder+"/"+table.className+".java"),
+                        params);
+
+                    this.fs.copyTpl(
+                        this.templatePath('java_dao.java'),
+                        this.destinationPath(this.props.daoFolder+"/"+table.className+"Dao.java"),
+                        params);
+
+                    this.fs.copyTpl(
+                        this.templatePath('java_process.java'),
+                        this.destinationPath(this.props.processFolder+"/"+table.className+"Process.java"),
+                        params);
+
+                    this.fs.copyTpl(
+                        this.templatePath('ws_list.java'),
+                        this.destinationPath(this.props.wsFolder+"/List"+table.className+"Servlet.java"),
+                        params);
+                }
+
+                if (table.inCrud) {
+
+                    this.fs.copyTpl(
+                        this.templatePath('ws_get.java'),
+                        this.destinationPath(this.props.wsFolder+"/Get"+table.className+"Servlet.java"),
+                        params);
+
+                    this.fs.copyTpl(
+                        this.templatePath('ws_persist.java'),
+                        this.destinationPath(this.props.wsFolder+"/Persist"+table.className+"Servlet.java"),
+                        params);
+
+                }
             }
         }        
 
@@ -631,24 +758,22 @@ module.exports = yeoman.generators.Base.extend({
         for (var i in this.props.tables) {
             var table = this.props.tables[i];
 
-            if (!table.inCrud) {
-                continue;
+            if (table.inCrud && !table.isNtoNtable) {
+                var params = {
+                    props: this.props,
+                    table: table
+                };
+
+                this.fs.copyTpl(
+                    this.templatePath('list.js'),
+                    this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/controller/list"+table.className+".js"),
+                    params);
+
+                this.fs.copyTpl(
+                    this.templatePath('persist.js'),
+                    this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/controller/persist"+table.className+".js"),
+                    params);
             }
-            
-            var params = {
-                props: this.props,
-                table: table
-            };
-
-            this.fs.copyTpl(
-                this.templatePath('list.js'),
-                this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/controller/list"+table.className+".js"),
-                params);
-
-            this.fs.copyTpl(
-                this.templatePath('persist.js'),
-                this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/controller/persist"+table.className+".js"),
-                params);
         }
 
         if (this.props.loginsys) {
@@ -682,24 +807,23 @@ module.exports = yeoman.generators.Base.extend({
         for (var i in this.props.tables) {
             var table = this.props.tables[i];
 
-            if (!table.inCrud) {
-                continue;
+            if (table.inCrud && !table.isNtoNtable) {
+
+                var params = {
+                    props: this.props,
+                    table: table
+                };
+                
+                this.fs.copyTpl(
+                    this.templatePath('list.html'),
+                    this.destinationPath("src/main/webapp/" + this.props.modulename + "/list"+table.className+".html"),
+                    params);
+
+                this.fs.copyTpl(
+                    this.templatePath('persist.html'),
+                    this.destinationPath("src/main/webapp/" + this.props.modulename + "/persist"+table.className+".html"),
+                    params);
             }
-
-            var params = {
-                props: this.props,
-                table: table
-            };
-            
-            this.fs.copyTpl(
-                this.templatePath('list.html'),
-                this.destinationPath("src/main/webapp/" + this.props.modulename + "/list"+table.className+".html"),
-                params);
-
-            this.fs.copyTpl(
-                this.templatePath('persist.html'),
-                this.destinationPath("src/main/webapp/" + this.props.modulename + "/persist"+table.className+".html"),
-                params);
         }
 
         if (this.props.loginsys) {

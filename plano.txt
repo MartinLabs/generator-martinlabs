@@ -1,4 +1,6 @@
-- colocar select onde tem foreign key
+- permitir crud de N to N
+- não usar _obj como nome de variavel
 - corrigir bug: se a tabela tiver 2 primarykey vai fazer select e update por 1 id só
-- atualizar o pom com martinlabs java commons depois que tiver publicado
+- atualizar o pom com martinlabs java commons, versão de java 1.8, remover node_modules
 - bug pra usar datatables não está usando 1.10.9 (está colocando o ^)
+- poder declarar um arquivo com configurações avançadas para tabelas e colunas, dizendo para ignorar, não exibir, declarar um tipo inteligente (password)
