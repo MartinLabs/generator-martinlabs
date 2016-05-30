@@ -15,7 +15,7 @@
     
     module.exports = function() {
         
-        var _list = [],
+        var _list<%= table.className %> = [],
             _dataTable;
         
         var init = function() {
@@ -30,8 +30,8 @@
             },
             function(resp){
                 if (resp.Success) {
-                    _list = resp.Data;
-                    render(_list);<% if (props.loginsys) { %>
+                    _list<%= table.className %> = resp.Data;
+                    render(_list<%= table.className %>);<% if (props.loginsys) { %>
                 } else if (resp.Code === 33) {
                     location.href = URL.login;<% } %>
                 } else {
@@ -48,8 +48,8 @@
         var render = function() {
             var dataSet = [];
             
-            for (var i in _list) {
-                var obj = _list[i];
+            for (var i in _list<%= table.className %>) {
+                var obj = _list<%= table.className %>[i];
                 
                 var dSet = [
                     <% 

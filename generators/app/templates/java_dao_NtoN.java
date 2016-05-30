@@ -25,16 +25,13 @@ public class <%= table.className %>Dao extends DaoWrapper {
         for (var i in table.columns) { var c = table.columns[i]; %>
             <%= c.propertyName + (i < table.columns.length -1 ? ',' : '') %><% } %>).affectedRows;
     }
-    
 <% for (var i in table.columns) { var c = table.columns[i]; %>
     public int removeAllFrom<%= c.referencedTable.className %>(long <%= c.propertyName %>){
         return update("DELETE FROM <%= table.name %> "
                 + "WHERE <%= c.propertyName %> = ? ",
             <%= c.propertyName %>).affectedRows;
     }
-<% } %>  
-
-    <% 
+<% } 
     var c = table.columns[0];
     var other = table.columns[1];
     %>
@@ -47,7 +44,6 @@ public class <%= table.className %>Dao extends DaoWrapper {
             + "WHERE <%= other.column_name %> = ? ", 
         rs -> {
             <%= c.referencedTable.className %> obj = new <%= c.referencedTable.className %>();
-
             <% for (var i in c.referencedTable.columns) { var ci = c.referencedTable.columns[i]; %>
             obj.set<%= ci.propertyNameUpper %>(rs.<%= ci.resultSetGetter %>("<%= ci.column_name %>"));<% } %>
             
@@ -67,7 +63,6 @@ public class <%= table.className %>Dao extends DaoWrapper {
             + "WHERE <%= other.column_name %> = ? ", 
         rs -> {
             <%= c.referencedTable.className %> obj = new <%= c.referencedTable.className %>();
-
             <% for (var i in c.referencedTable.columns) { var ci = c.referencedTable.columns[i]; %>
             obj.set<%= ci.propertyNameUpper %>(rs.<%= ci.resultSetGetter %>("<%= ci.column_name %>"));<% } %>
             
