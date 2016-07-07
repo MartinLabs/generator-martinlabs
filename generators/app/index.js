@@ -188,6 +188,8 @@ module.exports = yeoman.generators.Base.extend({
     },
 
     generateProjectProps: function() {
+        //TODO: o Model todo vai ficar no mesmo package, não no package do modulo
+
         this.props.javaFolder = "src/main/java/"+this.props.package.replace(/\./g, '\/')+"/" + this.props.modulename;
         this.props.daoPackage = this.props.package + "." + this.props.modulename + ".dao";
         this.props.daoFolder = this.props.javaFolder + "/dao";
@@ -317,7 +319,7 @@ module.exports = yeoman.generators.Base.extend({
             sassFiles.push({
                 "expand": true,
                 "cwd": sassPath,
-                "src": ["*.scss"],
+                "src": [this.props.modulename + ".scss"],
                 "dest": this.props.modulename + "/css",
                 "ext": ".css"
             });
@@ -397,6 +399,9 @@ module.exports = yeoman.generators.Base.extend({
 
             self.props.tables = [];
 
+            //TODO: Haverá um arquivo de configurações que irá dizer quais tabelas vamos usar
+            //entre outras coisas
+
             var alltables = false;
             if (self.props.crudTables.length == 0) {
                 alltables = true;
@@ -421,6 +426,7 @@ module.exports = yeoman.generators.Base.extend({
         var self = this;
         var done = this.async();
 
+        //TODO: precisa mesmo do referencedTables ou vai criar Dao pra todo mundo?
         this.props.referencedTables = new Set();
         this.props.NtoNreferencedTables = {};
 
@@ -531,6 +537,8 @@ module.exports = yeoman.generators.Base.extend({
 
             //marks that this table should have List WS even if it's not choosen to be CRUD
             table.inListWS = this.props.referencedTables.has(table.name);
+            //TODO: na verdade não vai ter um WS para listar, só vai ter Dao e o process do outro é
+            //que vai ler e colocar no mesmo objeto
 
             var isLoginTable = false;
             if (table.name === this.props.logintablename) {
@@ -617,6 +625,8 @@ module.exports = yeoman.generators.Base.extend({
                 this.props.urlConstants["LIST_" + nc.otherTable.classUpper + "FROM" + nc.NtoNtable.classUpper] = "../" + this.props.modulenameUpper + "/List" + nc.otherTable.className + "From" + nc.NtoNtable.className;
             }
         }
+
+        console.log(this.props);
     },
 
     writeJavaClasses: function () {
@@ -786,8 +796,20 @@ module.exports = yeoman.generators.Base.extend({
 
     writeScssFiles: function() {
         this.fs.copy(
-            this.templatePath('datatables.scss'),
-            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/scss/datatables.scss"));
+            this.templatePath('adminLte.scss'),
+            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/scss/adminLte.scss"));
+
+        this.fs.copy(
+            this.templatePath('adminLteSkins.scss'),
+            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/scss/adminLteSkins.scss"));
+
+        this.fs.copy(
+            this.templatePath('fontAwesome.scss'),
+            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/scss/fontAwesome.scss"));
+
+        this.fs.copy(
+            this.templatePath('index.scss'),
+            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/scss/index.scss"));
 
         this.fs.copy(
             this.templatePath('crud.scss'),
@@ -898,10 +920,10 @@ module.exports = yeoman.generators.Base.extend({
                     "bootstrap-notify", 
                     "bootstrap-sass", 
                     "bootstrap-validator", 
-                    "datatables@<=1.10.9", 
+                    "datatables@1.10.9", 
                     "datatables-bootstrap", 
                     "font-awesome", 
-                    "jquery", 
+                    "jquery@^2", 
                     "jquery-localize", 
                     "jstify", 
                     "ml-js-commons", 
