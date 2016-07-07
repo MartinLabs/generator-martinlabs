@@ -1,5 +1,4 @@
 - processar datatables no servidor
-- não usar nome de variaveis idiotas como: _obj, entre outros
 - atualizar o pom com martinlabs java commons, versão de java 1.8, remover node_modules
 - inativar entidade
 - gerar "esqueci a senha"

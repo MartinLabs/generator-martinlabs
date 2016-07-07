@@ -43,11 +43,11 @@ public class <%= table.className %>Dao extends DaoWrapper {
             + "INNER JOIN <%= table.name %> ON <%= c.referencedTable.idColumn.column_name %> = <%= c.column_name %> "
             + "WHERE <%= other.column_name %> = ? ", 
         rs -> {
-            <%= c.referencedTable.className %> obj = new <%= c.referencedTable.className %>();
+            <%= c.referencedTable.className %> <%= c.referencedTable.classLowerCamel %> = new <%= c.referencedTable.className %>();
             <% for (var i in c.referencedTable.columns) { var ci = c.referencedTable.columns[i]; %>
-            obj.set<%= ci.propertyNameUpper %>(rs.<%= ci.resultSetGetter %>("<%= ci.column_name %>"));<% } %>
+            <%= c.referencedTable.classLowerCamel %>.set<%= ci.propertyNameUpper %>(rs.<%= ci.resultSetGetter %>("<%= ci.column_name %>"));<% } %>
             
-            return obj;
+            return <%= c.referencedTable.classLowerCamel %>;
         }, <%= other.propertyName %>);
     } 
     <% 
@@ -62,11 +62,11 @@ public class <%= table.className %>Dao extends DaoWrapper {
             + "INNER JOIN <%= table.name %> ON <%= c.referencedTable.idColumn.column_name %> = <%= c.column_name %> "
             + "WHERE <%= other.column_name %> = ? ", 
         rs -> {
-            <%= c.referencedTable.className %> obj = new <%= c.referencedTable.className %>();
+            <%= c.referencedTable.className %> <%= c.referencedTable.classLowerCamel %> = new <%= c.referencedTable.className %>();
             <% for (var i in c.referencedTable.columns) { var ci = c.referencedTable.columns[i]; %>
-            obj.set<%= ci.propertyNameUpper %>(rs.<%= ci.resultSetGetter %>("<%= ci.column_name %>"));<% } %>
+            <%= c.referencedTable.classLowerCamel %>.set<%= ci.propertyNameUpper %>(rs.<%= ci.resultSetGetter %>("<%= ci.column_name %>"));<% } %>
             
-            return obj;
+            return <%= c.referencedTable.classLowerCamel %>;
         }, <%= other.propertyName %>);
     }
 

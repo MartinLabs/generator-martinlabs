@@ -30,11 +30,11 @@ public class <%= table.className %>Dao extends DaoWrapper {
             + "FROM <%= table.name %> "
             + "WHERE <%= table.idColumn.column_name %> = ? ", 
         rs -> {
-            <%= table.className %> obj = new <%= table.className %>();
+            <%= table.className %> <%= table.classLowerCamel %> = new <%= table.className %>();
             <% for (var i in table.columns) { var c = table.columns[i]; %>
-            obj.set<%= c.propertyNameUpper %>(rs.<%= c.resultSetGetter %>("<%= c.column_name %>"));<% } %>
+            <%= table.classLowerCamel %>.set<%= c.propertyNameUpper %>(rs.<%= c.resultSetGetter %>("<%= c.column_name %>"));<% } %>
             
-            return obj;
+            return <%= table.classLowerCamel %>;
         }, id);
     }
     
@@ -44,25 +44,25 @@ public class <%= table.className %>Dao extends DaoWrapper {
             + "<%= c.column_name + (i < table.columns.length -1 ? ',' : '') %> "<% } %>
             + "FROM <%= table.name %> ", 
         rs -> {
-            <%= table.className %> obj = new <%= table.className %>();
+            <%= table.className %> <%= table.classLowerCamel %> = new <%= table.className %>();
             <% for (var i in table.columns) { var c = table.columns[i]; %>
-            obj.set<%= c.propertyNameUpper %>(rs.<%= c.resultSetGetter %>("<%= c.column_name %>"));<% } %>
+            <%= table.classLowerCamel %>.set<%= c.propertyNameUpper %>(rs.<%= c.resultSetGetter %>("<%= c.column_name %>"));<% } %>
             
-            return obj;
+            return <%= table.classLowerCamel %>;
         });
     }
     
-    public int update(<%= table.className %> obj){
+    public int update(<%= table.className %> <%= table.classLowerCamel %>){
         return update("UPDATE <%= table.name %> SET "<% 
         for (var i in table.columns) { var c = table.columns[i]; if (c.extra !== "auto_increment") { %>
             + "<%= c.column_name %> = ?<%= i < table.columns.length -1 ? ',' : '' %> "<% }} %>
             + "WHERE <%= table.idColumn.column_name %> = ? ",<% 
         for (var i in table.columns) { var c = table.columns[i]; if (c.extra !== "auto_increment") { %>
-            obj.get<%= c.propertyNameUpper %>(),<% }} %>
-            obj.get<%= table.idColumn.propertyNameUpper %>()).affectedRows;
+            <%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>(),<% }} %>
+            <%= table.classLowerCamel %>.get<%= table.idColumn.propertyNameUpper %>()).affectedRows;
     }
     
-    public long insert(<%= table.className %> obj){
+    public long insert(<%= table.className %> <%= table.classLowerCamel %>){
         return update("INSERT INTO <%= table.name %> ( "<% 
         for (var i in table.columns) { var c = table.columns[i]; if (c.extra !== "auto_increment") { %>
             + "<%= c.column_name + (i < table.columns.length -1 ? ',' : '') %> "<% }} %>
@@ -70,6 +70,6 @@ public class <%= table.className %>Dao extends DaoWrapper {
             + "<% for (var i in table.columns) { var c = table.columns[i]; if (c.extra !== 'auto_increment') { %>?<%= i < table.columns.length -1 ? ',' : '' %><% }} %>"
             + ") ",<% 
         for (var i in table.columns) { var c = table.columns[i]; if (c.extra !== "auto_increment") { %>
-            obj.get<%= c.propertyNameUpper %>()<%= i < table.columns.length -1 ? ',' : '' %><% }} %>).key;
+            <%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>()<%= i < table.columns.length -1 ? ',' : '' %><% }} %>).key;
     }
 }

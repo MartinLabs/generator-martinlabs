@@ -84,12 +84,12 @@ public class LoginServices extends TransacProcess {
             throw new TokenInvalidoException();
         }
         
-        LoginHolder objToken = new Gson().fromJson(token, LoginHolder.class);
-        if (objToken == null) {
+        LoginHolder loginHolder = new Gson().fromJson(token, LoginHolder.class);
+        if (loginHolder == null) {
             throw new TokenInvalidoException();
         }
         
-        return objToken;
+        return loginHolder;
     }
 
     public class LoginHolder {

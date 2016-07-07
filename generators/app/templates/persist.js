@@ -17,7 +17,7 @@
     
     module.exports = function() {
         
-        var _obj<%= table.className %> = {};
+        var _<%= table.classLowerCamel %> = {};
         
         var init = function() {
             defaultInterface({ active: "<%= table.className %>" });
@@ -59,7 +59,7 @@
             },
             function(resp){
                 if (resp.Success) {
-                    _obj<%= table.className %> = resp.Data;
+                    _<%= table.classLowerCamel %> = resp.Data;
                     render();
                     cb && cb();<% if (props.loginsys) { %>
                 } else if (resp.Code === 33) {
@@ -96,8 +96,8 @@
                             +"</option>");
                     }
                     
-                    if (_obj<%= table.className %> && _obj<%= table.className %>.<%= c.propertyName %>) {
-                        selectV.val(_obj<%= table.className %>.<%= c.propertyName %>);
+                    if (_<%= table.classLowerCamel %> && _<%= table.classLowerCamel %>.<%= c.propertyName %>) {
+                        selectV.val(_<%= table.classLowerCamel %>.<%= c.propertyName %>);
                     }
                     <% if (props.loginsys) { %>
                 } else if (resp.Code === 33) {
@@ -150,11 +150,11 @@
 
         var populateThis<%= col.NtoNtable.className %> = function() {
             $.get(URL.LIST_<%= col.otherTable.classUpper %>FROM<%= col.NtoNtable.classUpper %>, { 
-                <%= col.column.propertyName %>: _obj<%= table.className %>.<%= table.idColumn.propertyName %>,
+                <%= col.column.propertyName %>: _<%= table.classLowerCamel %>.<%= table.idColumn.propertyName %>,
                 token: simpleStorage.get("token<%= props.modulenameUpper %>") || null
             }, function(resp){
                 if (resp.Success) {
-                    _obj<%= table.className %>.<%= col.NtoNtable.classLowerCamel %> = resp.Data;
+                    _<%= table.classLowerCamel %>.<%= col.NtoNtable.classLowerCamel %> = resp.Data;
                     render<%= col.NtoNtable.className %>();
                 <% if (props.loginsys) { %>
                 } else if (resp.Code === 33) {
@@ -175,7 +175,7 @@
             extractFromFields();
             
             martinlabs.bodyRequest(URL.PERSIST_<%= table.classUpper %>, {
-                <%= table.classLowerCamel %>: _obj<%= table.className %><% 
+                <%= table.classLowerCamel %>: _<%= table.classLowerCamel %><% 
             for (var i in table.NtoNcolumns) { var col = table.NtoNcolumns[i]; %>,
                 ids<%= col.otherTable.className %>: extractIds<%= col.NtoNtable.className %>()<% 
             } 
@@ -183,8 +183,8 @@
                 token: simpleStorage.get("token<%= props.modulenameUpper %>") || null<% } %>
             }, function(resp){
                 if (resp.Success) {
-                    if (!_obj<%= table.className %>.<%= table.idColumn.propertyName %>) {
-                        _obj<%= table.className %>.<%= table.idColumn.propertyName %> = resp.Data;
+                    if (!_<%= table.classLowerCamel %>.<%= table.idColumn.propertyName %>) {
+                        _<%= table.classLowerCamel %>.<%= table.idColumn.propertyName %> = resp.Data;
                     }
 
                     $.notify({ message: "Persisted Successfully" },{
@@ -213,21 +213,21 @@ for (var i in table.columns) {
     if (c.extra !== "auto_increment") {
         if (c.javaType === "String") { 
             %>
-            _obj<%= table.className %>.<%= c.propertyName %> = $("#input-<%= c.propertyName %>").val();<% 
+            _<%= table.classLowerCamel %>.<%= c.propertyName %> = $("#input-<%= c.propertyName %>").val();<% 
         
         } else if (["Long", "long"].indexOf(c.javaType) > -1) { 
             %>
-            _obj<%= table.className %>.<%= c.propertyName %> = parseInt($("#input-<%= c.propertyName %>").val());<% 
+            _<%= table.classLowerCamel %>.<%= c.propertyName %> = parseInt($("#input-<%= c.propertyName %>").val());<% 
         } else if (["Double", "double"].indexOf(c.javaType) > -1) { 
             %>
-            _obj<%= table.className %>.<%= c.propertyName %> = parseFloat($("#input-<%= c.propertyName %>").val());<% 
+            _<%= table.classLowerCamel %>.<%= c.propertyName %> = parseFloat($("#input-<%= c.propertyName %>").val());<% 
         } else if (c.javaType === "Date") { 
             %>
             aux = $("#input-<%= c.propertyName %>").data("DateTimePicker").date();
-            _obj<%= table.className %>.<%= c.propertyName %> = aux === null ? null : aux.format("YYYY-MM-DDTHH:mm:ss");<% 
+            _<%= table.classLowerCamel %>.<%= c.propertyName %> = aux === null ? null : aux.format("YYYY-MM-DDTHH:mm:ss");<% 
         } else { 
             %>
-            _obj<%= table.className %>.<%= c.propertyName %> = $("#input-<%= c.propertyName %>").is(':checked');<% 
+            _<%= table.classLowerCamel %>.<%= c.propertyName %> = $("#input-<%= c.propertyName %>").is(':checked');<% 
         }
     }
 } 
@@ -250,13 +250,13 @@ for (var i in table.columns) {
     if (c.extra !== "auto_increment") {
         if (c.javaType === "Date") {
 %>
-            $("#input-<%= c.propertyName %>").data("DateTimePicker").date(moment(_obj.<%= c.propertyName %>, "YYYY-MM-DDTHH:mm:ss"));<% 
+            $("#input-<%= c.propertyName %>").data("DateTimePicker").date(moment(_<%= table.classLowerCamel %>.<%= c.propertyName %>, "YYYY-MM-DDTHH:mm:ss"));<% 
         } else if (["Boolean", "boolean"].indexOf(c.javaType) > -1) { 
             %>
-            $("#input-<%= c.propertyName %>").prop('checked', _obj<%= table.className %>.<%= c.propertyName %>);<% 
+            $("#input-<%= c.propertyName %>").prop('checked', _<%= table.classLowerCamel %>.<%= c.propertyName %>);<% 
         } else { 
             %>
-            $("#input-<%= c.propertyName %>").val(_obj<%= table.className %>.<%= c.propertyName %>);<% 
+            $("#input-<%= c.propertyName %>").val(_<%= table.classLowerCamel %>.<%= c.propertyName %>);<% 
         }
     }
 } 
@@ -271,8 +271,8 @@ for (var i in table.columns) {
                 return;
             }
             
-            for (var i in _obj<%= table.className %>.<%= col.NtoNtable.classLowerCamel %>) {
-                var item = _obj<%= table.className %>.<%= col.NtoNtable.classLowerCamel %>[i];
+            for (var i in _<%= table.classLowerCamel %>.<%= col.NtoNtable.classLowerCamel %>) {
+                var item = _<%= table.classLowerCamel %>.<%= col.NtoNtable.classLowerCamel %>[i];
                 $("#input-<%= col.NtoNtable.classLowerCamel %> input[type=checkbox][data-id='"+item.<%= col.otherTable.idColumn.propertyName %>+"']").prop("checked", true);
             }
         };

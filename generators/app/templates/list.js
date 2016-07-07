@@ -49,7 +49,7 @@
             var dataSet = [];
             
             for (var i in _list<%= table.className %>) {
-                var obj = _list<%= table.className %>[i];
+                var <%= table.classLowerCamel %> = _list<%= table.className %>[i];
                 
                 var dSet = [
                     <% 
@@ -60,7 +60,7 @@
                             columnPrimaryKey = i;
                         }
                         %><%= i > 0 ? "," : "" %>
-                    obj.<%= c.propertyName %> != null ? obj.<%= c.propertyName %> : ""<% } %>
+                    <%= table.classLowerCamel %>.<%= c.propertyName %> != null ? <%= table.classLowerCamel %>.<%= c.propertyName %> : ""<% } %>
                 ];
                 
                 dataSet.push(dSet);

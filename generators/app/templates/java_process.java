@@ -42,19 +42,19 @@ public class <%= table.className %>Process extends TransacProcess {
         });
     }
 
-    public OpResponse<Long> persist(<%= table.className %> obj<% for (var i in table.NtoNcolumns) { %>, List<Long> ids<%= table.NtoNcolumns[i].otherTable.className %><% } %><% if (props.loginsys) { %>, String token<% } %>) throws RespException {<% 
+    public OpResponse<Long> persist(<%= table.className %> <%= table.classLowerCamel %><% for (var i in table.NtoNcolumns) { %>, List<Long> ids<%= table.NtoNcolumns[i].otherTable.className %><% } %><% if (props.loginsys) { %>, String token<% } %>) throws RespException {<% 
 for (var i in table.columns) { 
     var c = table.columns[i]; 
     if (c.is_nullable === "NO" && (c.javaType === "String" || c.javaType === "Date")) { 
 %>
-        if (obj.get<%= c.propertyNameUpper %>() == null) {
+        if (<%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>() == null) {
             throw new RespException(<%= c.ordinal_position %>,  LanguageFactory.getInstance().cannotBeNull("<%= c.propertyNameUpper %>"));
         }<% 
     }
 
     if (c.javaType === "String") {
         %>
-        if (obj.get<%= c.propertyNameUpper %>().length() > <%= c.character_maximum_length %>) {
+        if (<%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>().length() > <%= c.character_maximum_length %>) {
             throw new RespException(<%= c.ordinal_position %>, LanguageFactory.getInstance().lengthCannotBeMoreThan("<%= c.propertyNameUpper %>", <%= c.character_maximum_length %>));
         }<%
     }
@@ -67,11 +67,11 @@ for (var i in table.columns) {
             <%= table.className %>Dao dao = new <%= table.className %>Dao(con);
 
             long id<%= table.className %>;
-            if (obj.get<%= table.idColumn.propertyNameUpper %>() > 0) {
-                id<%= table.className %> = dao.update(obj);
+            if (<%= table.classLowerCamel %>.get<%= table.idColumn.propertyNameUpper %>() > 0) {
+                id<%= table.className %> = dao.update(<%= table.classLowerCamel %>);
             } else {
-                id<%= table.className %> = dao.insert(obj);
-                obj.set<%= table.idColumn.propertyNameUpper %>(id<%= table.className %>);
+                id<%= table.className %> = dao.insert(<%= table.classLowerCamel %>);
+                <%= table.classLowerCamel %>.set<%= table.idColumn.propertyNameUpper %>(id<%= table.className %>);
             }
 
             if (id<%= table.className %> == 0) {
