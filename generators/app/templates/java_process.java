@@ -1,7 +1,18 @@
 package <%= props.processPackage %>;
 
 import <%= props.modelPackage %>.<%= table.className %>;
-import <%= props.daoPackage %>.<%= table.className %>Dao;
+import <%= props.responsePackage %>.<%= table.className %>Resp;
+import <%= props.daoPackage %>.<%= table.className %>Dao;<% 
+var antiRepeat = [];
+for (var i in table.columns) { 
+    var c = table.columns[i]; 
+    if (c.referencedTable && antiRepeat.indexOf(c.referencedTable.className) < 0) {
+        antiRepeat.push(c.referencedTable.className);
+%>
+import <%= props.daoPackage %>.<%= c.referencedTable.className %>Dao;<%
+    }
+}
+%>
 <% for (var i in table.NtoNcolumns) { var c = table.NtoNcolumns[i]; %>
 import <%= props.daoPackage %>.<%= c.NtoNtable.className %>Dao;<% } %>
 import br.com.martinlabs.commons.OpResponse;
@@ -31,14 +42,42 @@ public class <%= table.className %>Process extends TransacProcess {
         });
     }
 
-    public OpResponse<<%= table.className %>> get(long id<% if (props.loginsys) { %>, String token<% } %>) throws RespException {
+    public OpResponse<<%= table.className %>Resp> get(long id<% if (props.loginsys) { %>, String token<% } %>) throws RespException {
         return open(con -> {<% 
         if (props.loginsys) { %>
             loginS.allowAccess(con, token);
         <% } %>
-            <%= table.className %>Dao dao = new <%= table.className %>Dao(con);
+            <%= table.className %>Dao <%= table.classLowerCamel %>Dao = new <%= table.className %>Dao(con);<% 
 
-            return new OpResponse<>(dao.get(id));
+    antiRepeat = [];
+    for (var i in table.columns) { 
+        var c = table.columns[i]; 
+        if (c.referencedTable && antiRepeat.indexOf(c.referencedTable.className) < 0) {
+            antiRepeat.push(c.referencedTable.className);
+    %>
+            <%= c.referencedTable.className %>Dao <%= c.referencedTable.classLowerCamel %>Dao = new <%= c.referencedTable.className %>Dao(con);<%
+        }
+    }
+    %>
+            <%= table.className %>Resp resp = new <%= table.className %>Resp();
+
+            if (id > 0) {
+                resp.set<%= table.className %>(<%= table.classLowerCamel %>Dao.get(id));
+            }<% 
+
+    antiRepeat = [];
+    for (var j in table.columns) { 
+        var cx = table.columns[j]; 
+        if (cx.referencedTable && antiRepeat.indexOf(cx.referencedTable.className) < 0) {
+            antiRepeat.push(cx.referencedTable.className);
+    %>
+            resp.setAll<%= cx.referencedTable.className %>(<%= cx.referencedTable.classLowerCamel %>Dao.list());
+    <%
+        }
+    }
+    %>
+
+            return new OpResponse<>(resp);
         });
     }
 

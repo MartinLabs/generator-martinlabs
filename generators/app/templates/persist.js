@@ -17,19 +17,22 @@
     
     module.exports = function() {
         
-        var _<%= table.classLowerCamel %> = {};
+        var _<%= table.classLowerCamel %>;<% 
+var antiRepeat = [];
+for (var i in table.columns) { 
+    var c = table.columns[i]; 
+    if (c.referencedTable && antiRepeat.indexOf(c.referencedTable.className) < 0) {
+        antiRepeat.push(c.referencedTable.className);
+%>
+        var _all<%= c.referencedTable.className %>;<%
+    }
+}
+%>
         
         var init = function() {
             defaultInterface({ active: "<%= table.className %>" });
             translate();
             registerInteraction();<% 
-
-    for (var i in table.columns) { 
-        var c = table.columns[i]; 
-        if (c.referencedTable) { %>
-            populate<%= c.propertyNameUpper %>();<%
-        }
-    }
 
     if (!table.NtoNcolumns) { %>
             requestContent();<% 
@@ -47,11 +50,7 @@
         };
         
         var requestContent = function(cb) {
-            var id = martinlabs.getParam("id");
-            
-            if (!id) {
-                return;
-            }
+            var id = martinlabs.getParam("id") || 0;
             
             $.get(URL.GET_<%= table.classUpper %>, {
                 id: id<% if (props.loginsys) { %>, 
@@ -59,7 +58,18 @@
             },
             function(resp){
                 if (resp.Success) {
-                    _<%= table.classLowerCamel %> = resp.Data;
+                    _<%= table.classLowerCamel %> = resp.Data.<%= table.classLowerCamel %>;<% 
+            antiRepeat = [];
+            for (var i in table.columns) { 
+                var c = table.columns[i]; 
+                if (c.referencedTable && antiRepeat.indexOf(c.referencedTable.className) < 0) {
+                    antiRepeat.push(c.referencedTable.className);
+            %>
+                    _all<%= c.referencedTable.className %> = resp.Data.all<%= c.referencedTable.className %>;
+            <% 
+                }
+            }
+            %>
                     render();
                     cb && cb();<% if (props.loginsys) { %>
                 } else if (resp.Code === 33) {
@@ -74,49 +84,6 @@
 
             });
         };
-
-<% for (var i in table.columns) { 
-    var c = table.columns[i]; 
-    if (c.referencedTable) {
-
-%>
-        var populate<%= c.propertyNameUpper %> = function() {
-            $.get(URL.LIST_<%= c.referencedTable.classUpper %>, {<% if (props.loginsys) { %> 
-                token: simpleStorage.get("token<%= props.modulenameUpper %>") || null<% } %>
-            }, function(resp){
-                if (resp.Success) {
-                    var selectV = $("#input-<%= c.propertyName %>");
-                    for (var i in resp.Data) {
-                        var item = resp.Data[i];
-                        selectV.append("<option value='"+item.<%= c.referencedTable.idColumn.propertyName %>+"'>"<% 
-
-                        for (var j in c.referencedTable.columns) { var r = c.referencedTable.columns[j]; %>
-                            + (item.<%= r.propertyName %> === undefined ? "" : item.<%= r.propertyName %> + "; ")<% 
-                        } %>
-                            +"</option>");
-                    }
-                    
-                    if (_<%= table.classLowerCamel %> && _<%= table.classLowerCamel %>.<%= c.propertyName %>) {
-                        selectV.val(_<%= table.classLowerCamel %>.<%= c.propertyName %>);
-                    }
-                    <% if (props.loginsys) { %>
-                } else if (resp.Code === 33) {
-                    location.href = URL.login;<% } %>
-                } else {
-                    $.notify({ message: resp.Message },{
-                        type: "danger",
-                        placement: { align: "center" },
-                        delay: 2000
-                    });
-                }
-
-            });
-        };
-<% 
-    }
-} 
-%>
-
     <% for (var i in table.NtoNcolumns) { var col = table.NtoNcolumns[i]; %>
         var populateAll<%= col.NtoNtable.className %>Checkbox = function() {
             $.get(URL.LIST_<%= col.otherTable.classUpper %>, { 
@@ -170,7 +137,6 @@
             });
         };
     <% } %>
-        
         var persist = function() {
             extractFromFields();
             
@@ -206,7 +172,11 @@
         };
         
         var extractFromFields = function() {
-            var aux;<% 
+            var aux;
+
+            if (!_<%= table.classLowerCamel %>) {
+                _<%= table.classLowerCamel %> = {};
+            }<% 
 
 for (var i in table.columns) { 
     var c = table.columns[i]; 
@@ -245,9 +215,10 @@ for (var i in table.columns) {
         };
     <% } %>
         var render = function() {
-<% for (var i in table.columns) { 
+            if (_<%= table.classLowerCamel %>) {<% 
+for (var i in table.columns) { 
     var c = table.columns[i]; 
-    if (c.extra !== "auto_increment") {
+    if (c.extra !== "auto_increment" && !c.referencedTable) {
         if (c.javaType === "Date") {
 %>
             $("#input-<%= c.propertyName %>").data("DateTimePicker").date(moment(_<%= table.classLowerCamel %>.<%= c.propertyName %>, "YYYY-MM-DDTHH:mm:ss"));<% 
@@ -261,7 +232,30 @@ for (var i in table.columns) {
     }
 } 
 %>
-            
+            }
+<% 
+for (var i in table.columns) { 
+    var c = table.columns[i]; 
+    if (c.referencedTable) {
+%>
+            var <%= c.propertyName %>V = $("#input-<%= c.propertyName %>");
+            for (var i in _all<%= c.referencedTable.className %>) {
+                var item = _all<%= c.referencedTable.className %>[i];
+                <%= c.propertyName %>V.append("<option value='"+item.<%= c.referencedTable.idColumn.propertyName %>+"'>"<% 
+
+                for (var j in c.referencedTable.columns) { var r = c.referencedTable.columns[j]; %>
+                    + (item.<%= r.propertyName %> === undefined ? "" : item.<%= r.propertyName %> + "; ")<% 
+                } %>
+                +"</option>");
+            }
+
+            if (_<%= table.classLowerCamel %> && _<%= table.classLowerCamel %>.<%= c.propertyName %>) {
+                <%= c.propertyName %>V.val(_<%= table.classLowerCamel %>.<%= c.propertyName %>);
+            }
+<%
+    }
+}
+%>          
             translate();
         };
     <% for (var i in table.NtoNcolumns) { var col = table.NtoNcolumns[i]; %>

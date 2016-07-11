@@ -197,6 +197,8 @@ module.exports = yeoman.generators.Base.extend({
         this.props.processFolder = this.props.javaFolder + "/process";
         this.props.modelPackage = this.props.package + "." + this.props.modulename + ".model";
         this.props.modelFolder = this.props.javaFolder + "/model";
+        this.props.responsePackage = this.props.package + "." + this.props.modulename + ".response";
+        this.props.responseFolder = this.props.javaFolder + "/response";
         this.props.wsPackage = this.props.package + "." + this.props.modulename + ".ws";
         this.props.wsFolder = this.props.javaFolder + "/ws";
         this.props.modulenameUpper = this._capitalizeFirstLetter(this.props.modulename);
@@ -399,9 +401,6 @@ module.exports = yeoman.generators.Base.extend({
 
             self.props.tables = [];
 
-            //TODO: Haverá um arquivo de configurações que irá dizer quais tabelas vamos usar
-            //entre outras coisas
-
             var alltables = false;
             if (self.props.crudTables.length == 0) {
                 alltables = true;
@@ -426,7 +425,6 @@ module.exports = yeoman.generators.Base.extend({
         var self = this;
         var done = this.async();
 
-        //TODO: precisa mesmo do referencedTables ou vai criar Dao pra todo mundo?
         this.props.referencedTables = new Set();
         this.props.NtoNreferencedTables = {};
 
@@ -536,9 +534,7 @@ module.exports = yeoman.generators.Base.extend({
             table.classLowerCamel = this._lowerCamelCase(table.name);
 
             //marks that this table should have List WS even if it's not choosen to be CRUD
-            table.inListWS = this.props.referencedTables.has(table.name);
-            //TODO: na verdade não vai ter um WS para listar, só vai ter Dao e o process do outro é
-            //que vai ler e colocar no mesmo objeto
+            table.isReferenced = this.props.referencedTables.has(table.name);
 
             var isLoginTable = false;
             if (table.name === this.props.logintablename) {
@@ -592,7 +588,7 @@ module.exports = yeoman.generators.Base.extend({
                     for (var n in this.props.tables) {
                         var nt = this.props.tables[n];
                         if (nt.name === nc.otherTableName) {
-                            nt.inListWS = true;
+                            nt.isReferenced = true;
                             nc.otherTable = nt;
                         }
                     }
@@ -606,7 +602,7 @@ module.exports = yeoman.generators.Base.extend({
                     var table = this.props.tables[i];
 
             if (!table.isNtoNtable) {
-                if (table.inCrud || table.inListWS) {
+                if (table.inCrud || table.isReferenced) {
                     this.props.urlConstants["LIST_"+table.classUpper] = "../" + this.props.modulenameUpper + "/List" + table.className;
                 }
 
@@ -673,7 +669,7 @@ module.exports = yeoman.generators.Base.extend({
 
             } else { 
 
-                if (table.inCrud || table.inListWS) {
+                if (table.inCrud || table.isReferenced) {
 
                     this.fs.copyTpl(
                         this.templatePath('java_model.java'),
@@ -684,6 +680,9 @@ module.exports = yeoman.generators.Base.extend({
                         this.templatePath('java_dao.java'),
                         this.destinationPath(this.props.daoFolder+"/"+table.className+"Dao.java"),
                         params);
+                }
+
+                if (table.inCrud) {
 
                     this.fs.copyTpl(
                         this.templatePath('java_process.java'),
@@ -691,12 +690,9 @@ module.exports = yeoman.generators.Base.extend({
                         params);
 
                     this.fs.copyTpl(
-                        this.templatePath('ws_list.java'),
-                        this.destinationPath(this.props.wsFolder+"/List"+table.className+"Servlet.java"),
+                        this.templatePath('java_response.java'),
+                        this.destinationPath(this.props.responseFolder+"/"+table.className+"Resp.java"),
                         params);
-                }
-
-                if (table.inCrud) {
 
                     this.fs.copyTpl(
                         this.templatePath('ws_get.java'),
@@ -706,6 +702,11 @@ module.exports = yeoman.generators.Base.extend({
                     this.fs.copyTpl(
                         this.templatePath('ws_persist.java'),
                         this.destinationPath(this.props.wsFolder+"/Persist"+table.className+"Servlet.java"),
+                        params);                    
+
+                    this.fs.copyTpl(
+                        this.templatePath('ws_list.java'),
+                        this.destinationPath(this.props.wsFolder+"/List"+table.className+"Servlet.java"),
                         params);
 
                 }
