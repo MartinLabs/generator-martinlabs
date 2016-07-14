@@ -17,15 +17,12 @@ public class Persist<%= table.className %>Servlet extends ServletWrapper {
     @Override
     protected Object process(ServletContent content) throws RespException {
     	RequestBody reqBody = content.getBody(RequestBody.class);
-    	return new <%= table.className %>Process().persist(reqBody.<%= table.classLowerCamel %><% for (var i in table.NtoNcolumns) { %>, reqBody.ids<%= table.NtoNcolumns[i].otherTable.className %><% } %><% if (props.loginsys) { %>, reqBody.token<% } %>);
+    	return new <%= table.className %>Process().persist(reqBody.<%= table.classLowerCamel %><% if (props.loginsys) { %>, reqBody.token<% } %>);
     }
     
     private class RequestBody {
         <% if (props.loginsys) { %> public String token; <% } %>
-        public <%= table.className %> <%= table.classLowerCamel %>;<% 
-    for (var i in table.NtoNcolumns) { %>
-    	List<Long> ids<%= table.NtoNcolumns[i].otherTable.className %>;
-	<% } %>
+        public <%= table.className %> <%= table.classLowerCamel %>;
     }
     
 }

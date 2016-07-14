@@ -1,9 +1,11 @@
+- organizar model, não deixar o foreignkey, deixar o model dentro do outro
 - processar datatables no servidor
 - atualizar o pom com martinlabs java commons, versão de java 1.8, remover node_modules
 - inativar entidade
 - gerar "esqueci a senha"
 - bug pra usar datatables não está usando 1.10.9 (está colocando o ^)
-- usar uma requisição só para obter os dados do persist
+- usar uma requisição só para obter os dados do persist (N to N)
+- remover botão do datepicker e mostra-lo ao dar foco
 
 - ideia do koba: separar packages do ws em list, get, update
 - quando a tabela só tiver uma primary key e for tambem uma foreign key deve acopla-la

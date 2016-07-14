@@ -614,12 +614,6 @@ module.exports = yeoman.generators.Base.extend({
                     this.props.urlConstants.persistPages[table.className] = "persist"+table.className+".html";
                 }
             }
-
-            for (var m in table.NtoNcolumns) {
-                var nc = table.NtoNcolumns[m];
-
-                this.props.urlConstants["LIST_" + nc.otherTable.classUpper + "FROM" + nc.NtoNtable.classUpper] = "../" + this.props.modulenameUpper + "/List" + nc.otherTable.className + "From" + nc.NtoNtable.className;
-            }
         }
 
         console.log(this.props);
@@ -646,41 +640,17 @@ module.exports = yeoman.generators.Base.extend({
                     this.destinationPath(this.props.daoFolder+"/"+table.className+"Dao.java"),
                     params);
 
-                this.fs.copyTpl(
-                    this.templatePath('java_process_NtoN.java'),
-                    this.destinationPath(this.props.processFolder+"/"+table.className+"Process.java"),
-                    params);
-
-                params.column = table.columns[0];
-                params.otherColumn = table.columns[1];
-
-                this.fs.copyTpl(
-                    this.templatePath('ws_list_NtoN.java'),
-                    this.destinationPath(this.props.wsFolder+"/List"+params.column.referencedTable.className+"From"+table.className+"Servlet.java"),
-                    params);
-
-                params.column = table.columns[1];
-                params.otherColumn = table.columns[0];
-
-                this.fs.copyTpl(
-                    this.templatePath('ws_list_NtoN.java'),
-                    this.destinationPath(this.props.wsFolder+"/List"+params.column.referencedTable.className+"From"+table.className+"Servlet.java"),
-                    params);
-
             } else { 
 
-                if (table.inCrud || table.isReferenced) {
+                this.fs.copyTpl(
+                    this.templatePath('java_model.java'),
+                    this.destinationPath(this.props.modelFolder+"/"+table.className+".java"),
+                    params);
 
-                    this.fs.copyTpl(
-                        this.templatePath('java_model.java'),
-                        this.destinationPath(this.props.modelFolder+"/"+table.className+".java"),
-                        params);
-
-                    this.fs.copyTpl(
-                        this.templatePath('java_dao.java'),
-                        this.destinationPath(this.props.daoFolder+"/"+table.className+"Dao.java"),
-                        params);
-                }
+                this.fs.copyTpl(
+                    this.templatePath('java_dao.java'),
+                    this.destinationPath(this.props.daoFolder+"/"+table.className+"Dao.java"),
+                    params);
 
                 if (table.inCrud) {
 
