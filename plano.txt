@@ -1,4 +1,3 @@
-- organizar model, não deixar o foreignkey, deixar o model dentro do outro
 - processar datatables no servidor
 - atualizar o pom com martinlabs java commons, versão de java 1.8, remover node_modules
 - inativar entidade

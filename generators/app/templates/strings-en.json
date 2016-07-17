@@ -25,12 +25,28 @@
         "submit": "Submit"
     },
     
-    "classes": {<% for (var i in tables) { var t = tables[i]; %><%= i > 0 ? "," : "" %>
+    "classes": {<% 
+    for (var i in tables) { 
+        var t = tables[i]; 
+        %><%= i > 0 ? "," : "" %>
         "<%= t.className %>": {
             "title": "<%= t.className %>",
-            "columns": {<% for (var j in t.columns) { var c = t.columns[j]; %><%= j > 0 ? "," : "" %>
-                "<%= c.propertyName %>": "<%= c.propertyName %>"<% } %>
+            "columns": {<% 
+        for (var j in t.columns) { 
+            var c = t.columns[j]; 
+            %><%= j > 0 ? "," : "" %><% 
+            if (!c.referencedTable) {
+        %>
+                "<%= c.propertyName %>": "<%= c.propertyName %>"<% 
+            } else { %>
+                "<%= c.notIdPropertyName %>": "<%= c.notIdPropertyName %>"<% 
             }
-        }<% } %>
+        }
+        %>
+            }
+        }  
+    <% 
+    } 
+    %>
     }
 }

@@ -52,15 +52,22 @@
                 var <%= table.classLowerCamel %> = _list<%= table.className %>[i];
                 
                 var dSet = [
-                    <% 
-                    var columnPrimaryKey = 0; 
-                	for (var i in table.columns) { 
-                        var c = table.columns[i]; 
-                        if (c.column_key === "PRI") {
-                            columnPrimaryKey = i;
-                        }
-                        %><%= i > 0 ? "," : "" %>
-                    <%= table.classLowerCamel %>.<%= c.propertyName %> != null ? <%= table.classLowerCamel %>.<%= c.propertyName %> : ""<% } %>
+            <% 
+            var columnPrimaryKey = 0; 
+        	for (var i in table.columns) { 
+                var c = table.columns[i]; 
+                if (c.column_key === "PRI") {
+                    columnPrimaryKey = i;
+                }
+                %><%= i > 0 ? "," : "" %><%
+                if (!c.referencedTable) { 
+                %>
+                    <%= table.classLowerCamel %>.<%= c.propertyName %> != null ? <%= table.classLowerCamel %>.<%= c.propertyName %> : null<% 
+                } else { %>
+                    <%= table.classLowerCamel %>.<%= c.notIdPropertyName %> != null && <%= table.classLowerCamel %>.<%= c.notIdPropertyName %>.<%= c.referencedTable.idColumn.propertyName %> != null ? <%= table.classLowerCamel %>.<%= c.notIdPropertyName %>.<%= c.referencedTable.idColumn.propertyName %> : null<% 
+                }
+            }
+            %>
                 ];
                 
                 dataSet.push(dSet);
@@ -70,7 +77,7 @@
                 data: dataSet,
                 "columns": [
                 	<% for (var i in table.columns) { var c = table.columns[i]; %><%= i > 0 ? "," : "" %>
-                    { title: "<%= c.propertyName %>" }<% } %>
+                    { title: "<%= !c.referencedTable ? c.propertyName : c.notIdPropertyName %>" }<% } %>
                 ]
             });
 

@@ -108,7 +108,12 @@ for (var i in table.NtoNcolumns) {
                         type: "success",
                         placement: { align: "center" },
                         delay: 2000
-                    });<% if (props.loginsys) { %>
+                    });
+                    
+                    setTimeout(function() {
+                        location.href = URL.listPages.<%= table.className %>;
+                    }, 2000);
+                    <% if (props.loginsys) { %>
                 } else if (resp.Code === 33) {
                     location.href = URL.login;<% } %>
                 } else {
@@ -132,7 +137,12 @@ for (var i in table.NtoNcolumns) {
 for (var i in table.columns) { 
     var c = table.columns[i]; 
     if (c.extra !== "auto_increment") {
-        if (c.javaType === "String") { 
+        if (c.referencedTable) {
+            %>
+            _<%= table.classLowerCamel %>.<%= c.notIdPropertyName %> = {
+                <%= c.referencedTable.idColumn.propertyName %>: parseInt($("#input-<%= c.propertyName %>").val())
+            };<% 
+        } else if (c.javaType === "String") { 
             %>
             _<%= table.classLowerCamel %>.<%= c.propertyName %> = $("#input-<%= c.propertyName %>").val();<% 
         
@@ -208,8 +218,8 @@ for (var i in table.columns) {
                 +"</option>");
             }
 
-            if (_<%= table.classLowerCamel %> && _<%= table.classLowerCamel %>.<%= c.propertyName %>) {
-                <%= c.propertyName %>V.val(_<%= table.classLowerCamel %>.<%= c.propertyName %>);
+            if (_<%= table.classLowerCamel %> && _<%= table.classLowerCamel %>.<%= c.notIdPropertyName %> && _<%= table.classLowerCamel %>.<%= c.notIdPropertyName %>.<%= c.referencedTable.idColumn.propertyName %>) {
+                <%= c.propertyName %>V.val(_<%= table.classLowerCamel %>.<%= c.notIdPropertyName %>.<%= c.referencedTable.idColumn.propertyName %>);
             }
 <%
     }

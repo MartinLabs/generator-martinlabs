@@ -554,6 +554,8 @@ module.exports = yeoman.generators.Base.extend({
                 col.resultSetGetter = this._generateResultSetGetter(col);
                 col.propertyName = this._lowerCamelCase(col.column_name);
                 col.propertyNameUpper = this._capitalizeFirstLetter(col.propertyName);
+                col.notIdPropertyName = this._notIdPkFk(col.propertyName);
+                col.notIdPropertyNameUpper = this._capitalizeFirstLetter(col.notIdPropertyName);
 
                 //putting column information on logintable
                 if (isLoginTable) {
@@ -602,7 +604,7 @@ module.exports = yeoman.generators.Base.extend({
                     var table = this.props.tables[i];
 
             if (!table.isNtoNtable) {
-                if (table.inCrud || table.isReferenced) {
+                if (table.inCrud) {
                     this.props.urlConstants["LIST_"+table.classUpper] = "../" + this.props.modulenameUpper + "/List" + table.className;
                 }
 
@@ -616,7 +618,6 @@ module.exports = yeoman.generators.Base.extend({
             }
         }
 
-        console.log(this.props);
     },
 
     writeJavaClasses: function () {
@@ -859,6 +860,8 @@ module.exports = yeoman.generators.Base.extend({
             this.destinationPath("src/main/webapp/" + this.props.modulename + "/json/strings-en.json"),
             this.props);
 
+        console.log("strings en");
+
         var metaInfCtxAsXml = new xml2js.Builder().buildObject(this.props.metaInfCtx);
         var xmlPath = this.destinationRoot() + "/src/main/webapp/META-INF/context.xml";
 
@@ -988,5 +991,18 @@ module.exports = yeoman.generators.Base.extend({
 
     _normalizeFirstLetter: function(string) {
         return string.charAt(0).toLowerCase() + string.slice(1);
+    },
+
+    _notIdPkFk: function(string) {
+        var newStr = string + "";
+        if (newStr.charAt(0) === "i" && newStr.charAt(1) === "d") {
+            newStr = newStr.slice(2);
+        }
+
+        if ((newStr.charAt(newStr.length -2) === "P" || newStr.charAt(newStr.length -2) === "F") && newStr.charAt(newStr.length -1) === "k") {
+            newStr = newStr.slice(0, -2);
+        }
+
+        return this._normalizeFirstLetter(newStr);
     }
 });
