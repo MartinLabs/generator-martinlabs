@@ -2,8 +2,9 @@ package <%= props.modelPackage %>;
 
 import java.util.Date;
 import java.util.List;
+
 /**
- *
+ * <%= table.comment %>
  * @author martinlabs CRUD generator
  */
 public class <%= table.className %> {
@@ -13,7 +14,8 @@ public class <%= table.className %> {
     %>
     private <%= c.javaType %> <%= c.propertyName %>;<% 
     } else { %>
-    private <%= c.referencedTable.className %> <%= c.notIdPropertyName %>;<% }
+    private <%= c.referencedTable.className %> <%= c.notIdPropertyName %>;<% 
+    } %><%= c.column_comment ? " //" + c.column_comment : "" %><% 
 } %>
 
     <% for (var i in table.NtoNcolumns) { var cn = table.NtoNcolumns[i]; %>

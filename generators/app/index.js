@@ -389,7 +389,7 @@ module.exports = yeoman.generators.Base.extend({
 
         this.connection.query(
             "SELECT "
-            + "table_name "
+            + "table_name, table_comment "
             + "FROM tables "
             + "WHERE table_schema = ? ",
             [this.props.database],
@@ -413,6 +413,7 @@ module.exports = yeoman.generators.Base.extend({
 
                 self.props.tables.push({
                     name: results[i].table_name,
+                    comment: results[i].table_comment,
                     inCrud: alltables || self.props.crudTables.indexOf(results[i].table_name) > -1
                 });
             }
@@ -434,7 +435,7 @@ module.exports = yeoman.generators.Base.extend({
             self.connection.query(
                 "SELECT "
                 + "c.column_name, is_nullable, data_type, character_maximum_length, "
-                + "column_key, c.ordinal_position, extra, referenced_table_name "
+                + "column_key, c.ordinal_position, c.column_comment, extra, referenced_table_name "
                 + "FROM columns c "
                 + "LEFT JOIN key_column_usage k ON c.table_schema = k.table_schema "
                 + "AND c.table_name = k.table_name AND c.column_name = k.column_name "
