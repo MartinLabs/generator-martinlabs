@@ -18,6 +18,25 @@ public class <%= table.className %> {
 
     <% for (var i in table.NtoNcolumns) { var cn = table.NtoNcolumns[i]; %>
     private List<<%= cn.otherTable.className %>> <%= cn.NtoNtable.classLowerCamel %>;<% } %>
+
+    public <%= table.className %>() {
+    }
+
+    public <%= table.className %>(<%= table.className %> other) {
+        <% for (var i in table.columns) { 
+            var c = table.columns[i]; 
+            if (!c.referencedTable) {
+        %>
+        this.<%= c.propertyName %> = other.<%= c.propertyName %>;<% 
+        } else { %>
+        this.<%= c.notIdPropertyName %> = other.<%= c.notIdPropertyName %>;<% 
+            } 
+        } 
+
+        for (var i in table.NtoNcolumns) { var cn = table.NtoNcolumns[i]; %>
+        this.<%= cn.NtoNtable.classLowerCamel %> = other.<%= cn.NtoNtable.classLowerCamel %>;<% 
+        } %>
+    }
     
 <% for (var j in table.columns) { 
     var cx = table.columns[j]; 
