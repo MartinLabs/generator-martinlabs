@@ -1,13 +1,14 @@
-- processar datatables no servidor
-- atualizar o pom com martinlabs java commons, versão de java 1.8, remover node_modules
+- em todos os WS além de token tem que enviar versão do client para validar se é muito antiga e sistema operacional
+- no model, colocar um construtor vazio e outro que faz um clone
 - inativar entidade
-- gerar "esqueci a senha"
-- bug pra usar datatables não está usando 1.10.9 (está colocando o ^)
-- usar uma requisição só para obter os dados do persist (N to N)
 - remover botão do datepicker e mostra-lo ao dar foco
+- gerar "esqueci a senha"
+- atualizar o pom com martinlabs java commons, versão de java 1.8, remover node_modules
+- bug pra usar datatables não está usando 1.10.9 (está colocando o ^)
+- gerar em portugues tb
 
+- quando a tabela só tiver uma primary key e for tambem uma foreign key deve extende-la
 - ideia do koba: separar packages do ws em list, get, update
-- quando a tabela só tiver uma primary key e for tambem uma foreign key deve acopla-la
 - poder alterar "minha conta"
 - gerar create.sql e dados.sql
 - gerar testes unitários

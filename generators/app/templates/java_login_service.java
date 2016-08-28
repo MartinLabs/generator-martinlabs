@@ -44,7 +44,7 @@ public class LoginServices extends TransacProcess {
     
     public boolean checkLogin(Connection con, String account, String password) throws RespException {
         LoginServiceDao dao = new LoginServiceDao(con);
-        return dao.exist(account, password);
+        return dao.existAccount(account, password);
     }
     
     public boolean checkLogin(Connection con, String token) throws RespException{

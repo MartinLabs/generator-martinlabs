@@ -49,9 +49,9 @@ for (var i in table.NtoNcolumns) {
         var requestContent = function() {
             var id = martinlabs.getParam("id") || 0;
             
-            $.get(URL.GET_<%= table.classUpper %>, {
-                id: id<% if (props.loginsys) { %>, 
-                token: simpleStorage.get("token<%= props.modulenameUpper %>") || null<% } %>
+            $.get(URL.GET_<%= table.classUpper %>, {<% if (props.loginsys) { %> 
+                token: simpleStorage.get("token<%= props.modulenameUpper %>") || null,<% } %>
+                id: id
             },
             function(resp){
                 if (resp.Success) {
@@ -249,7 +249,7 @@ for (var i in table.NtoNcolumns) { var col = table.NtoNcolumns[i]; %>
         };
         
         var registerInteraction = function() {
-            $("form").validator().on("submit", function(e){
+            $("form").validator({ disable: false }).on("submit", function(e){
                 if (!e.isDefaultPrevented()) {
                     persist();
                 }

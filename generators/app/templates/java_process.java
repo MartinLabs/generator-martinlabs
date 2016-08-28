@@ -34,8 +34,10 @@ import <%= props.daoPackage %>.<%= c.otherTable.className %>Dao;<%
 } 
 %>
 import br.com.martinlabs.commons.OpResponse;
+import br.com.martinlabs.commons.OpResponsePaginado;
 import br.com.martinlabs.commons.TransacProcess;
 import br.com.martinlabs.commons.exceptions.RespException;
+import com.google.common.base.Strings;
 import java.util.List;
 /**
  *
@@ -49,25 +51,47 @@ public class <%= table.className %>Process extends TransacProcess {
         super("<%= props.datasource %>");
     }
 
-    public OpResponse<List<<%= table.className %>>> list(<% if (props.loginsys) { %>String token<% } %>) throws RespException {
+    public OpResponse<List<<%= table.className %>>> list(<% if (props.loginsys) { %>
+        String token, <% } %>
+        String search,
+        Integer start,
+        Integer length,
+        Integer orderColumn,
+        String orderDir) throws RespException {
         return open(con -> {<% 
         if (props.loginsys) { %>
             loginS.allowAccess(con, token);
         <% } %>
             <%= table.className %>Dao dao = new <%= table.className %>Dao(con);
 
-            return new OpResponse<>(dao.list());
+            List<<%= table.className %>> list<%= table.className %> = dao.list(search, start, length, orderColumn, orderDir);
+
+            OpResponsePaginado resp = new OpResponsePaginado<>(list<%= table.className %>);
+
+            resp.setQuantidadeTotal(dao.count());
+            if (!Strings.isNullOrEmpty(search)) {
+                resp.setQuantidadeFiltrada(dao.count(search));
+            } else {
+                resp.setQuantidadeFiltrada(resp.getQuantidadeTotal());
+            }
+
+            return resp;
         });
     }
 
     public OpResponse<<%= table.className %>Resp> get(long id<% if (props.loginsys) { %>, String token<% } %>) throws RespException {
         return open(con -> {<% 
-        if (props.loginsys) { %>
+    if (props.loginsys) { 
+    %>
             loginS.allowAccess(con, token);
-        <% } %>
+    <% 
+    }
+     
+    antiRepeat = [];
+    antiRepeat.push(table.className);
+    %>
             <%= table.className %>Dao <%= table.classLowerCamel %>Dao = new <%= table.className %>Dao(con);<% 
 
-    antiRepeat = [];
     for (var i in table.columns) { 
         var c = table.columns[i]; 
         if (c.referencedTable && antiRepeat.indexOf(c.referencedTable.className) < 0) {
@@ -77,7 +101,6 @@ public class <%= table.className %>Process extends TransacProcess {
         }
     }
 
-    antiRepeat = [];
     for (var i in table.NtoNcolumns) { 
         var c = table.NtoNcolumns[i]; 
         if (antiRepeat.indexOf(c.otherTable.className) < 0) {

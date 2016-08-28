@@ -15,41 +15,66 @@
     
     module.exports = function() {
         
-        var _list<%= table.className %> = [],
-            _dataTable;
+        var _dataTable;
         
         var init = function() {
             defaultInterface({ active: "<%= table.className %>" });
             translate();
-            request();
+            initDataTable();
+            registerInteraction();
         };
         
-        var request = function() {
-            $.get(URL.LIST_<%= table.classUpper %>, {<% if (props.loginsys) { %>
-                token: simpleStorage.get("token<%= props.modulenameUpper %>") || null<% } %>
-            },
-            function(resp){
-                if (resp.Success) {
-                    _list<%= table.className %> = resp.Data;
-                    render(_list<%= table.className %>);<% if (props.loginsys) { %>
-                } else if (resp.Code === 33) {
-                    location.href = URL.login;<% } %>
-                } else {
-                    $.notify({ message: resp.Message },{
-                        type: "danger",
-                        placement: { align: "center" },
-                        delay: 2000
-                    });
-                }
+        var initDataTable = function() {
+            _dataTable = $('#list').DataTable({
+                serverSide: true,
+                columns: [
+                    <% for (var i in table.columns) { var c = table.columns[i]; %><%= i > 0 ? "," : "" %>
+                    { title: "<%= !c.referencedTable ? c.propertyName : c.notIdPropertyName %>" }<% } %>
+                ],
+                ajax: function(data, callback, settings) { 
 
+                    $.get(URL.LIST_<%= table.classUpper %>, {<% if (props.loginsys) { %>
+                        token: simpleStorage.get("token<%= props.modulenameUpper %>") || null,<% } %>
+                        search: data.search.value,
+                        start: data.start,
+                        length: data.length,
+                        orderColumn: data.order[0].column,
+                        orderDir: data.order[0].dir
+                    },
+                    function(resp){
+                        if (resp.Success) {
+                            callback({
+                                recordsTotal: resp.QuantidadeTotal,
+                                recordsFiltered: resp.QuantidadeFiltrada,
+                                data: prepareDataSet(resp.Data)
+                            });
+
+                            translate.datatable("#list", "<%= table.className %>");
+                            <% if (props.loginsys) { %>
+                        } else if (resp.Code === 33) {
+                            location.href = URL.login;<% } %>
+                        } else {
+                            $.notify({ message: resp.Message },{
+                                type: "danger",
+                                placement: { align: "center" },
+                                delay: 2000
+                            });
+                        }
+
+                    });
+
+                }
             });
+
+
+            
         };
         
-        var render = function() {
+        var prepareDataSet = function(list<%= table.className %>) {
             var dataSet = [];
             
-            for (var i in _list<%= table.className %>) {
-                var <%= table.classLowerCamel %> = _list<%= table.className %>[i];
+            for (var i in list<%= table.className %>) {
+                var <%= table.classLowerCamel %> = list<%= table.className %>[i];
                 
                 var dSet = [
             <% 
@@ -72,22 +97,13 @@
                 
                 dataSet.push(dSet);
             }
-            
-            _dataTable = $('#list').DataTable({
-                data: dataSet,
-                "columns": [
-                	<% for (var i in table.columns) { var c = table.columns[i]; %><%= i > 0 ? "," : "" %>
-                    { title: "<%= !c.referencedTable ? c.propertyName : c.notIdPropertyName %>" }<% } %>
-                ]
-            });
 
-            translate.datatable("#list", "<%= table.className %>");
+            return dataSet;
 
-            registerInteraction();
         };
         
         var registerInteraction = function() {
-            $('#list').on("click", "tr", function(){
+            $(document).on("click", "#list tbody tr", function(){
                 location.href = "persist<%= table.className %>.html?id=" + _dataTable.row(this).data()[<%= columnPrimaryKey %>];
             });
         };

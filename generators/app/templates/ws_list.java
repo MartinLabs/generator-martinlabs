@@ -14,7 +14,13 @@ public class List<%= table.className %>Servlet extends ServletWrapper {
 
     @Override
     protected Object process(ServletContent content) throws RespException {
-    	return new <%= table.className %>Process().list(<% if (props.loginsys) { %>content.getParamString("token")<% } %>);
+    	return new <%= table.className %>Process().list(<% if (props.loginsys) { %>
+    		content.getParamString("token"),<% } %>
+    		content.getParamString("search"),
+            content.getParamInteger("start"),
+            content.getParamInteger("length"),
+            content.getParamInteger("orderColumn"),
+            content.getParamString("orderDir"));
     }
     
 }

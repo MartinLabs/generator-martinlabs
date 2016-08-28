@@ -13,7 +13,7 @@ public class LoginServiceDao extends DaoWrapper{
         super(con);
     }
     
-    public boolean exist(String account, String password) {
+    public boolean existAccount(String account, String password) {
         return exist(""
                 + "SELECT <%= table.idColumn.column_name %> "
                 + "FROM <%= table.name %> "
