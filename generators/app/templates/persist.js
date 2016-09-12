@@ -104,7 +104,7 @@ for (var i in table.NtoNcolumns) {
                         _<%= table.classLowerCamel %>.<%= table.idColumn.propertyName %> = resp.Data;
                     }
 
-                    $.notify({ message: "Persisted Successfully" },{
+                    $.notify({ message: translate.data.app.persistedSuccessfully },{
                         type: "success",
                         placement: { align: "center" },
                         delay: 2000
@@ -251,10 +251,10 @@ for (var i in table.NtoNcolumns) { var col = table.NtoNcolumns[i]; %>
         var registerInteraction = function() {
             $("form").validator({ disable: false }).on("submit", function(e){
                 if (!e.isDefaultPrevented()) {
+                    e.preventDefault();
+
                     persist();
                 }
-                
-                return false;
             });
             
             $(".datetime").datetimepicker({

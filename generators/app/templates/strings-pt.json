@@ -1,0 +1,78 @@
+{
+    "app": {
+        "title": "<%= modulenameUpper %>",
+        "logout": "Sair",
+        "menu": "Menu",
+        "add": "Adicionar",
+        "export": "Exportar",
+        "persistedSuccessfully": "Salvo com Sucesso!"
+    },
+    
+    "dataTable": {
+        "sEmptyTable": "Nenhum registro encontrado",
+        "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+        "sInfoEmpty": "Mostrando 0 até 0 de 0 registros",
+        "sInfoFiltered": "(Filtrados de _MAX_ registros)",
+        "sInfoPostFix": "",
+        "sInfoThousands": ".",
+        "sLengthMenu": "_MENU_ resultados por página",
+        "sLoadingRecords": "Carregando...",
+        "sProcessing": "Processando...",
+        "sZeroRecords": "Nenhum registro encontrado",
+        "sSearch": "Pesquisar",
+        "oPaginate": {
+            "sNext": "Próximo",
+            "sPrevious": "Anterior",
+            "sFirst": "Primeiro",
+            "sLast": "Último"
+        },
+        "oAria": {
+            "sSortAscending": ": Ordenar colunas de forma ascendente",
+            "sSortDescending": ": Ordenar colunas de forma descendente"
+        }
+    },
+    
+    "login": {
+        "title": "Login",
+        "subtitle": "Faça Login",
+        "account": "Conta",
+        "password": "Senha",
+        "signin": "Entrar"
+    },
+    
+    "home": {
+        "title": "Home",
+        "subtitle": "Home"
+    },
+
+    "persist": {
+        "number": "Numérico",
+        "datetime": "Data e Hora",
+        "submit": "Enviar"
+    },
+    
+    "classes": {<% 
+    for (var i in tables) { 
+        var t = tables[i]; 
+        %><%= i > 0 ? "," : "" %>
+        "<%= t.className %>": {
+            "title": "<%= t.className %>",
+            "columns": {<% 
+        for (var j in t.columns) { 
+            var c = t.columns[j]; 
+            %><%= j > 0 ? "," : "" %><% 
+            if (!c.referencedTable) {
+        %>
+                "<%= c.propertyName %>": "<%= c.propertyName %>"<% 
+            } else { %>
+                "<%= c.notIdPropertyName %>": "<%= c.notIdPropertyName %>"<% 
+            }
+        }
+        %>
+            }
+        }  
+    <% 
+    } 
+    %>
+    }
+}

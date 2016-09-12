@@ -60,17 +60,12 @@
                             <div class="form-group">
                                 <label class="control-label"
                                     data-localize="classes.<%= table.className %>.columns.<%= col.propertyName %>"></label>
-                                <div id="input-<%= col.propertyName %>" 
-                                    class='input-group datetime'>
-                                    <input 
-                                        type='text' 
-                                        placeholder="" 
-                                        data-localize="persist.datetime" 
-                                        class="form-control" <%= col.is_nullable !== "YES" ? "required" : "" %>/>
-                                    <span class="input-group-addon">
-                                        <span class="glyphicon glyphicon-calendar"></span>
-                                    </span>
-                                </div>
+                                <input 
+                                    id="input-<%= col.propertyName %>" 
+                                    type='text' 
+                                    placeholder="" 
+                                    data-localize="persist.datetime" 
+                                    class="form-control datetime" <%= col.is_nullable !== "YES" ? "required" : "" %>/>
                             </div>
             <% } else { %>
                             <div class="form-group">

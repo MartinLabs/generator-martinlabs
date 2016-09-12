@@ -5,19 +5,23 @@
     window.jQuery = $;
     require("jquery-localize");
     
-    module.exports = function() {
+    var translate = function() {
         
         var init = function() {
             $("[data-localize]").localize("strings", {
                 language: "en",
-                pathPrefix: "json"
+                pathPrefix: "json",
+                callback: function(data, defaultCallback) {
+                    translate.data = data;
+                    defaultCallback(data);
+                }
             });
         };
         
         init();
     };
 
-    module.exports.datatable = function(selector, className) {
+    translate.datatable = function(selector, className) {
         $(selector).find("th").each(function(){
             $(this).data("localize", "classes." + className + ".columns." + $(this).html());
             $(this).localize("strings", {
@@ -25,8 +29,8 @@
                 pathPrefix: "json"
             });
         });
-
-        
     };
+
+    module.exports = translate;
     
 })();

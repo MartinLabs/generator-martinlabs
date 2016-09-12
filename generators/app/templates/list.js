@@ -2,6 +2,7 @@
 
     var $ = require("jquery"),
         martinlabs = require("ml-js-commons"),
+        tableExport = require("ml-js-commons/tableExport"),
         URL = require("../const/url"),
         defaultInterface = require("../service/defaultInterface"),
         <% if (props.loginsys) { %>simpleStorage = require("simpleStorage.js"),
@@ -27,6 +28,7 @@
         var initDataTable = function() {
             _dataTable = $('#list').DataTable({
                 serverSide: true,
+                language: translate.data.dataTable,
                 columns: [
                     <% for (var i in table.columns) { var c = table.columns[i]; %><%= i > 0 ? "," : "" %>
                     { title: "<%= !c.referencedTable ? c.propertyName : c.notIdPropertyName %>" }<% } %>
@@ -105,6 +107,11 @@
         var registerInteraction = function() {
             $(document).on("click", "#list tbody tr", function(){
                 location.href = "persist<%= table.className %>.html?id=" + _dataTable.row(this).data()[<%= columnPrimaryKey %>];
+            });
+            
+            $("#export").click(function() {
+                $(this).attr("download", "<%= table.className %>.csv");
+                tableExport.csv(this, "list");
             });
         };
         

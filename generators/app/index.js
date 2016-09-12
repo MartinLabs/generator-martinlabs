@@ -729,6 +729,10 @@ module.exports = yeoman.generators.Base.extend({
             this.templatePath('translate.js'),
             this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/service/translate.js"));
 
+        this.fs.copy(
+            this.templatePath('pushMenu.js'),
+            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/service/pushMenu.js"));
+
         this.fs.copyTpl(
             this.templatePath('home.js'),
             this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/controller/home.js"),
@@ -769,12 +773,8 @@ module.exports = yeoman.generators.Base.extend({
 
     writeScssFiles: function() {
         this.fs.copy(
-            this.templatePath('adminLte.scss'),
-            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/scss/adminLte.scss"));
-
-        this.fs.copy(
-            this.templatePath('adminLteSkins.scss'),
-            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/scss/adminLteSkins.scss"));
+            this.templatePath('template.scss'),
+            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/scss/template.scss"));
 
         this.fs.copy(
             this.templatePath('fontAwesome.scss'),
@@ -861,7 +861,10 @@ module.exports = yeoman.generators.Base.extend({
             this.destinationPath("src/main/webapp/" + this.props.modulename + "/json/strings-en.json"),
             this.props);
 
-        console.log("strings en");
+        this.fs.copyTpl(
+            this.templatePath('strings-pt.json'),
+            this.destinationPath("src/main/webapp/" + this.props.modulename + "/json/strings-pt.json"),
+            this.props);
 
         var metaInfCtxAsXml = new xml2js.Builder().buildObject(this.props.metaInfCtx);
         var xmlPath = this.destinationRoot() + "/src/main/webapp/META-INF/context.xml";

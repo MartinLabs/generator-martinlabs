@@ -1,11 +1,10 @@
 $icon-font-path: "../fonts/";
 
-@import "adminLte.scss";
-@import "adminLteSkins.scss";
 @import "fontAwesome.scss";
 @import "../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
 @import "../../../node_modules/ml-js-commons/datatables.scss";
 @import "../../../node_modules/ml-js-commons/datetimepicker.scss";
+@import "template.scss";
 
 body {
     display: none; //defaultInterface will show again
