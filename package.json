@@ -2,7 +2,7 @@
   "name": "generator-martinlabs",
   "version": "3.3.0",
   "description": "Generates a crud using martinlabs commons based on a mysql table of your choice",
-  "homepage": "martinlabs.com.br",
+  "homepage": "https://github.com/martinlabs/generator-martinlabs",
   "author": {
     "name": "Gil Lopes Bueno",
     "email": "melanke.hc@gmail.com",
