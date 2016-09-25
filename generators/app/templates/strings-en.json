@@ -32,6 +32,18 @@
         }
     },
     
+    "dateFormat": {
+        "millisecond": "YY/MM/DD hh:mm:ss",
+        "second": "YY/MM/DD hh:mm:ss",
+        "minute": "YY/MM/DD hh:mm",
+        "hour": "YY/MM/DD hh:mm",
+        "day": "YY/MM/DD hh:mm",
+        "week": "YY/MM/DD",
+        "month": "YY/MM/DD",
+        "quarter": "YY/MM/DD",
+        "year": "YY/MM/DD"
+    },
+    
     "login": {
         "title": "Login",
         "subtitle": "Please sign in",

@@ -14,6 +14,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-cssmin');
 
     grunt.registerTask('default', ['browserify', 'sass']);
+    grunt.registerTask('js', ['browserify']);
     grunt.registerTask('production', ['browserify', 'sass', 'uglify', 'cssmin']);
 
 };

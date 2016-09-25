@@ -1,8 +1,8 @@
 - enviar nome da coluna para ordenar e não a posição dela, ver se dá pra evitar o prepareDataSet
-- no gruntfile colocar compilação de apenas JS tb
-- em todos os WS além de token tem que enviar versão do client para validar se é muito antiga e sistema operacional
 - dao e model ficar num package geral, não do modulo
 - atualizar o pom com martinlabs java commons, versão de java 1.8, remover node_modules
+- exportar em csv da tabela inteira (não só da tabela exibida)
+- em todos os WS além de token tem que enviar versão do client para validar se é muito antiga e sistema operacional
 
 - inativar entidade
 - gerar "esqueci a senha"

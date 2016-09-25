@@ -906,7 +906,8 @@ module.exports = yeoman.generators.Base.extend({
                     "jstify", 
                     "ml-js-commons", 
                     "moment",
-                    "simplestorage.js"
+                    "simplestorage.js",
+                    "chart.js"
                 ], 
                 { save: true },
                 function() {

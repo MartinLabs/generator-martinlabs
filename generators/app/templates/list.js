@@ -2,11 +2,14 @@
 
     var $ = require("jquery"),
         martinlabs = require("ml-js-commons"),
+        moment = require("moment"),
         tableExport = require("ml-js-commons/tableExport"),
         URL = require("../const/url"),
         defaultInterface = require("../service/defaultInterface"),
-        <% if (props.loginsys) { %>simpleStorage = require("simpleStorage.js"),
-        <% } %>translate = require("../service/translate");
+        translate = require("../service/translate"),
+        Chart = require('chart.js')
+        <% if (props.loginsys) { %>simpleStorage = require("simpleStorage.js")
+        <% } %>;
 
     window.jQuery = $;
     require("bootstrap-sass");
@@ -48,10 +51,13 @@
                             callback({
                                 recordsTotal: resp.QuantidadeTotal,
                                 recordsFiltered: resp.QuantidadeFiltrada,
-                                data: prepareDataSet(resp.Data)
+                                data: prepareTableDataSet(resp.Data)
                             });
 
                             translate.datatable("#list", "<%= table.className %>");
+
+                            renderCharts(resp.Data);
+
                             <% if (props.loginsys) { %>
                         } else if (resp.Code === 33) {
                             location.href = URL.login;<% } %>
@@ -72,13 +78,13 @@
             
         };
         
-        var prepareDataSet = function(list<%= table.className %>) {
+        var prepareTableDataSet = function(list<%= table.className %>) {
             var dataSet = [];
             
             for (var i in list<%= table.className %>) {
                 var <%= table.classLowerCamel %> = list<%= table.className %>[i];
                 
-                var dSet = [
+                dataSet.push([
             <% 
             var columnPrimaryKey = 0; 
         	for (var i in table.columns) { 
@@ -95,14 +101,128 @@
                 }
             }
             %>
-                ];
-                
-                dataSet.push(dSet);
+                ]);
             }
 
             return dataSet;
 
         };
+
+    <% 
+        var existDateCol = false;
+        var existValueCol = false;
+        for (var i in table.columns) { 
+            var col = table.columns[i];
+
+            if (col.javaType === "Date") {
+                existDateCol = true;
+            }
+
+            if (col.extra !== "auto_increment" 
+                && !col.referencedTable 
+                && ["Double", "double", "Long", "long"].indexOf(col.javaType) > -1) {
+                existValueCol = true;
+            }
+        }
+    %>
+
+    <% if (existDateCol && existValueCol) { %>
+
+        var renderCharts = function (list<%= table.className %>) {
+            $("#charts .carousel-inner").html("");
+            <% 
+            var firstChart = true;
+            for (var i in table.columns) { 
+                var col = table.columns[i];
+
+                if (col.javaType === "Date") {
+                    for (var j in table.columns) { 
+                        var colI = table.columns[j];
+
+                        if (colI.extra !== "auto_increment" 
+                            && !colI.referencedTable 
+                            && ["Double", "double", "Long", "long"].indexOf(colI.javaType) > -1) {
+
+                            %>
+            renderAChart(list<%= table.className %>, "<%= colI.propertyName %>", "<%= col.propertyName %>"<%= firstChart ? ", true" : "" %>);<%
+                            firstChart = false;
+                        }
+                    }
+                }
+            } 
+            %>
+
+            $('.carousel').carousel();
+
+        };
+        
+        var renderAChart = function(list<%= table.className %>, colYName, colXName, active) {
+            
+            var newPage = $("<div class='item " + (active ? "active": "") + "'><h1>"
+                    + translate.data.classes.<%= table.className %>.columns[colYName]
+                    + " x "
+                    + translate.data.classes.<%= table.className %>.columns[colXName]
+                    + "</h1><canvas></canvas></div>");
+            
+            newPage.appendTo("#charts .carousel-inner");
+
+            new Chart(newPage.find("canvas"), {
+                type: 'line',
+                data: {
+                    datasets: [{
+                        data: prepareChartDataset(list<%= table.className %>, colXName, colYName),
+                        fill: false
+                    }]
+                },
+                options: {
+                    legend: {
+                        display: false
+                    },
+                    scales: {
+                        xAxes: [{
+                            type: "time",
+                            time: {
+                                displayFormats: translate.data.dateFormat
+                            }
+                        }]
+                    },
+                    tooltips: {
+                        callbacks: {
+                            title: function(tooltip, data) {
+                                return moment(tooltip[0].xLabel).format(translate.data.dateFormat.hour);
+                            }
+                        }
+                    }
+                }
+            });
+        };
+        
+        var prepareChartDataset = function(list<%= table.className %>, colXName, colYName) {
+            var dataSet = [];
+            
+            for (var i in list<%= table.className %>) {
+                var <%= table.classLowerCamel %> = list<%= table.className %>[i];
+                
+                dataSet.push({
+                    x: <%= table.classLowerCamel %>[colXName],
+                    y: <%= table.classLowerCamel %>[colYName]
+                });
+            }
+            
+            dataSet.sort(function (a, b) {
+                if (a.x < b.x) {
+                    return -1;
+                } else if (a.x > b.x) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            });
+            
+            return dataSet;
+        };
+
+    <% } %>
         
         var registerInteraction = function() {
             $(document).on("click", "#list tbody tr", function(){

@@ -32,6 +32,18 @@
         }
     },
     
+    "dateFormat": {
+        "millisecond": "DD/MM/YY HH:mm:ss",
+        "second": "DD/MM/YY HH:mm:ss",
+        "minute": "DD/MM/YY HH:mm",
+        "hour": "DD/MM/YY HH:mm",
+        "day": "DD/MM/YY HH:mm",
+        "week": "DD/MM/YY",
+        "month": "DD/MM/YY",
+        "quarter": "DD/MM/YY",
+        "year": "DD/MM/YY"
+    },
+    
     "login": {
         "title": "Login",
         "subtitle": "Faça Login",

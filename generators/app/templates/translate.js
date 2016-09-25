@@ -4,12 +4,14 @@
 
     window.jQuery = $;
     require("jquery-localize");
+
+    var _language = "en";
     
     var translate = function() {
         
         var init = function() {
             $("[data-localize]").localize("strings", {
-                language: "en",
+                language: _language,
                 pathPrefix: "json",
                 callback: function(data, defaultCallback) {
                     translate.data = data;
@@ -25,7 +27,7 @@
         $(selector).find("th").each(function(){
             $(this).data("localize", "classes." + className + ".columns." + $(this).html());
             $(this).localize("strings", {
-                language: "en",
+                language: _language,
                 pathPrefix: "json"
             });
         });

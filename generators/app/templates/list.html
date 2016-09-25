@@ -31,6 +31,38 @@
                         <div class="table-responsive">
                             <table id="list" class="table table-striped table-bordered"></table>
                         </div>
+<% 
+var existDateCol = false;
+var existValueCol = false;
+for (var i in table.columns) { 
+    var col = table.columns[i];
+
+    if (col.javaType === "Date") {
+        existDateCol = true;
+    }
+
+    if (col.extra !== "auto_increment" 
+        && !col.referencedTable 
+        && ["Double", "double", "Long", "long"].indexOf(col.javaType) > -1) {
+        existValueCol = true;
+    }
+}
+
+if (existDateCol && existValueCol) { %>
+                        
+                        <div id="charts" class="carousel slide" data-ride="carousel">
+                            
+                            <div class="carousel-inner" role="listbox"></div>
+
+                            <!-- Controls -->
+                            <a class="left carousel-control" href="#charts" role="button" data-slide="prev">
+                                <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                            </a>
+                            <a class="right carousel-control" href="#charts" role="button" data-slide="next">
+                                <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                            </a>
+                        </div>
+<% } %>
                     </div>
                 </div>
             </section>
