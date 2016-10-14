@@ -6,12 +6,12 @@ import br.com.martinlabs.commons.OpResponse;
 import br.com.martinlabs.commons.SecurityUtils;
 import br.com.martinlabs.commons.exceptions.RespException;
 import br.com.martinlabs.commons.TransacProcess;
-import br.com.martinlabs.commons.exceptions.TokenInvalidoException;
 import com.google.gson.Gson;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.sql.Connection;
+import br.com.martinlabs.commons.LanguageHolder;
 
 /**
  *
@@ -27,18 +27,18 @@ public class LoginServices extends TransacProcess {
     
     public OpResponse<String> login(String account, String password) throws RespException {
         return open(con -> {
-            if (checkLogin(con, account, password)) {
-                String token = loginToToken(account, password);
-                return new OpResponse(token);
-            } else {
-                return new OpResponse(false, LanguageFactory.getInstance().invalidLogin());
+            if (!checkLogin(con, account, password)) {
+                throw new RespException(ErrorCode.INVALID_LOGIN, LanguageHolder.instance.invalidLogin());
             }
+
+            String token = loginToToken(account, password);
+            return new OpResponse(token);
         });
     }
     
     public void allowAccess(Connection con, String token) throws RespException{
         if (!checkLogin(con, token)) {
-            throw new RespException(LanguageFactory.getInstance().pleaseLogin());
+            throw new RespException(LanguageHolder.instance.pleaseLogin());
         }
     }
     
@@ -66,10 +66,10 @@ public class LoginServices extends TransacProcess {
         return token;
     }
 
-    private LoginHolder tokenToLogin(String token) throws TokenInvalidoException {
+    private LoginHolder tokenToLogin(String token) throws RespException {
         
         if (token == null) {
-            throw new TokenInvalidoException();
+            throw new RespException(ErrorCode.INVALID_LOGIN, LanguageHolder.instance.pleaseLogin());
         }
 
         try {
@@ -81,12 +81,12 @@ public class LoginServices extends TransacProcess {
         token = SecurityUtils.decrypt(token, criptographyHash);
         
         if (token == null) {
-            throw new TokenInvalidoException();
+            throw new RespException(ErrorCode.INVALID_LOGIN, LanguageHolder.instance.pleaseLogin());
         }
         
         LoginHolder loginHolder = new Gson().fromJson(token, LoginHolder.class);
         if (loginHolder == null) {
-            throw new TokenInvalidoException();
+            throw new RespException(ErrorCode.INVALID_LOGIN, LanguageHolder.instance.pleaseLogin());
         }
         
         return loginHolder;

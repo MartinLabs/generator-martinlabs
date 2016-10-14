@@ -8,6 +8,8 @@ var fs = require('fs');
 var mkdirp = require('mkdirp');
 var astQuery = require("ast-query");
 var jsonfile = require('jsonfile');
+var lorem = require("./lorem");
+var moment = require("moment");
 
 module.exports = yeoman.generators.Base.extend({
 
@@ -543,12 +545,15 @@ module.exports = yeoman.generators.Base.extend({
                 isLoginTable = true;
             }
 
+            var primaryIndex = 0;
             for (var k = table.columns.length - 1; k >= 0; k--) {
                 var col = table.columns[k];
 
                 //primary key
                 if (col.column_key === "PRI") {
                     table.idColumn = col;
+                    col.primaryIndex = primaryIndex;
+                    primaryIndex++;
                 }
 
                 col.javaType = this._generateJavaType(col);
@@ -623,8 +628,8 @@ module.exports = yeoman.generators.Base.extend({
 
     writeJavaClasses: function () {
         this.fs.copyTpl(
-            this.templatePath('LanguageFactory.java'),
-            this.destinationPath(this.props.processFolder+"/LanguageFactory.java"),
+            this.templatePath('ServerListener.java'),
+            this.destinationPath(this.props.processFolder+"/ServerListener.java"),
             this.props);
 
         for (var i in this.props.tables) {
@@ -705,6 +710,11 @@ module.exports = yeoman.generators.Base.extend({
             this.fs.copyTpl(
                 this.templatePath('ws_login.java'),
                 this.destinationPath(this.props.wsFolder+"/LoginServlet.java"),
+                paramsLogin);
+
+            this.fs.copyTpl(
+                this.templatePath('ErrorCode.java'),
+                this.destinationPath(this.props.processFolder+"/ErrorCode.java"),
                 paramsLogin);
         }
     },
@@ -866,6 +876,18 @@ module.exports = yeoman.generators.Base.extend({
             this.destinationPath("src/main/webapp/" + this.props.modulename + "/json/strings-pt.json"),
             this.props);
 
+        this.props.generateDataForColumn = this._generateDataForColumn;
+
+        this.fs.copyTpl(
+            this.templatePath('data.sql'),
+            this.destinationPath("src/test/resources/database/data.sql"),
+            this.props);
+
+        this.fs.copyTpl(
+            this.templatePath('web.xml'),
+            this.destinationPath("src/main/webapp/WEB-INF/web.xml"),
+            this.props);
+
         var metaInfCtxAsXml = new xml2js.Builder().buildObject(this.props.metaInfCtx);
         var xmlPath = this.destinationRoot() + "/src/main/webapp/META-INF/context.xml";
 
@@ -974,6 +996,55 @@ module.exports = yeoman.generators.Base.extend({
 
         throw new Error("Unkown type " + column.data_type + " for " + column.column_name);
 
+    },
+
+    _generateDataForColumn: function(column, index) {
+
+        if (column.primaryIndex == 1) { 
+            //if it is the second primary it will be counted regulary to avoid duplicate entry
+            return index + 1;
+        }
+
+        if (column.referencedTable) {
+            if (index == 0) {
+                return 1; //the first one is connected with the other first one's
+            } else {
+                return Math.floor(Math.random() * 50) + 1;
+            }
+        }
+
+        if (column.column_key === "PRI") {
+            return index + 1;
+        }
+
+        if (["char", "varchar", "text"].indexOf(column.data_type) > -1) {
+            return "\"" + lorem(column.character_maximum_length) + "\"";
+        }
+
+        else if (["float", "double", "real", "double precision", "numeric", "decimal"].indexOf(column.data_type) > -1) {
+            return (Math.random() * 300).toFixed(3);
+        }
+
+        else if (["int", "integer", "smallint", "mediumint", "bigint"].indexOf(column.data_type) > -1) {
+            return Math.floor(Math.random() * 300);
+        }
+
+        else if ("tinyint" === column.data_type) {
+            if (index == 0) {
+                return 1; //the first one has everything true
+            } else {
+                return Math.round(Math.random() * 1);
+            }
+        }
+
+        else if (["date", "time", "datetime", "timestamp"].indexOf(column.data_type) > -1) {
+            var minDate = new Date(2012, 0, 1); 
+            var maxDate = new Date();
+            var date = new Date(minDate.getTime() + Math.random() * (maxDate.getTime() - minDate.getTime()))
+            return "\"" + moment(date).format("YYYY-MM-DD HH:mm:ss.000") + "\"";
+        }
+
+        throw new Error("Unkown type " + column.data_type + " for " + column.column_name);
     },
 
     _camelCase: function(string) {

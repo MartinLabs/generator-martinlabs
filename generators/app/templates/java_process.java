@@ -39,6 +39,7 @@ import br.com.martinlabs.commons.TransacProcess;
 import br.com.martinlabs.commons.exceptions.RespException;
 import com.google.common.base.Strings;
 import java.util.List;
+import br.com.martinlabs.commons.LanguageHolder;
 /**
  *
  * @author martinlabs CRUD generator
@@ -158,14 +159,14 @@ for (var i in table.columns) {
     if (c.is_nullable === "NO" && (c.javaType === "String" || c.javaType === "Date")) { 
 %>
         if (<%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>() == null) {
-            throw new RespException(<%= c.ordinal_position %>,  LanguageFactory.getInstance().cannotBeNull("<%= c.propertyNameUpper %>"));
+            throw new RespException(<%= c.ordinal_position %>,  LanguageHolder.instance.cannotBeNull("<%= c.propertyNameUpper %>"));
         }<% 
     }
 
     if (c.javaType === "String") {
         %>
         if (<%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>().length() > <%= c.character_maximum_length %>) {
-            throw new RespException(<%= c.ordinal_position %>, LanguageFactory.getInstance().lengthCannotBeMoreThan("<%= c.propertyNameUpper %>", <%= c.character_maximum_length %>));
+            throw new RespException(<%= c.ordinal_position %>, LanguageHolder.instance.lengthCannotBeMoreThan("<%= c.propertyNameUpper %>", <%= c.character_maximum_length %>));
         }<%
     }
 } %>
@@ -183,14 +184,14 @@ for (var i in table.columns) {
                 int affectedRows = dao.update(<%= table.classLowerCamel %>);
 
                 if (affectedRows == 0) {
-                    throw new RespException(LanguageFactory.getInstance().unexpectedError());
+                    throw new RespException(LanguageHolder.instance.unexpectedError());
                 }
             } else {
                 id<%= table.className %> = dao.insert(<%= table.classLowerCamel %>);
                 <%= table.classLowerCamel %>.set<%= table.idColumn.propertyNameUpper %>(id<%= table.className %>);
 
                 if (id<%= table.className %> == 0) {
-                    throw new RespException(LanguageFactory.getInstance().unexpectedError());
+                    throw new RespException(LanguageHolder.instance.unexpectedError());
                 }
             }
 
@@ -204,7 +205,7 @@ for (var i in table.columns) {
                     int affectedRows = <%= col.NtoNtable.classLowerCamel %>Dao.insert(<%= col.otherTable.classLowerCamel %>.get<%= col.otherTable.idColumn.propertyNameUpper %>(), id<%= table.className %>);
                     
                     if (affectedRows == 0) {
-                        throw new RespException(LanguageFactory.getInstance().unexpectedError());
+                        throw new RespException(LanguageHolder.instance.unexpectedError());
                     }
                 }
             }

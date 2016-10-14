@@ -7,9 +7,9 @@
         URL = require("../const/url"),
         defaultInterface = require("../service/defaultInterface"),
         translate = require("../service/translate"),
-        Chart = require('chart.js')
-        <% if (props.loginsys) { %>simpleStorage = require("simpleStorage.js")
-        <% } %>;
+        <% if (props.loginsys) { %>simpleStorage = require("simpleStorage.js"),
+        <% } %>
+        Chart = require('chart.js');
 
     window.jQuery = $;
     require("bootstrap-sass");
@@ -27,6 +27,24 @@
             initDataTable();
             registerInteraction();
         };
+
+    <% 
+        var existDateCol = false;
+        var existValueCol = false;
+        for (var i in table.columns) { 
+            var col = table.columns[i];
+
+            if (col.javaType === "Date") {
+                existDateCol = true;
+            }
+
+            if (col.extra !== "auto_increment" 
+                && !col.referencedTable 
+                && ["Double", "double", "Long", "long"].indexOf(col.javaType) > -1) {
+                existValueCol = true;
+            }
+        }
+    %>
         
         var initDataTable = function() {
             _dataTable = $('#list').DataTable({
@@ -55,8 +73,8 @@
                             });
 
                             translate.datatable("#list", "<%= table.className %>");
-
-                            renderCharts(resp.Data);
+                        <% if (existDateCol && existValueCol) { %>
+                            renderCharts(resp.Data);<% } %>
 
                             <% if (props.loginsys) { %>
                         } else if (resp.Code === 33) {
@@ -107,25 +125,6 @@
             return dataSet;
 
         };
-
-    <% 
-        var existDateCol = false;
-        var existValueCol = false;
-        for (var i in table.columns) { 
-            var col = table.columns[i];
-
-            if (col.javaType === "Date") {
-                existDateCol = true;
-            }
-
-            if (col.extra !== "auto_increment" 
-                && !col.referencedTable 
-                && ["Double", "double", "Long", "long"].indexOf(col.javaType) > -1) {
-                existValueCol = true;
-            }
-        }
-    %>
-
     <% if (existDateCol && existValueCol) { %>
 
         var renderCharts = function (list<%= table.className %>) {
@@ -222,8 +221,7 @@
             return dataSet;
         };
 
-    <% } %>
-        
+    <% } %>      
         var registerInteraction = function() {
             $(document).on("click", "#list tbody tr", function(){
                 location.href = "persist<%= table.className %>.html?id=" + _dataTable.row(this).data()[<%= columnPrimaryKey %>];

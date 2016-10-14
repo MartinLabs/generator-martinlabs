@@ -258,7 +258,7 @@ for (var i in table.NtoNcolumns) { var col = table.NtoNcolumns[i]; %>
             });
             
             $(".datetime").datetimepicker({
-                locale: "pt-br"
+                locale: translate.data.language
             });
         };
         

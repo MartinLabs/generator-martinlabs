@@ -1,4 +1,5 @@
 {
+    "language": "en-us",
     "app": {
         "title": "<%= modulenameUpper %>",
         "logout": "Logout",
