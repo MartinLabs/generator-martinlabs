@@ -31,7 +31,30 @@ var words = ['lorem', 'ipsum', 'dolor', 'sit', 'amet', 'consectetur',
 
 var separators = [" ", ", ", ". "];
 
-module.exports = function(maxsize) {
+var urls = [
+	"http://www.martinlabs.com.br",
+	"https://github.com/MartinLabs",
+	"https://www.facebook.com/martinlabsdev",
+	"https://github.com/melanke",
+	"http://melanke.deviantart.com",
+	"https://twitter.com/melanke",
+	"http://ulige.com.br",
+	"http://www.naosalvo.com.br/",
+	"https://www.reddit.com/r/gifs",
+	"https://www.youtube.com/cozinhaulige",
+	"https://www.youtube.com/cidcidoso",
+	"https://en.wikipedia.org/wiki/Programming_paradigm",
+	"https://en.wikipedia.org/wiki/Mobile_application_development",
+	"https://en.wikipedia.org/wiki/Mussum",
+	"http://www.uol.com.br/",
+	"http://g1.globo.com/"
+];
+
+var lorem = function(maxsize) {
+	if (maxsize === 1) {
+		return words[Math.floor(Math.random() * words.length)];
+	}
+
 	var pretext = "";
 	var text = "";
 	while (pretext.length < maxsize) {
@@ -46,3 +69,9 @@ module.exports = function(maxsize) {
 
 	return text;
 };
+
+lorem.url = function() {
+	return urls[Math.floor(Math.random() * urls.length)];
+};
+
+module.exports = lorem;

@@ -111,6 +111,66 @@ module.exports = yeoman.generators.Base.extend({
         }
     },
 
+    promptColumnNamePatters: function () {
+        var done = this.async();
+
+        var prompts = [{
+            type: 'confirm',
+            name: 'configureColumnNamePattern',
+            message: "Do you want to configure column names pattern? It's " + (this.props.columnNamePatterns ? "Already configured" : "Not configured"),
+            default: this.props.columnNamePatterns == null
+        }];
+
+        this.prompt(prompts, function (props) {
+            if (props.configureColumnNamePattern) {
+
+                if (!this.props.columnNamePatterns) {
+                    this.props.columnNamePatterns = {};
+                }
+
+                prompts = [{
+                    type: 'input',
+                    name: 'emailCNP',
+                    message: 'Email: a string that represents an e-mail. Enter a Regex to Match, case insensitive',
+                    default: this.props.columnNamePatterns.email || "\\w*email\\w*"
+                },{
+                    type: 'input',
+                    name: 'passwordCNP',
+                    message: 'Password: a string that represents a password. Enter a Regex to Match, case insensitive',
+                    default: this.props.columnNamePatterns.password || "\\w*(password|senha)\\w*"
+                },{
+                    type: 'input',
+                    name: 'imageUrlCNP',
+                    message: 'Image URL: a string that represents an image URL. Enter a Regex to Match, case insensitive',
+                    default: this.props.columnNamePatterns.imageUrl || "\\w*url\\w*(image|photo|foto)\\w*|\\w*(image|photo|foto)\\w*url\\w*"
+                },{
+                    type: 'input',
+                    name: 'urlCNP',
+                    message: 'URL: a string that represents an URL, will be tested after Image URL. Enter a Regex to Match, case insensitive',
+                    default: this.props.columnNamePatterns.url || "\\w*url\\w*"
+                },{
+                    type: 'input',
+                    name: 'activeCNP',
+                    message: 'Active: a boolean that indicates if the row can be used, mimics a delete if it is false. Enter a Regex to Match, case insensitive',
+                    default: this.props.columnNamePatterns.active || "\\w*(active|ativo)\\w*"
+                }];
+
+                this.prompt(prompts, function (props) {
+                    this.props.columnNamePatterns.email = props.emailCNP;
+                    this.props.columnNamePatterns.password = props.passwordCNP;
+                    this.props.columnNamePatterns.imageUrl = props.imageUrlCNP;
+                    this.props.columnNamePatterns.url = props.urlCNP;
+                    this.props.columnNamePatterns.active = props.activeCNP;
+
+                    done();
+                }.bind(this));
+
+            } else {
+                done();
+            }
+        }.bind(this));
+    },
+
     saveConfig: function() {
         this.config.set("props", this.props);
         this.config.save();
@@ -562,6 +622,7 @@ module.exports = yeoman.generators.Base.extend({
                 col.propertyNameUpper = this._capitalizeFirstLetter(col.propertyName);
                 col.notIdPropertyName = this._notIdPkFk(col.propertyName);
                 col.notIdPropertyNameUpper = this._capitalizeFirstLetter(col.notIdPropertyName);
+                col.smartType = this._generateSmartType(col);
 
                 //putting column information on logintable
                 if (isLoginTable) {
@@ -1017,6 +1078,22 @@ module.exports = yeoman.generators.Base.extend({
             return index + 1;
         }
 
+        if (column.smartType === "email") {
+            return "\"" + lorem(1) + "@gmail.com\"";
+        }
+
+        if (column.smartType === "password") {
+            return "SHA1(SHA1(\"abcabc\"))";
+        }
+
+        if (column.smartType === "imageUrl") {
+            return "\"https://unsplash.it/600?image=" + Math.floor(Math.random() * 1000) + "\"";
+        }
+
+        if (column.smartType === "url") {
+            return "\"" + lorem.url() + "\"";
+        }
+
         if (["char", "varchar", "text"].indexOf(column.data_type) > -1) {
             return "\"" + lorem(column.character_maximum_length) + "\"";
         }
@@ -1045,6 +1122,37 @@ module.exports = yeoman.generators.Base.extend({
         }
 
         throw new Error("Unkown type " + column.data_type + " for " + column.column_name);
+    },
+
+    _generateSmartType: function(column) {
+
+        if (this._regexTestExactInsensitive(this.props.columnNamePatterns.active, column.column_name)) {
+            return "active";
+        }
+
+        else if (this._regexTestExactInsensitive(this.props.columnNamePatterns.email, column.column_name)) {
+            return "email";
+        }
+
+        else if (this._regexTestExactInsensitive(this.props.columnNamePatterns.password, column.column_name)) {
+            return "password";
+        }
+
+        else if (this._regexTestExactInsensitive(this.props.columnNamePatterns.imageUrl, column.column_name)) {
+            return "imageUrl";
+        }
+
+        else if (this._regexTestExactInsensitive(this.props.columnNamePatterns.url, column.column_name)) {
+            return "url";
+        }
+
+        return null;
+
+    },
+
+    _regexTestExactInsensitive: function(r, str) {
+        var match = str.match(new RegExp(r, "i"));
+        return match != null && str == match[0];
     },
 
     _camelCase: function(string) {

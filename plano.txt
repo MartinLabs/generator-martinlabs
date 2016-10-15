@@ -1,16 +1,20 @@
+- usar outro datetimepicker
+- enviar nome da coluna para ordenar e não a posição dela
 - nome do JS compilado deve ser main.js no lugar de <modulo>.js
-- enviar nome da coluna para ordenar e não a posição dela, ver se dá pra evitar o prepareDataSet
 - dao e model ficar num package geral, não do modulo
-- poder configurar padrões de nomes de variáveis de tipos "extendidos" (ativo, email, senha)
+- se a coluna for "ativo" poder inativa-la e não exibi-la no listar
+- se a coluna for "email" deve validar no persist
+- se a coluna for "password" deve fazer sha1 no js e sha1 no insert/update; se estiver em branco no update não alterar; não exibir no listar
+- se a coluna for "imageUrl" deve exibir uma imagem no listar
+- se a coluna for "url" deve validar no persist; no listar, ao clicar deve abrir nova aba
+- smartType para colocar NOW() no insert
+- ler comentario contendo "martinlabs-generator:ignore" e ignorar coluna
+- gerar testes unitários
 
 - atualizar o pom com martinlabs java commons, versão de java 1.8, remover node_modules
 - exportar em csv da tabela inteira (não só da tabela exibida)
 - em todos os WS além de token tem que enviar versão do client para validar se é muito antiga e sistema operacional
-- inativar entidade
 - gerar "esqueci a senha"
-- quando a tabela só tiver uma primary key e for tambem uma foreign key deve extende-la
 - ideia do koba: separar packages do ws em list, get, update
 - poder alterar "minha conta"
-- gerar testes unitários
 - gerar create.sql
-- poder declarar um arquivo com configurações avançadas para tabelas e colunas, dizendo para ignorar, não exibir, declarar um tipo inteligente (password, upload, date now, hidden, ignored, coluna de "ativo", entre outros)

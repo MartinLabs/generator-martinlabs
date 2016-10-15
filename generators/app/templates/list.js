@@ -52,7 +52,7 @@
                 language: translate.data.dataTable,
                 columns: [
                     <% for (var i in table.columns) { var c = table.columns[i]; %><%= i > 0 ? "," : "" %>
-                    { title: "<%= !c.referencedTable ? c.propertyName : c.notIdPropertyName %>" }<% } %>
+                    { data: "<%= !c.referencedTable ? c.propertyName : c.notIdPropertyName %>", title: "<%= !c.referencedTable ? c.propertyName : c.notIdPropertyName %>" }<% } %>
                 ],
                 ajax: function(data, callback, settings) { 
 
@@ -102,24 +102,25 @@
             for (var i in list<%= table.className %>) {
                 var <%= table.classLowerCamel %> = list<%= table.className %>[i];
                 
-                dataSet.push([
+                dataSet.push({
             <% 
-            var columnPrimaryKey = 0; 
         	for (var i in table.columns) { 
                 var c = table.columns[i]; 
-                if (c.column_key === "PRI") {
-                    columnPrimaryKey = i;
-                }
                 %><%= i > 0 ? "," : "" %><%
-                if (!c.referencedTable) { 
+                if (!c.referencedTable) {
+                    if (c.javaType === "Date") {
                 %>
-                    <%= table.classLowerCamel %>.<%= c.propertyName %> != null ? <%= table.classLowerCamel %>.<%= c.propertyName %> : null<% 
+                    <%= c.propertyName %>: <%= table.classLowerCamel %>.<%= c.propertyName %> != null ? moment(<%= table.classLowerCamel %>.<%= c.propertyName %>).format(translate.data.dateFormat.minute) : null<% 
+                    } else {
+                %>
+                    <%= c.propertyName %>: <%= table.classLowerCamel %>.<%= c.propertyName %> != null ? <%= table.classLowerCamel %>.<%= c.propertyName %> : null<% 
+                    }
                 } else { %>
-                    <%= table.classLowerCamel %>.<%= c.notIdPropertyName %> != null && <%= table.classLowerCamel %>.<%= c.notIdPropertyName %>.<%= c.referencedTable.idColumn.propertyName %> != null ? <%= table.classLowerCamel %>.<%= c.notIdPropertyName %>.<%= c.referencedTable.idColumn.propertyName %> : null<% 
+                    <%= c.notIdPropertyName %>: <%= table.classLowerCamel %>.<%= c.notIdPropertyName %> != null && <%= table.classLowerCamel %>.<%= c.notIdPropertyName %>.<%= c.referencedTable.idColumn.propertyName %> != null ? <%= table.classLowerCamel %>.<%= c.notIdPropertyName %>.<%= c.referencedTable.idColumn.propertyName %> : null<% 
                 }
             }
             %>
-                ]);
+                });
             }
 
             return dataSet;
@@ -224,7 +225,7 @@
     <% } %>      
         var registerInteraction = function() {
             $(document).on("click", "#list tbody tr", function(){
-                location.href = "persist<%= table.className %>.html?id=" + _dataTable.row(this).data()[<%= columnPrimaryKey %>];
+                location.href = "persist<%= table.className %>.html?id=" + _dataTable.row(this).data().<%= c.propertyName %>;
             });
             
             $("#export").click(function() {
