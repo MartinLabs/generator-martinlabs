@@ -2,6 +2,7 @@ package <%= props.wsPackage %>;
 
 import <%= props.modelPackage %>.<%= table.className %>;
 import <%= props.processPackage %>.<%= table.className %>Process;
+import br.com.martinlabs.commons.ServletContent;
 import br.com.martinlabs.commons.exceptions.RespException;
 import br.com.martinlabs.commons.ServletWrapper;
 import javax.servlet.annotation.WebServlet;

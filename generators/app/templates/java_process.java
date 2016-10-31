@@ -159,14 +159,14 @@ for (var i in table.columns) {
     if (c.is_nullable === "NO" && (c.javaType === "String" || c.javaType === "Date")) { 
 %>
         if (<%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>() == null) {
-            throw new RespException(<%= c.ordinal_position %>,  LanguageHolder.instance.cannotBeNull("<%= c.propertyNameUpper %>"));
+            throw new RespException(<%= c.ordinal_position %>,  LanguageHolder.instance.cannotBeNull("<%= c.propertyNatural %>"));
         }<% 
     }
 
     if (c.javaType === "String") {
         %>
         if (<%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>().length() > <%= c.character_maximum_length %>) {
-            throw new RespException(<%= c.ordinal_position %>, LanguageHolder.instance.lengthCannotBeMoreThan("<%= c.propertyNameUpper %>", <%= c.character_maximum_length %>));
+            throw new RespException(<%= c.ordinal_position %>, LanguageHolder.instance.lengthCannotBeMoreThan("<%= c.propertyNatural %>", <%= c.character_maximum_length %>));
         }<%
     }
 } %>

@@ -69,22 +69,21 @@
         var t = tables[i]; 
         %><%= i > 0 ? "," : "" %>
         "<%= t.className %>": {
-            "title": "<%= t.className %>",
+            "title": "<%= t.classNatural %>",
             "columns": {<% 
         for (var j in t.columns) { 
             var c = t.columns[j]; 
             %><%= j > 0 ? "," : "" %><% 
             if (!c.referencedTable) {
         %>
-                "<%= c.propertyName %>": "<%= c.propertyName %>"<% 
+                "<%= c.propertyName %>": "<%= c.propertyNatural %>"<% 
             } else { %>
-                "<%= c.notIdPropertyName %>": "<%= c.notIdPropertyName %>"<% 
+                "<%= c.notIdPropertyName %>": "<%= c.notIdPropertyNatural %>"<% 
             }
         }
         %>
             }
-        }  
-    <% 
+        }<% 
     } 
     %>
     }

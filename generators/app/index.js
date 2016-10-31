@@ -595,6 +595,7 @@ module.exports = yeoman.generators.Base.extend({
             table.className = this._upperCamelCase(table.name);
             table.classUpper = table.className.toUpperCase();
             table.classLowerCamel = this._lowerCamelCase(table.name);
+            table.classNatural = this._naturalCase(table.className);
 
             //marks that this table should have List WS even if it's not choosen to be CRUD
             table.isReferenced = this.props.referencedTables.has(table.name);
@@ -620,7 +621,9 @@ module.exports = yeoman.generators.Base.extend({
                 col.resultSetGetter = this._generateResultSetGetter(col);
                 col.propertyName = this._lowerCamelCase(col.column_name);
                 col.propertyNameUpper = this._capitalizeFirstLetter(col.propertyName);
+                col.propertyNatural = this._naturalCase(col.propertyName);
                 col.notIdPropertyName = this._notIdPkFk(col.propertyName);
+                col.notIdPropertyNatural = this._naturalCase(col.notIdPropertyName);
                 col.notIdPropertyNameUpper = this._capitalizeFirstLetter(col.notIdPropertyName);
                 col.smartType = this._generateSmartType(col);
 
@@ -1159,6 +1162,10 @@ module.exports = yeoman.generators.Base.extend({
         return string.replace(/_([a-z])/g, function (g) { 
             return g[1].toUpperCase();
         });
+    },
+
+    _naturalCase: function(string) {
+        return this._capitalizeFirstLetter(string.replace(/\.?([A-Z]+)/g, " $1").replace(/^\s/, ""));
     },
 
     _lowerCamelCase: function(string) {
