@@ -50,11 +50,6 @@ module.exports = yeoman.generators.Base.extend({
             message: 'Input the Tables Names separated by comma (or "all tables") ',
             default: this.props.tables ? this.props.tables : "all tables"
         },{
-            type: 'input',
-            name: 'datasource',
-            message: 'Input the Datasource Name',
-            default: this.props.datasource
-        },{
             type: 'confirm',
             name: 'runNpm',
             message: 'Do you want to Install the NPM Dependencies?',
@@ -72,7 +67,6 @@ module.exports = yeoman.generators.Base.extend({
             this.props.password = props.password;
             this.props.database = props.database;
             this.props.tables = props.tables;
-            this.props.datasource = props.datasource;
             this.props.runNpm = props.runNpm
             this.props.loginsys = props.loginsys;
 
@@ -252,18 +246,19 @@ module.exports = yeoman.generators.Base.extend({
     generateProjectProps: function() {
         //TODO: o Model todo vai ficar no mesmo package, não no package do modulo
 
-        this.props.javaFolder = "src/main/java/"+this.props.package.replace(/\./g, '\/')+"/" + this.props.modulename;
-        this.props.daoPackage = this.props.package + "." + this.props.modulename + ".dao";
+        this.props.javaFolder = "src/main/java/"+this.props.package.replace(/\./g, '\/');
+        this.props.daoPackage = this.props.package + ".dao";
         this.props.daoFolder = this.props.javaFolder + "/dao";
         this.props.processPackage = this.props.package + "." + this.props.modulename + ".process";
-        this.props.processFolder = this.props.javaFolder + "/process";
-        this.props.modelPackage = this.props.package + "." + this.props.modulename + ".model";
+        this.props.processFolder = this.props.javaFolder + "/" + this.props.modulename + "/process";
+        this.props.modelPackage = this.props.package + ".model";
         this.props.modelFolder = this.props.javaFolder + "/model";
         this.props.responsePackage = this.props.package + "." + this.props.modulename + ".response";
-        this.props.responseFolder = this.props.javaFolder + "/response";
+        this.props.responseFolder = this.props.javaFolder + "/" + this.props.modulename + "/response";
         this.props.wsPackage = this.props.package + "." + this.props.modulename + ".ws";
-        this.props.wsFolder = this.props.javaFolder + "/ws";
+        this.props.wsFolder = this.props.javaFolder + "/" + this.props.modulename + "/ws";
         this.props.modulenameUpper = this._capitalizeFirstLetter(this.props.modulename);
+        this.props.datasource = "jdbc/" + this.props.database + "DS";
 
         if (this.props.tables !== "all tables") {
             this.props.crudTables = this.props.tables.replace(/ /g, "").split(",");
