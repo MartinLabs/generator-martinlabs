@@ -1,3 +1,4 @@
+- não perguntar datasource
 - gerar watch no grunt
 - um JS no service para fazer as requisições, todos passam por ele (inclur o bodyRequest bele)
 - usar outro datetimepicker

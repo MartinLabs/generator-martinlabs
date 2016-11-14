@@ -225,7 +225,7 @@
     <% } %>      
         var registerInteraction = function() {
             $(document).on("click", "#list tbody tr", function(){
-                location.href = "persist<%= table.className %>.html?id=" + _dataTable.row(this).data().<%= c.propertyName %>;
+                location.href = "persist<%= table.className %>.html?id=" + _dataTable.row(this).data().<%= table.idColumn.propertyName %>;
             });
             
             $("#export").click(function() {
