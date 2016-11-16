@@ -430,7 +430,7 @@ module.exports = yeoman.generators.Base.extend({
                 if (bta.groupId[0] === b.groupId[0] && bta.artifactId[0] === b.artifactId[0]) {
                     exist = true;
 
-                    if (bta.configuration[0].source) {
+                    if (bta.configuration && bta.configuration.length && bta.configuration[0].source) {
                         b.configuration[0].source = bta.configuration[0].source;
                         b.configuration[0].target = bta.configuration[0].target;
                     }
@@ -1119,7 +1119,10 @@ module.exports = yeoman.generators.Base.extend({
 
         var metaInfCtxAsXml = new xml2js.Builder().buildObject(this.props.metaInfCtx);
         try {
-            fs.mkdirSync(this.destinationRoot() + "/src/main/webapp/META-INF/");
+            fs.mkdirSync(this.destinationRoot() + "/src");
+            fs.mkdirSync(this.destinationRoot() + "/src/main");
+            fs.mkdirSync(this.destinationRoot() + "/src/main/webapp");
+            fs.mkdirSync(this.destinationRoot() + "/src/main/webapp/META-INF");
         } catch (e) {}
         fs.writeFileSync(this.destinationRoot() + "/src/main/webapp/META-INF/context.xml", metaInfCtxAsXml, "utf8");
     },
