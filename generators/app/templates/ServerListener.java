@@ -1,4 +1,4 @@
-package <%= processPackage %>;
+package <%= package %>;
 
 import br.com.martinlabs.commons.LanguageHolder;
 import br.com.martinlabs.commons.EnglishLanguage;

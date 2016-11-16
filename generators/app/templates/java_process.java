@@ -33,127 +33,130 @@ import <%= props.daoPackage %>.<%= c.otherTable.className %>Dao;<%
     }
 } 
 %>
-import br.com.martinlabs.commons.OpResponse;
-import br.com.martinlabs.commons.OpResponsePaginado;
-import br.com.martinlabs.commons.TransacProcess;
 import br.com.martinlabs.commons.exceptions.RespException;
 import com.google.common.base.Strings;
 import java.util.List;
 import br.com.martinlabs.commons.LanguageHolder;
+import br.com.martinlabs.commons.PagedResp;
+import java.sql.Connection;
+
 /**
  *
  * @author martinlabs CRUD generator
  */
-public class <%= table.className %>Process extends TransacProcess {
-<% if (props.loginsys) { %>
-    LoginServices loginS = new LoginServices();
+public class <%= table.className %>Process {
+
+    private Connection con;<% 
+if (props.loginsys) { %>
+    private LoginServices loginS;
 <% } %>
-    public <%= table.className %>Process() {
-        super("<%= props.datasource %>");
+    public <%= table.className %>Process(Connection con) {
+        this.con = con;<% 
+if (props.loginsys) { %>
+        loginS = new LoginServices(con);
+<% } %>
     }
 
-    public OpResponse<List<<%= table.className %>>> list(<% if (props.loginsys) { %>
+    public PagedResp<<%= table.className %>> list(<% if (props.loginsys) { %>
         String token, <% } %>
         String search,
         Integer start,
         Integer length,
         Integer orderColumn,
-        String orderDir) throws RespException {
-        return open(con -> {<% 
-        if (props.loginsys) { %>
-            loginS.allowAccess(con, token);
-        <% } %>
-            <%= table.className %>Dao dao = new <%= table.className %>Dao(con);
+        String orderDir) {
+        
+    <% if (props.loginsys) { %>
+        loginS.allowAccess(token);
+    <% } %>
+        <%= table.className %>Dao dao = new <%= table.className %>Dao(con);
 
-            List<<%= table.className %>> list<%= table.className %> = dao.list(search, start, length, orderColumn, orderDir);
+        List<<%= table.className %>> list<%= table.className %> = dao.list(search, start, length, orderColumn, orderDir);
 
-            OpResponsePaginado resp = new OpResponsePaginado<>(list<%= table.className %>);
+        PagedResp resp = new PagedResp<>(list<%= table.className %>);
 
-            resp.setQuantidadeTotal(dao.count());
-            if (!Strings.isNullOrEmpty(search)) {
-                resp.setQuantidadeFiltrada(dao.count(search));
-            } else {
-                resp.setQuantidadeFiltrada(resp.getQuantidadeTotal());
-            }
-
-            return resp;
-        });
-    }
-
-    public OpResponse<<%= table.className %>Resp> get(long id<% if (props.loginsys) { %>, String token<% } %>) throws RespException {
-        return open(con -> {<% 
-    if (props.loginsys) { 
-    %>
-            loginS.allowAccess(con, token);
-    <% 
-    }
-     
-    antiRepeat = [];
-    antiRepeat.push(table.className);
-    %>
-            <%= table.className %>Dao <%= table.classLowerCamel %>Dao = new <%= table.className %>Dao(con);<% 
-
-    for (var i in table.columns) { 
-        var c = table.columns[i]; 
-        if (c.referencedTable && antiRepeat.indexOf(c.referencedTable.className) < 0) {
-            antiRepeat.push(c.referencedTable.className);
-    %>
-            <%= c.referencedTable.className %>Dao <%= c.referencedTable.classLowerCamel %>Dao = new <%= c.referencedTable.className %>Dao(con);<%
+        resp.setRecordsTotal(dao.count());
+        if (!Strings.isNullOrEmpty(search)) {
+            resp.setRecordsFiltered(dao.count(search));
+        } else {
+            resp.setRecordsFiltered(resp.getRecordsTotal());
         }
+
+        return resp;
     }
 
-    for (var i in table.NtoNcolumns) { 
-        var c = table.NtoNcolumns[i]; 
-        if (antiRepeat.indexOf(c.otherTable.className) < 0) {
-            antiRepeat.push(c.otherTable.className);
-    %>
-            <%= c.NtoNtable.className %>Dao <%= c.NtoNtable.classLowerCamel %>Dao = new <%= c.NtoNtable.className %>Dao(con);
-            <%= c.otherTable.className %>Dao <%= c.otherTable.classLowerCamel %>Dao = new <%= c.otherTable.className %>Dao(con);<%
-        }
+    public <%= table.className %>Resp get(long id<% if (props.loginsys) { %>, String token<% } %>) {
+        
+<% if (props.loginsys) { 
+%>
+        loginS.allowAccess(token);
+<% 
+}
+ 
+antiRepeat = [];
+antiRepeat.push(table.className);
+%>
+        <%= table.className %>Dao <%= table.classLowerCamel %>Dao = new <%= table.className %>Dao(con);<% 
+
+for (var i in table.columns) { 
+    var c = table.columns[i]; 
+    if (c.referencedTable && antiRepeat.indexOf(c.referencedTable.className) < 0) {
+        antiRepeat.push(c.referencedTable.className);
+%>
+        <%= c.referencedTable.className %>Dao <%= c.referencedTable.classLowerCamel %>Dao = new <%= c.referencedTable.className %>Dao(con);<%
     }
-    %>
-            <%= table.className %>Resp resp = new <%= table.className %>Resp();
+}
 
-            if (id > 0) {
-                <%= table.className %> <%= table.classLowerCamel %> = <%= table.classLowerCamel %>Dao.get(id);
-                resp.set<%= table.className %>(<%= table.classLowerCamel %>);<% 
-            for (var i in table.NtoNcolumns) { 
-                var c = table.NtoNcolumns[i]; 
-            %>
-                <%= table.classLowerCamel %>.set<%= c.NtoNtable.className %>(<%= c.NtoNtable.classLowerCamel %>Dao.list<%= c.otherTable.className %>Of<%= table.className %>(id));
-            <% 
-            } 
-            %>
-            }<% 
+for (var i in table.NtoNcolumns) { 
+    var c = table.NtoNcolumns[i]; 
+    if (antiRepeat.indexOf(c.otherTable.className) < 0) {
+        antiRepeat.push(c.otherTable.className);
+%>
+        <%= c.NtoNtable.className %>Dao <%= c.NtoNtable.classLowerCamel %>Dao = new <%= c.NtoNtable.className %>Dao(con);
+        <%= c.otherTable.className %>Dao <%= c.otherTable.classLowerCamel %>Dao = new <%= c.otherTable.className %>Dao(con);<%
+    }
+}
+%>
+        <%= table.className %>Resp resp = new <%= table.className %>Resp();
 
-    antiRepeat = [];
-    for (var j in table.columns) { 
-        var cx = table.columns[j]; 
-        if (cx.referencedTable && antiRepeat.indexOf(cx.referencedTable.className) < 0) {
-            antiRepeat.push(cx.referencedTable.className);
-    %>
-            resp.setAll<%= cx.referencedTable.className %>(<%= cx.referencedTable.classLowerCamel %>Dao.list());
-    <%
-        }
+        if (id > 0) {
+            <%= table.className %> <%= table.classLowerCamel %> = <%= table.classLowerCamel %>Dao.get(id);
+            resp.set<%= table.className %>(<%= table.classLowerCamel %>);<% 
+        for (var i in table.NtoNcolumns) { 
+            var c = table.NtoNcolumns[i]; 
+        %>
+            <%= table.classLowerCamel %>.set<%= c.NtoNtable.className %>(<%= c.NtoNtable.classLowerCamel %>Dao.list<%= c.otherTable.className %>Of<%= table.className %>(id));
+        <% 
+        } 
+        %>
+        }<% 
+
+antiRepeat = [];
+for (var j in table.columns) { 
+    var cx = table.columns[j]; 
+    if (cx.referencedTable && antiRepeat.indexOf(cx.referencedTable.className) < 0) {
+        antiRepeat.push(cx.referencedTable.className);
+%>
+        resp.setAll<%= cx.referencedTable.className %>(<%= cx.referencedTable.classLowerCamel %>Dao.list());
+<%
+    }
+}
+
+antiRepeat = [];
+for (var j in table.NtoNcolumns) { 
+    var cx = table.NtoNcolumns[j]; 
+    if (antiRepeat.indexOf(c.otherTable.className) < 0) {
+        antiRepeat.push(cx.otherTable.className);
+%>
+        resp.setAll<%= cx.otherTable.className %>(<%= cx.otherTable.classLowerCamel %>Dao.list());
+<%
+    }
+}
+%>
+
+        return resp;
     }
 
-    antiRepeat = [];
-    for (var j in table.NtoNcolumns) { 
-        var cx = table.NtoNcolumns[j]; 
-        if (antiRepeat.indexOf(c.otherTable.className) < 0) {
-            antiRepeat.push(cx.otherTable.className);
-    %>
-            resp.setAll<%= cx.otherTable.className %>(<%= cx.otherTable.classLowerCamel %>Dao.list());
-    <%
-        }
-    }
-    %>
-
-            return new OpResponse<>(resp);
-        });
-    }
-
-    public OpResponse<Long> persist(<%= table.className %> <%= table.classLowerCamel %><% if (props.loginsys) { %>, String token<% } %>) throws RespException {<% 
+    public Long persist(<%= table.className %> <%= table.classLowerCamel %><% if (props.loginsys) { %>, String token<% } %>) {<% 
 for (var i in table.columns) { 
     var c = table.columns[i]; 
     if (c.is_nullable === "NO" && (c.javaType === "String" || c.javaType === "Date")) { 
@@ -171,48 +174,46 @@ for (var i in table.columns) {
     }
 } %>
 
-        return open(con -> {<% 
-        if (props.loginsys) { %>
-            loginS.allowAccess(con, token);
-        <% } %>
-            <%= table.className %>Dao dao = new <%= table.className %>Dao(con);
+    <% if (props.loginsys) { %>
+        loginS.allowAccess(token);
+    <% } %>
+        <%= table.className %>Dao dao = new <%= table.className %>Dao(con);
 
-            long id<%= table.className %>;
-            if (<%= table.classLowerCamel %>.get<%= table.idColumn.propertyNameUpper %>() > 0) {
-                id<%= table.className %> = <%= table.classLowerCamel %>.get<%= table.idColumn.propertyNameUpper %>();
+        long id<%= table.className %>;
+        if (<%= table.classLowerCamel %>.get<%= table.idColumn.propertyNameUpper %>() > 0) {
+            id<%= table.className %> = <%= table.classLowerCamel %>.get<%= table.idColumn.propertyNameUpper %>();
+            
+            int affectedRows = dao.update(<%= table.classLowerCamel %>);
+
+            if (affectedRows == 0) {
+                throw new RespException(LanguageHolder.instance.unexpectedError());
+            }
+        } else {
+            id<%= table.className %> = dao.insert(<%= table.classLowerCamel %>);
+            <%= table.classLowerCamel %>.set<%= table.idColumn.propertyNameUpper %>(id<%= table.className %>);
+
+            if (id<%= table.className %> == 0) {
+                throw new RespException(LanguageHolder.instance.unexpectedError());
+            }
+        }
+
+    <% for (var i in table.NtoNcolumns) { var col = table.NtoNcolumns[i]; %>
+        <%= col.NtoNtable.className %>Dao <%= col.NtoNtable.classLowerCamel %>Dao = new <%= col.NtoNtable.className %>Dao(con);
+    
+        <%= col.NtoNtable.classLowerCamel %>Dao.removeAllFrom<%= table.className %>(id<%= table.className %>);
+        
+        if (<%= table.classLowerCamel %>.get<%= col.NtoNtable.className %>() != null) {
+            for (<%= col.otherTable.className %> <%= col.otherTable.classLowerCamel %> : <%= table.classLowerCamel %>.get<%= col.NtoNtable.className %>()) {
+                int affectedRows = <%= col.NtoNtable.classLowerCamel %>Dao.insert(<%= col.otherTable.classLowerCamel %>.get<%= col.otherTable.idColumn.propertyNameUpper %>(), id<%= table.className %>);
                 
-                int affectedRows = dao.update(<%= table.classLowerCamel %>);
-
                 if (affectedRows == 0) {
                     throw new RespException(LanguageHolder.instance.unexpectedError());
                 }
-            } else {
-                id<%= table.className %> = dao.insert(<%= table.classLowerCamel %>);
-                <%= table.classLowerCamel %>.set<%= table.idColumn.propertyNameUpper %>(id<%= table.className %>);
-
-                if (id<%= table.className %> == 0) {
-                    throw new RespException(LanguageHolder.instance.unexpectedError());
-                }
             }
+        }
+    <% } %>
 
-        <% for (var i in table.NtoNcolumns) { var col = table.NtoNcolumns[i]; %>
-            <%= col.NtoNtable.className %>Dao <%= col.NtoNtable.classLowerCamel %>Dao = new <%= col.NtoNtable.className %>Dao(con);
-        
-            <%= col.NtoNtable.classLowerCamel %>Dao.removeAllFrom<%= table.className %>(id<%= table.className %>);
-            
-            if (<%= table.classLowerCamel %>.get<%= col.NtoNtable.className %>() != null) {
-                for (<%= col.otherTable.className %> <%= col.otherTable.classLowerCamel %> : <%= table.classLowerCamel %>.get<%= col.NtoNtable.className %>()) {
-                    int affectedRows = <%= col.NtoNtable.classLowerCamel %>Dao.insert(<%= col.otherTable.classLowerCamel %>.get<%= col.otherTable.idColumn.propertyNameUpper %>(), id<%= table.className %>);
-                    
-                    if (affectedRows == 0) {
-                        throw new RespException(LanguageHolder.instance.unexpectedError());
-                    }
-                }
-            }
-        <% } %>
-
-            return new OpResponse<>(id<%= table.className %>);
-        });
+        return id<%= table.className %>;
     }
 
 }

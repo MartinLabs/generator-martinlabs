@@ -9,8 +9,18 @@
             30
         </session-timeout>
     </session-config>
+
+    <servlet>
+        <servlet-name>javax.ws.rs.core.Application</servlet-name>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>javax.ws.rs.core.Application</servlet-name>
+        <url-pattern>/ws/*</url-pattern>
+    </servlet-mapping>
+
     
     <listener>
-        <listener-class><%= processPackage %>.ServerListener</listener-class>
+        <listener-class><%= package %>.ServerListener</listener-class>
     </listener>
 </web-app>

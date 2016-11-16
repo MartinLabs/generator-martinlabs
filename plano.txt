@@ -1,7 +1,6 @@
 - gerar watch no grunt
 - um JS no service para fazer as requisições, todos passam por ele (inclur o bodyRequest nele)
 - usar mascara em vez de datepicker, e diferenciar data de datahora pelo tipo no mysql
-- usar jersey
 - usar vue.js
 
 - se a coluna for "ativo" poder inativa-la e não exibir a linha inativa no listar
@@ -13,7 +12,6 @@
 - ler comentario contendo "martinlabs-generator:ignore" e ignorar coluna
 - gerar testes unitários
 
-- atualizar o pom com martinlabs java commons, versão de java 1.8, remover node_modules
 - exportar em csv da tabela inteira (não só da tabela exibida)
 - em todos os WS além de token tem que enviar versão do client para validar se é muito antiga e sistema operacional
 - gerar "esqueci a senha"

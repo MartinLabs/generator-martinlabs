@@ -176,11 +176,39 @@ module.exports = yeoman.generators.Base.extend({
 
         fs.readFile(this.destinationRoot() + '/pom.xml', function(err, data) {
             xml2js.parseString(data, function (err, result) {
-                self.props.package = result.project.groupId[0];
+                if (result) {
+                    self.props.pom = result;
+                    self.props.package = result.project.groupId[0];
+                    self.props.projectName = result.project.artifactId[0];
+                }
+
                 done();
             });
         });
 
+    },
+
+    promptPomMissingInfo: function() {
+        if (!this.props.package || !this.props.projectName) {
+            var done = this.async();
+
+            var prompts = [{
+                type: 'input',
+                name: 'projectName',
+                message: 'Input the Project Name'
+            },{
+                type: 'input',
+                name: 'package',
+                message: 'Input the Package'
+            }];
+
+            this.prompt(prompts, function (props) {
+                this.props.package = props.package;
+                this.props.projectName = props.projectName;
+
+                done();
+            }.bind(this));
+        }
     },
 
     readMetaInfCtx: function() {
@@ -244,19 +272,19 @@ module.exports = yeoman.generators.Base.extend({
     },
 
     generateProjectProps: function() {
-        //TODO: o Model todo vai ficar no mesmo package, não no package do modulo
-
         this.props.javaFolder = "src/main/java/"+this.props.package.replace(/\./g, '\/');
         this.props.daoPackage = this.props.package + ".dao";
         this.props.daoFolder = this.props.javaFolder + "/dao";
-        this.props.processPackage = this.props.package + "." + this.props.modulename + ".process";
-        this.props.processFolder = this.props.javaFolder + "/" + this.props.modulename + "/process";
         this.props.modelPackage = this.props.package + ".model";
         this.props.modelFolder = this.props.javaFolder + "/model";
-        this.props.responsePackage = this.props.package + "." + this.props.modulename + ".response";
-        this.props.responseFolder = this.props.javaFolder + "/" + this.props.modulename + "/response";
-        this.props.wsPackage = this.props.package + "." + this.props.modulename + ".ws";
-        this.props.wsFolder = this.props.javaFolder + "/" + this.props.modulename + "/ws";
+        this.props.modulePackage = this.props.package + "." + this.props.modulename;
+        this.props.moduleFolder = this.props.javaFolder + "/" + this.props.modulename;
+        this.props.processPackage = this.props.modulePackage + ".process";
+        this.props.processFolder = this.props.moduleFolder + "/process";
+        this.props.responsePackage = this.props.modulePackage + ".response";
+        this.props.responseFolder = this.props.moduleFolder + "/response";
+        this.props.wsPackage = this.props.modulePackage + ".ws";
+        this.props.wsFolder = this.props.moduleFolder + "/ws";
         this.props.modulenameUpper = this._capitalizeFirstLetter(this.props.modulename);
         this.props.datasource = "jdbc/" + this.props.database + "DS";
 
@@ -267,6 +295,153 @@ module.exports = yeoman.generators.Base.extend({
         }
 
         this.props.tables = [];
+    },
+
+    generatePom: function() {
+
+        if (!this.props.pom) {
+            this.props.pom = {
+                project: {
+                    "$": {
+                        xmlns: "http://maven.apache.org/POM/4.0.0",
+                        "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+                        "xsi:schemaLocation": "http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+                    },
+                    modelVersion: ["4.0.0"],
+                    groupId: [this.props.package],
+                    artifactId: [this.props.projectName],
+                    version: ["1.0.0"],
+                    packaging: ["war"],
+                    name: [this.props.projectName],
+                    properties: [{
+                        "endorsed.dir": ["${project.build.directory}/endorsed"],
+                        "project.build.sourceEncoding": ["UTF-8"]
+                    }]
+                }
+            };
+        }
+
+        if (!this.props.pom.project.dependencies) {
+            this.props.pom.project.dependencies = [{}];
+        }
+
+        if (!this.props.pom.project.dependencies[0].dependency) {
+            this.props.pom.project.dependencies[0].dependency = [];
+        }
+
+        var dependenciesToAdd = [{
+            groupId: ["br.com.martinlabs"],
+            artifactId: ["martinlabs-commons"],
+            version: ["3.4"],
+            type: ["jar"]
+        }, {
+            groupId: ["org.glassfish.jersey.containers"],
+            artifactId: ["jersey-container-servlet"],
+            version: ["2.15"]
+        }, {
+            groupId: ["org.zalando.phrs"],
+            artifactId: ["jersey-media-json-gson"],
+            version: ["0.1"]
+        }, {
+            groupId: ["javax"],
+            artifactId: ["javaee-web-api"],
+            version: ["7.0"],
+            scope: ["provided"]
+        }];
+        
+        for (var i in dependenciesToAdd) {
+            var dta = dependenciesToAdd[i];
+            var exist = false;
+            for (var j in this.props.pom.project.dependencies[0].dependency) {
+                var d = this.props.pom.project.dependencies[0].dependency[j];
+
+                if (dta.groupId[0] === d.groupId[0] && dta.artifactId[0] === d.artifactId[0]) {
+                    exist = true;
+                }
+            }
+
+            if (!exist) {
+                this.props.pom.project.dependencies[0].dependency.push(dta);
+            }
+        }
+
+        if (!this.props.pom.project.build) {
+            this.props.pom.project.build = [{}];
+        }
+
+        if (!this.props.pom.project.build[0].plugins) {
+            this.props.pom.project.build[0].plugins = [{}];
+        }
+
+        if (!this.props.pom.project.build[0].plugins[0].plugin) {
+            this.props.pom.project.build[0].plugins[0].plugin = [];
+        }
+
+        var pluginsToAdd = [{
+            groupId: ["org.apache.maven.plugins"],
+            artifactId: ["maven-compiler-plugin"],
+            version: ["3.1"],
+            configuration: [{
+                source: ["1.8"],
+                target: ["1.8"],
+                compilerArguments: [{
+                    endorseddirs: ["${endorsed.dir}"]
+                }]
+            }]
+        }, {
+            groupId: ["org.apache.maven.plugins"],
+            artifactId: ["maven-war-plugin"],
+            version: ["2.3"],
+            configuration: [{
+                failOnMissingWebXml: ["false"]
+            }]
+        }, {
+            groupId: ["org.apache.maven.plugins"],
+            artifactId: ["maven-dependency-plugin"],
+            version: ["2.6"],
+            executions: [{
+                execution: [{
+                    phase: ["validate"],
+                    goals: [{
+                        goal: ["copy"]
+                    }],
+                    configuration: [{
+                        outputDirectory: ["${endorsed.dir}"],
+                        silent: ["true"],
+                        artifactItems: [{
+                            artifactItem: [{
+                                groupId: ["javax"],
+                                artifactId: ["javaee-endorsed-api"],
+                                version: ["7.0"],
+                                type: ["jar"]
+                            }]
+                        }]
+                    }]
+                }]
+            }]
+        }];
+
+        for (var i in pluginsToAdd) {
+            var bta = pluginsToAdd[i];
+            var exist = false;
+            for (var j in this.props.pom.project.build[0].plugins[0].plugin) {
+                var b = this.props.pom.project.build[0].plugins[0].plugin[j];
+
+                if (bta.groupId[0] === b.groupId[0] && bta.artifactId[0] === b.artifactId[0]) {
+                    exist = true;
+
+                    if (bta.configuration[0].source) {
+                        b.configuration[0].source = bta.configuration[0].source;
+                        b.configuration[0].target = bta.configuration[0].target;
+                    }
+                }
+            }
+
+            if (!exist) {
+                this.props.pom.project.build[0].plugins[0].plugin.push(bta);
+            }
+        }
+
     },
 
     generateMetaInfCtx: function() {
@@ -670,12 +845,12 @@ module.exports = yeoman.generators.Base.extend({
 
             if (!table.isNtoNtable) {
                 if (table.inCrud) {
-                    this.props.urlConstants["LIST_"+table.classUpper] = "../" + this.props.modulenameUpper + "/List" + table.className;
+                    this.props.urlConstants["LIST_"+table.classUpper] = "../ws/" + this.props.modulenameUpper + "/" + table.className;
                 }
 
                 if (table.inCrud) {
-                    this.props.urlConstants["GET_"+table.classUpper] = "../" + this.props.modulenameUpper + "/Get" + table.className;
-                    this.props.urlConstants["PERSIST_"+table.classUpper] = "../" + this.props.modulenameUpper + "/Persist" + table.className;
+                    this.props.urlConstants["GET_"+table.classUpper] = "../ws/" + this.props.modulenameUpper + "/" + table.className;
+                    this.props.urlConstants["PERSIST_"+table.classUpper] = "../ws/" + this.props.modulenameUpper  + "/" + table.className;
                     
                     this.props.urlConstants.listPages[table.className] = "list"+table.className+".html";
                     this.props.urlConstants.persistPages[table.className] = "persist"+table.className+".html";
@@ -688,7 +863,22 @@ module.exports = yeoman.generators.Base.extend({
     writeJavaClasses: function () {
         this.fs.copyTpl(
             this.templatePath('ServerListener.java'),
-            this.destinationPath(this.props.processFolder+"/ServerListener.java"),
+            this.destinationPath(this.props.javaFolder+"/ServerListener.java"),
+            this.props);
+
+        this.fs.copyTpl(
+            this.templatePath('ErrorCode.java'),
+            this.destinationPath(this.props.javaFolder+"/ErrorCode.java"), 
+            this.props);
+
+        this.fs.copyTpl(
+            this.templatePath('GsonContextResolver.java'),
+            this.destinationPath(this.props.javaFolder+"/GsonContextResolver.java"), 
+            this.props);
+
+        this.fs.copyTpl(
+            this.templatePath('Router.java'),
+            this.destinationPath(this.props.moduleFolder+"/Router.java"), 
             this.props);
 
         for (var i in this.props.tables) {
@@ -730,21 +920,6 @@ module.exports = yeoman.generators.Base.extend({
                         this.destinationPath(this.props.responseFolder+"/"+table.className+"Resp.java"),
                         params);
 
-                    this.fs.copyTpl(
-                        this.templatePath('ws_get.java'),
-                        this.destinationPath(this.props.wsFolder+"/Get"+table.className+"Servlet.java"),
-                        params);
-
-                    this.fs.copyTpl(
-                        this.templatePath('ws_persist.java'),
-                        this.destinationPath(this.props.wsFolder+"/Persist"+table.className+"Servlet.java"),
-                        params);                    
-
-                    this.fs.copyTpl(
-                        this.templatePath('ws_list.java'),
-                        this.destinationPath(this.props.wsFolder+"/List"+table.className+"Servlet.java"),
-                        params);
-
                 }
             }
         }        
@@ -762,18 +937,8 @@ module.exports = yeoman.generators.Base.extend({
                 paramsLogin);
 
             this.fs.copyTpl(
-                this.templatePath('java_login_service.java'),
+                this.templatePath('LoginServices.java'),
                 this.destinationPath(this.props.processFolder+"/LoginServices.java"),
-                paramsLogin);
-
-            this.fs.copyTpl(
-                this.templatePath('ws_login.java'),
-                this.destinationPath(this.props.wsFolder+"/LoginServlet.java"),
-                paramsLogin);
-
-            this.fs.copyTpl(
-                this.templatePath('ErrorCode.java'),
-                this.destinationPath(this.props.processFolder+"/ErrorCode.java"),
                 paramsLogin);
         }
     },
@@ -947,14 +1112,16 @@ module.exports = yeoman.generators.Base.extend({
             this.destinationPath("src/main/webapp/WEB-INF/web.xml"),
             this.props);
 
-        var metaInfCtxAsXml = new xml2js.Builder().buildObject(this.props.metaInfCtx);
-        var xmlPath = this.destinationRoot() + "/src/main/webapp/META-INF/context.xml";
 
+        var pomAsXml = new xml2js.Builder().buildObject(this.props.pom);
+        fs.writeFileSync(this.destinationRoot() + "/pom.xml", pomAsXml, "utf8");
+
+
+        var metaInfCtxAsXml = new xml2js.Builder().buildObject(this.props.metaInfCtx);
         try {
             fs.mkdirSync(this.destinationRoot() + "/src/main/webapp/META-INF/");
         } catch (e) {}
-
-        fs.writeFileSync(xmlPath, metaInfCtxAsXml, "utf8");
+        fs.writeFileSync(this.destinationRoot() + "/src/main/webapp/META-INF/context.xml", metaInfCtxAsXml, "utf8");
     },
 
     installDependencies: function() {

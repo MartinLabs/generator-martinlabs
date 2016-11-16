@@ -18,21 +18,32 @@
         };
 
         var login = function(account, password) {
-            martinlabs.bodyRequest(URL.LOGIN, {
-                Account: account,
-                Password: martinlabs.sha1.hash(password)
+            post(URL.LOGIN, {
+                account: account,
+                password: martinlabs.sha1.hash(password)
             }, function(resp) {
 
-                if (resp.Success) {
-                    simpleStorage.set("token<%= modulenameUpper %>", resp.Data);
+                if (resp.success) {
+                    simpleStorage.set("token<%= modulenameUpper %>", resp.data);
                     location.href = URL.home;
                 } else {
-                    $.notify({ message: resp.Message },{
+                    $.notify({ message: resp.message },{
                         type: "danger",
                         placement: { align: "center" },
                         delay: 2000
                     });
                 }
+            });
+        };
+
+        var post = function(url, data, success) {
+            $.ajax({
+                type: "POST",
+                url: url,
+                processData: false,
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: success
             });
         };
         

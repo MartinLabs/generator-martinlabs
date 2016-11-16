@@ -49,20 +49,19 @@ for (var i in table.NtoNcolumns) {
         var requestContent = function() {
             var id = martinlabs.getParam("id") || 0;
             
-            $.get(URL.GET_<%= table.classUpper %>, {<% if (props.loginsys) { %> 
-                token: simpleStorage.get("token<%= props.modulenameUpper %>") || null,<% } %>
-                id: id
+            $.get(URL.GET_<%= table.classUpper %> + "/" + id, {<% if (props.loginsys) { %> 
+                token: simpleStorage.get("token<%= props.modulenameUpper %>") || null<% } %>
             },
             function(resp){
-                if (resp.Success) {
-                    _<%= table.classLowerCamel %> = resp.Data.<%= table.classLowerCamel %>;<% 
+                if (resp.success) {
+                    _<%= table.classLowerCamel %> = resp.data.<%= table.classLowerCamel %>;<% 
             antiRepeat = [];
             for (var i in table.columns) { 
                 var c = table.columns[i]; 
                 if (c.referencedTable && antiRepeat.indexOf(c.referencedTable.className) < 0) {
                     antiRepeat.push(c.referencedTable.className);
             %>
-                    _all<%= c.referencedTable.className %> = resp.Data.all<%= c.referencedTable.className %>;
+                    _all<%= c.referencedTable.className %> = resp.data.all<%= c.referencedTable.className %>;
             <% 
                 }
             }
@@ -72,16 +71,16 @@ for (var i in table.NtoNcolumns) {
                 if (antiRepeat.indexOf(c.otherTable.className) < 0) {
                     antiRepeat.push(c.otherTable.className);
             %>
-                    _all<%= c.otherTable.className %> = resp.Data.all<%= c.otherTable.className %>;
+                    _all<%= c.otherTable.className %> = resp.data.all<%= c.otherTable.className %>;
             <% 
                 }
             }
             %>
                     render();<% if (props.loginsys) { %>
-                } else if (resp.Code === 33) {
+                } else if (resp.code === 33) {
                     location.href = URL.login;<% } %>
                 } else {
-                    $.notify({ message: resp.Message },{
+                    $.notify({ message: resp.message },{
                         type: "danger",
                         placement: { align: "center" },
                         delay: 2000
@@ -94,14 +93,14 @@ for (var i in table.NtoNcolumns) {
         var persist = function() {
             extractFromFields();
             
-            martinlabs.bodyRequest(URL.PERSIST_<%= table.classUpper %>, {
-                <%= table.classLowerCamel %>: _<%= table.classLowerCamel %><% 
+            post(URL.PERSIST_<%= table.classUpper %>, {
+                content: _<%= table.classLowerCamel %><% 
             if (props.loginsys) { %>,
                 token: simpleStorage.get("token<%= props.modulenameUpper %>") || null<% } %>
             }, function(resp){
-                if (resp.Success) {
+                if (resp.success) {
                     if (!_<%= table.classLowerCamel %>.<%= table.idColumn.propertyName %>) {
-                        _<%= table.classLowerCamel %>.<%= table.idColumn.propertyName %> = resp.Data;
+                        _<%= table.classLowerCamel %>.<%= table.idColumn.propertyName %> = resp.data;
                     }
 
                     $.notify({ message: translate.data.app.persistedSuccessfully },{
@@ -114,16 +113,27 @@ for (var i in table.NtoNcolumns) {
                         location.href = URL.listPages.<%= table.className %>;
                     }, 2000);
                     <% if (props.loginsys) { %>
-                } else if (resp.Code === 33) {
+                } else if (resp.code === 33) {
                     location.href = URL.login;<% } %>
                 } else {
-                    $.notify({ message: resp.Message },{
+                    $.notify({ message: resp.message },{
                         type: "danger",
                         placement: { align: "center" },
                         delay: 2000
                     });
                 }
 
+            });
+        };
+
+        var post = function(url, data, success) {
+            $.ajax({
+                type: "POST",
+                url: url,
+                processData: false,
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: success
             });
         };
         
@@ -155,7 +165,7 @@ for (var i in table.columns) {
         } else if (c.javaType === "Date") { 
             %>
             aux = $("#input-<%= c.propertyName %>").data("DateTimePicker").date();
-            _<%= table.classLowerCamel %>.<%= c.propertyName %> = aux === null ? null : aux.format("YYYY-MM-DDTHH:mm:ss");<% 
+            _<%= table.classLowerCamel %>.<%= c.propertyName %> = aux === null ? null : aux.format();<% 
         } else { 
             %>
             _<%= table.classLowerCamel %>.<%= c.propertyName %> = $("#input-<%= c.propertyName %>").is(':checked');<% 
@@ -190,7 +200,7 @@ for (var i in table.columns) {
     if (c.extra !== "auto_increment" && !c.referencedTable) {
         if (c.javaType === "Date") {
 %>
-            $("#input-<%= c.propertyName %>").data("DateTimePicker").date(moment(_<%= table.classLowerCamel %>.<%= c.propertyName %>, "YYYY-MM-DDTHH:mm:ss"));<% 
+            $("#input-<%= c.propertyName %>").data("DateTimePicker").date(moment(_<%= table.classLowerCamel %>.<%= c.propertyName %>));<% 
         } else if (["Boolean", "boolean"].indexOf(c.javaType) > -1) { 
             %>
             $("#input-<%= c.propertyName %>").prop('checked', _<%= table.classLowerCamel %>.<%= c.propertyName %>);<% 

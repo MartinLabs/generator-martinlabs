@@ -9,7 +9,7 @@ for (var i in urlConstants) {
 
 if (loginsys) { 
     %>
-    LOGIN: "../<%= modulenameUpper %>/Login",
+    LOGIN: "../ws/<%= modulenameUpper %>/Login",
 
     login: "index.html",<%
 } %>

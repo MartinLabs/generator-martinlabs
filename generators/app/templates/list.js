@@ -65,22 +65,22 @@
                         orderDir: data.order[0].dir
                     },
                     function(resp){
-                        if (resp.Success) {
+                        if (resp.success) {
                             callback({
-                                recordsTotal: resp.QuantidadeTotal,
-                                recordsFiltered: resp.QuantidadeFiltrada,
-                                data: prepareTableDataSet(resp.Data)
+                                recordsTotal: resp.data.recordsTotal,
+                                recordsFiltered: resp.data.recordsFiltered,
+                                data: prepareTableDataSet(resp.data.list)
                             });
 
                             translate.datatable("#list", "<%= table.className %>");
                         <% if (existDateCol && existValueCol) { %>
-                            renderCharts(resp.Data);<% } %>
+                            renderCharts(resp.data);<% } %>
 
                             <% if (props.loginsys) { %>
-                        } else if (resp.Code === 33) {
+                        } else if (resp.code === 33) {
                             location.href = URL.login;<% } %>
                         } else {
-                            $.notify({ message: resp.Message },{
+                            $.notify({ message: resp.message },{
                                 type: "danger",
                                 placement: { align: "center" },
                                 delay: 2000

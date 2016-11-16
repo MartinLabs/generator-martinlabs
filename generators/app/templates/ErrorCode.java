@@ -1,4 +1,4 @@
-package <%= props.processPackage %>;
+package <%= package %>;
 
 /**
  *
