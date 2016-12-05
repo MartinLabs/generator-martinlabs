@@ -1,22 +1,4 @@
 $icon-font-path: "../fonts/";
 
-@import "fontAwesome.scss";
 @import "../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
-@import "../../../node_modules/ml-js-commons/datatables.scss";
-@import "../../../node_modules/ml-js-commons/datetimepicker.scss";
 @import "template.scss";
-
-body {
-    display: none; //defaultInterface will show again
-}
-
-a {
-    cursor: pointer;
-}
-
-.content-wrapper {
-    min-height: 916px;
-}
-
-//customized pages should have its own sass and whapping all css with it's #id declared in <body>
-@import "index.scss";

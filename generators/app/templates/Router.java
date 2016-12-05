@@ -1,5 +1,6 @@
 package <%= modulePackage %>;
 
+import br.com.martinlabs.commons.LanguageHolder;
 import br.com.martinlabs.commons.OpResp;
 import br.com.martinlabs.commons.OperationPipe;
 import br.com.martinlabs.commons.PagedResp;
@@ -10,7 +11,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;<% 
+import javax.ws.rs.core.MediaType;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ExceptionMapper;<% 
 
 if (loginsys) { 
 %>
@@ -35,7 +40,7 @@ import <%= modelPackage %>.<%= table.className %>;<%
  */
 @Path("/<%= modulenameUpper %>")
 @Produces(MediaType.APPLICATION_JSON)
-public class Router {
+public class Router implements ExceptionMapper<Throwable> {
 
     private OperationPipe pipe = new OperationPipe("<%= datasource %>");
 <% if (loginsys) { %>
@@ -68,14 +73,14 @@ for (var i in tables) {
     @Path("/<%= table.className %>")
     public OpResp<PagedResp<<%= table.className %>>> list<%= table.className %>(
             @QueryParam("token") String token,
-            @QueryParam("search") String search,
-            @QueryParam("start") Integer start,
-            @QueryParam("length") Integer length,
-            @QueryParam("orderColumn") Integer orderColumn,
-            @QueryParam("orderDir") String orderDir) {
+            @QueryParam("query") String query,
+            @QueryParam("page") Integer page,
+            @QueryParam("limit") Integer limit,
+            @QueryParam("orderBy") String orderRequest,
+            @QueryParam("ascending") Boolean asc) {
 
         return pipe.handle(con -> {
-            return new <%= table.className %>Process(con).list(token, search, start, length, orderColumn, orderDir);
+            return new <%= table.className %>Process(con).list(token, query, page, limit, orderRequest, asc != null && asc);
         });
     }
 
@@ -90,5 +95,15 @@ for (var i in tables) {
 <%
 	}
 }
-%>
+%>  
+    @Override
+    public Response toResponse(Throwable e) {
+        Logger.getLogger(Router.class.getName()).log(Level.SEVERE, e.getMessage(), e);
+        
+        return Response.status(200)
+            .entity("{\"success\": false, \"message\": \""+LanguageHolder.instance.invalidEntry()+"\"}")
+            .type(MediaType.APPLICATION_JSON)
+            .build();
+    }
+
 }

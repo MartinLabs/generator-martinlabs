@@ -6,6 +6,7 @@ import com.google.common.base.Strings;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
 
 /**
  *
@@ -47,38 +48,39 @@ public class <%= table.className %>Dao extends DaoWrapper {
     }
 
     public List<<%= table.className %>> list(
-        String search,
-        Integer start,
-        Integer length,
-        Integer orderColumn,
-        String orderDir){
+        String query,
+        Integer page,
+        Integer limit,
+        String orderRequest,
+        Boolean asc){
 
-        String[] cols = new String[]{<% for (var i in table.columns) { var c = table.columns[i]; %>
-            "<%= c.column_name %>"<%= (i < table.columns.length -1 ? ',' : '') %><% } %>
-        };
+        HashMap<String, String> orderRequestAndColumn = new HashMap<>();
+
+        <% for (var i in table.columns) { var c = table.columns[i]; %>
+        orderRequestAndColumn.put("<%= c.column_name %>", "<%= c.column_name %>");<% } %>
+
+        String orderColumn = orderRequestAndColumn.get(orderRequest);
 
         ArrayList<Object> params = new ArrayList<>();
         String where = "";
 
-        if (!Strings.isNullOrEmpty(search)) {
+        if (!Strings.isNullOrEmpty(query)) {
             where = "WHERE LOWER(CONCAT("
             <% for (var i in table.columns) { var c = table.columns[i]; %>
             + "IFNULL(<%= c.column_name %>, '')<%= (i < table.columns.length -1 ? ',' : '') %> "<% } %>
             +")) LIKE LOWER(?) ";
-            params.add("%" + search + "%");
+            params.add("%" + query + "%");
         }
 
-        params.add(start);
-        params.add(length);
-
+        params.add(page * limit);
+        params.add(limit);
 
         return selectList("SELECT "<% 
         for (var i in table.columns) { var c = table.columns[i]; %>
             + "<%= c.column_name + (i < table.columns.length -1 ? ',' : '') %> "<% } %>
             + "FROM <%= table.name %> "
             + where
-            + "ORDER BY " + cols[orderColumn] + " "
-            + (orderDir.equals("desc") ? "DESC " : "ASC ")
+            + (orderColumn != null ? "ORDER BY " + orderColumn + " " + (asc ? "ASC " : "DESC ") : "")
             + "LIMIT ?, ? ", 
         rs -> {
             <%= table.className %> <%= table.classLowerCamel %> = new <%= table.className %>();

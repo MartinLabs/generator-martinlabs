@@ -5,7 +5,7 @@ module.exports = function(grunt) {
         browserify: grunt.file.readJSON('browserify.json'),
         uglify: grunt.file.readJSON('uglify.json'),
         sass: grunt.file.readJSON('sass.json'),
-        cssmin: grunt.file.readJSON('cssmin.json'),
+        cssmin: grunt.file.readJSON('cssmin.json')
     });
 
     grunt.loadNpmTasks('grunt-browserify');

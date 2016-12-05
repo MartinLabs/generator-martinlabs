@@ -1,4 +1,4 @@
-{
+export default {
     "language": "en-us",
     "app": {
         "title": "<%= modulenameUpper %>",
@@ -6,31 +6,21 @@
         "menu": "Menu",
         "add": "Add",
         "export": "Export",
+        "select": "Select",
         "persistedSuccessfully": "Persisted Successfully!"
     },
     
     "dataTable": {
-        "sEmptyTable": "No data available in table",
-        "sInfo": "Showing _START_ to _END_ of _TOTAL_ entries",
-        "sInfoEmpty": "Showing 0 to 0 of 0 entries",
-        "sInfoFiltered": "(filtered from _MAX_ total entries)",
-        "sInfoPostFix": "",
-        "sInfoThousands": ",",
-        "sLengthMenu": "Show _MENU_ entries",
-        "sLoadingRecords": "Loading...",
-        "sProcessing": "Processing...",
-        "sSearch": "Search:",
-        "sZeroRecords": "No matching records found",
-        "oPaginate": {
-            "sFirst": "First",
-            "sLast": "Last",
-            "sNext": "Next",
-            "sPrevious": "Previous"
-        },
-        "oAria": {
-            "sSortAscending": ": activate to sort column ascending",
-            "sSortDescending": ": activate to sort column descending"
-        }
+        "count": "Showing {from} to {to} of {count} records|{count} records|One record",
+        "filter": "Filter Results:",
+        "filterPlaceholder": "Search query",
+        "limit": "Records:",
+        "noResults": "No matching records",
+        "page": "Page:",
+        "filterBy": "Filter by {column}",
+        "loading": "Loading...",
+        "defaultOption": "Select {column}"
+
     },
     
     "dateFormat": {
@@ -42,9 +32,21 @@
         "week": "YY/MM/DD",
         "month": "YY/MM/DD",
         "quarter": "YY/MM/DD",
-        "year": "YY/MM/DD"
+        "year": "YY/MM/DD",
+        "date": "YYYY/MM/DD",
+        "datetime": "YYYY/MM/DD hh:mm",
+        "time": "hh:mm",
+        "datemask": "####/##/##",
+        "datetimemask": "####/##/## ##:##"
+
     },
     
+    "boolean": {
+        "true": "True",
+        "false": "False"
+    },
+
+
     "login": {
         "title": "Login",
         "subtitle": "Please sign in",
@@ -60,7 +62,6 @@
 
     "persist": {
         "number": "Number",
-        "datetime": "Date and Time",
         "submit": "Submit"
     },
     
@@ -87,4 +88,4 @@
     } 
     %>
     }
-}
+};

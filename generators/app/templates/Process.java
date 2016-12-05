@@ -59,26 +59,26 @@ if (props.loginsys) { %>
 
     public PagedResp<<%= table.className %>> list(<% if (props.loginsys) { %>
         String token, <% } %>
-        String search,
-        Integer start,
-        Integer length,
-        Integer orderColumn,
-        String orderDir) {
+        String query,
+        Integer page,
+        Integer limit,
+        String orderRequest,
+        Boolean asc) {
         
     <% if (props.loginsys) { %>
         loginS.allowAccess(token);
     <% } %>
         <%= table.className %>Dao dao = new <%= table.className %>Dao(con);
 
-        List<<%= table.className %>> list<%= table.className %> = dao.list(search, start, length, orderColumn, orderDir);
+        List<<%= table.className %>> list<%= table.className %> = dao.list(query, page, limit, orderRequest, asc);
 
         PagedResp resp = new PagedResp<>(list<%= table.className %>);
 
         resp.setRecordsTotal(dao.count());
-        if (!Strings.isNullOrEmpty(search)) {
-            resp.setRecordsFiltered(dao.count(search));
+        if (!Strings.isNullOrEmpty(query)) {
+            resp.setCount(dao.count(query));
         } else {
-            resp.setRecordsFiltered(resp.getRecordsTotal());
+            resp.setCount(dao.count());
         }
 
         return resp;
@@ -167,10 +167,17 @@ for (var i in table.columns) {
     }
 
     if (c.javaType === "String") {
+        if (c.is_nullable === "NO") {
+        %>
+        if (<%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>() != null && <%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>().length() > <%= c.character_maximum_length %>) {
+            throw new RespException(<%= c.ordinal_position %>, LanguageHolder.instance.lengthCannotBeMoreThan("<%= c.propertyNatural %>", <%= c.character_maximum_length %>));
+        }<%
+        } else {
         %>
         if (<%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>().length() > <%= c.character_maximum_length %>) {
             throw new RespException(<%= c.ordinal_position %>, LanguageHolder.instance.lengthCannotBeMoreThan("<%= c.propertyNatural %>", <%= c.character_maximum_length %>));
         }<%
+        }
     }
 } %>
 

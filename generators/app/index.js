@@ -224,26 +224,6 @@ module.exports = yeoman.generators.Base.extend({
 
     },
 
-    readExistingUrlConstants: function() {
-        var self = this;
-        var done = this.async();
-        this.props.urlConstants = {};
-        fs.readFile(this.destinationRoot() + '/src/main/webapp/src/' + this.props.modulename + '/js/const/url.js', "utf-8", function(err, data) {
-            if (data != null) {
-                var crappyJson = data.split("=")[1];
-                crappyJson = crappyJson.replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:/g, '"$2": ');
-
-                if (crappyJson.slice(-1) === ";") {
-                    crappyJson = crappyJson.slice(0, -1);
-                }
-
-                self.props.urlConstants = JSON.parse(crappyJson);
-            }
-            
-            done();
-        });
-    },
-
     readGruntConfig: function() {
         var self = this;
         var done = this.async();
@@ -454,7 +434,7 @@ module.exports = yeoman.generators.Base.extend({
             this.props.metaInfCtx.Context = {
                 "$": {
                     "antiJARLocking": "true",
-                    "path": "/" + this.props.modulenameUpper
+                    "path": "/" + this.props.projectName
                 }
             };
         }
@@ -520,7 +500,7 @@ module.exports = yeoman.generators.Base.extend({
                         "browserifyOptions": {
                             "debug": true
                         },
-                        "transform": ["jstify"]
+                        "transform": ["babelify", "vueify"]
                     }
 
                 }
@@ -749,16 +729,6 @@ module.exports = yeoman.generators.Base.extend({
     },
 
     generateTableProps: function() {
-        //web pages that lists content
-        if (!this.props.urlConstants.listPages) {
-            this.props.urlConstants.listPages = {};
-        }
-
-        //web pages that persists content
-        if (!this.props.urlConstants.persistPages) {
-            this.props.urlConstants.persistPages = {};
-        }
-
         for (var i in this.props.tables) {
             var table = this.props.tables[i];
 
@@ -839,27 +809,6 @@ module.exports = yeoman.generators.Base.extend({
         }
     },
 
-    generateUrlConstants: function() {
-        for (var i in this.props.tables) {
-                    var table = this.props.tables[i];
-
-            if (!table.isNtoNtable) {
-                if (table.inCrud) {
-                    this.props.urlConstants["LIST_"+table.classUpper] = "../ws/" + this.props.modulenameUpper + "/" + table.className;
-                }
-
-                if (table.inCrud) {
-                    this.props.urlConstants["GET_"+table.classUpper] = "../ws/" + this.props.modulenameUpper + "/" + table.className;
-                    this.props.urlConstants["PERSIST_"+table.classUpper] = "../ws/" + this.props.modulenameUpper  + "/" + table.className;
-                    
-                    this.props.urlConstants.listPages[table.className] = "list"+table.className+".html";
-                    this.props.urlConstants.persistPages[table.className] = "persist"+table.className+".html";
-                }
-            }
-        }
-
-    },
-
     writeJavaClasses: function () {
         this.fs.copyTpl(
             this.templatePath('ServerListener.java'),
@@ -892,31 +841,31 @@ module.exports = yeoman.generators.Base.extend({
             if (table.isNtoNtable) {
 
                 this.fs.copyTpl(
-                    this.templatePath('java_dao_NtoN.java'),
+                    this.templatePath('DaoNtoN.java'),
                     this.destinationPath(this.props.daoFolder+"/"+table.className+"Dao.java"),
                     params);
 
             } else { 
 
                 this.fs.copyTpl(
-                    this.templatePath('java_model.java'),
+                    this.templatePath('Model.java'),
                     this.destinationPath(this.props.modelFolder+"/"+table.className+".java"),
                     params);
 
                 this.fs.copyTpl(
-                    this.templatePath('java_dao.java'),
+                    this.templatePath('Dao.java'),
                     this.destinationPath(this.props.daoFolder+"/"+table.className+"Dao.java"),
                     params);
 
                 if (table.inCrud) {
 
                     this.fs.copyTpl(
-                        this.templatePath('java_process.java'),
+                        this.templatePath('Process.java'),
                         this.destinationPath(this.props.processFolder+"/"+table.className+"Process.java"),
                         params);
 
                     this.fs.copyTpl(
-                        this.templatePath('java_response.java'),
+                        this.templatePath('Response.java'),
                         this.destinationPath(this.props.responseFolder+"/"+table.className+"Resp.java"),
                         params);
 
@@ -932,7 +881,7 @@ module.exports = yeoman.generators.Base.extend({
             };
 
             this.fs.copyTpl(
-                this.templatePath('java_login_dao.java'),
+                this.templatePath('LoginServiceDao.java'),
                 this.destinationPath(this.props.daoFolder+"/LoginServiceDao.java"),
                 paramsLogin);
 
@@ -944,32 +893,55 @@ module.exports = yeoman.generators.Base.extend({
     },
 
     writeJsClasses: function() {
-        this.fs.copyTpl(
-            this.templatePath('url.js'),
-            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/const/url.js"),
-            this.props);
-
-        this.fs.copyTpl(
+        this.fs.copy(
             this.templatePath('index.js'),
-            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/index.js"),
+            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/index.js"));
+
+        this.fs.copy(
+            this.templatePath('AppBus.js'),
+            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/service/AppBus.js"));
+
+        this.fs.copy(
+            this.templatePath('AppTranslator.js'),
+            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/service/AppTranslator.js"));
+
+        this.fs.copy(
+            this.templatePath('App.vue'),
+            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/controller/App.vue"));
+
+        this.fs.copy(
+            this.templatePath('Home.vue'),
+            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/controller/Home.vue"));
+
+        this.fs.copy(
+            this.templatePath('pagination.vue'),
+            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/adaptable/pagination.vue"));
+
+        this.fs.copy(
+            this.templatePath('th.vue'),
+            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/adaptable/th.vue"));
+
+        this.fs.copy(
+            this.templatePath('searchfield.vue'),
+            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/adaptable/searchfield.vue"));
+
+        this.fs.copy(
+            this.templatePath('Store.js'),
+            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/adaptable/Store.js"));
+
+        this.fs.copyTpl(
+            this.templatePath('AppResource.js'),
+            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/service/AppResource.js"),
             this.props);
 
         this.fs.copyTpl(
-            this.templatePath('defaultInterface.js'),
-            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/service/defaultInterface.js"),
+            this.templatePath('AppRouter.js'),
+            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/service/AppRouter.js"),
             this.props);
 
-        this.fs.copy(
-            this.templatePath('translate.js'),
-            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/service/translate.js"));
-
-        this.fs.copy(
-            this.templatePath('pushMenu.js'),
-            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/service/pushMenu.js"));
-
         this.fs.copyTpl(
-            this.templatePath('home.js'),
-            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/controller/home.js"),
+            this.templatePath('Default.vue'),
+            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/controller/Default.vue"),
             this.props);
 
         this.fs.copy(
@@ -986,21 +958,21 @@ module.exports = yeoman.generators.Base.extend({
                 };
 
                 this.fs.copyTpl(
-                    this.templatePath('list.js'),
-                    this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/controller/list"+table.className+".js"),
+                    this.templatePath('List.vue'),
+                    this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/controller/List"+table.className+".vue"),
                     params);
 
                 this.fs.copyTpl(
-                    this.templatePath('persist.js'),
-                    this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/controller/persist"+table.className+".js"),
+                    this.templatePath('Persist.vue'),
+                    this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/controller/Persist"+table.className+".vue"),
                     params);
             }
         }
 
         if (this.props.loginsys) {
             this.fs.copyTpl(
-                this.templatePath('index_login.js'),
-                this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/controller/index.js"),
+                this.templatePath('Login.vue'),
+                this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/controller/Login.vue"),
                 this.props);
         }
     },
@@ -1011,56 +983,14 @@ module.exports = yeoman.generators.Base.extend({
             this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/scss/template.scss"));
 
         this.fs.copy(
-            this.templatePath('fontAwesome.scss'),
-            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/scss/fontAwesome.scss"));
-
-        this.fs.copy(
-            this.templatePath('index.scss'),
-            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/scss/index.scss"));
-
-        this.fs.copy(
             this.templatePath('crud.scss'),
             this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/scss/" + this.props.modulename + ".scss"));
     },
 
     writeHtmlFiles: function() {
         this.fs.copy(
-            this.templatePath('default.html'),
-            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/tmpl/default.html"));
-
-        this.fs.copyTpl(
-            this.templatePath('home.html'),
-            this.destinationPath("src/main/webapp/" + this.props.modulename + "/home.html"),
-            this.props);
-
-        for (var i in this.props.tables) {
-            var table = this.props.tables[i];
-
-            if (table.inCrud && !table.isNtoNtable) {
-
-                var params = {
-                    props: this.props,
-                    table: table
-                };
-                
-                this.fs.copyTpl(
-                    this.templatePath('list.html'),
-                    this.destinationPath("src/main/webapp/" + this.props.modulename + "/list"+table.className+".html"),
-                    params);
-
-                this.fs.copyTpl(
-                    this.templatePath('persist.html'),
-                    this.destinationPath("src/main/webapp/" + this.props.modulename + "/persist"+table.className+".html"),
-                    params);
-            }
-        }
-
-        if (this.props.loginsys) {
-            this.fs.copyTpl(
-                this.templatePath('index_login.html'),
-                this.destinationPath("src/main/webapp/" + this.props.modulename + "/index.html"),
-                this.props);
-        }
+            this.templatePath('index.html'),
+            this.destinationPath("src/main/webapp/" + this.props.modulename + "/index.html"));
     },
 
     writeGruntConfig: function() {
@@ -1088,16 +1018,20 @@ module.exports = yeoman.generators.Base.extend({
     writeOtherFiles: function() {
         var self = this;
 
+        this.fs.copy(
+            this.templatePath('.babelrc'),
+            this.destinationPath("src/main/webapp/.babelrc"));
+
         this.directory("fonts", "src/main/webapp/" + this.props.modulename + "/fonts");
 
         this.fs.copyTpl(
-            this.templatePath('strings-en.json'),
-            this.destinationPath("src/main/webapp/" + this.props.modulename + "/json/strings-en.json"),
+            this.templatePath('LangEn.js'),
+            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/const/LangEn.js"),
             this.props);
 
         this.fs.copyTpl(
-            this.templatePath('strings-pt.json'),
-            this.destinationPath("src/main/webapp/" + this.props.modulename + "/json/strings-pt.json"),
+            this.templatePath('LangPt.js'),
+            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/const/LangPt.js"),
             this.props);
 
         this.props.generateDataForColumn = this._generateDataForColumn;
@@ -1134,31 +1068,40 @@ module.exports = yeoman.generators.Base.extend({
             process.chdir("src/main/webapp/");
 
             this.npmInstall([
-                "browserify",
-                "grunt@0.4.5",
-                "grunt-browserify",
-                "grunt-contrib-sass",
-                "grunt-contrib-uglify",
-                "jstify",
-                "uglify"
+                "babel-core", 
+                "babel-helper-vue-jsx-merge-props", 
+                "babel-plugin-syntax-jsx", 
+                "babel-plugin-transform-vue-jsx", 
+                "babel-preset-es2015", 
+                "babelify", 
+                "browserify", 
+                "browserify-hmr", 
+                "grunt@0.4.5", 
+                "grunt-browserify", 
+                "grunt-contrib-sass", 
+                "grunt-contrib-uglify", 
+                "node-sass", 
+                "uglify", 
+                "vueify", 
             ], 
             { saveDev: true },
             function () {
                 
                 self.npmInstall([
-                    "bootstrap-notify", 
-                    "bootstrap-sass", 
-                    "bootstrap-validator", 
-                    "datatables@1.10.9", 
-                    "datatables-bootstrap", 
-                    "font-awesome", 
-                    "jquery@^2", 
-                    "jquery-localize", 
-                    "jstify", 
-                    "ml-js-commons", 
+                    "bootstrap-sass",
+                    "js-sha1",
+                    "lodash",
                     "moment",
                     "simplestorage.js",
-                    "chart.js"
+                    "v-mask",
+                    "vue",
+                    "vue-awesome",
+                    "vue-chartjs",
+                    "vue-i18n",
+                    "vue-moment",
+                    "vue-resource",
+                    "vue-router",
+                    "vue-strap"
                 ], 
                 { save: true },
                 function() {

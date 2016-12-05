@@ -1,4 +1,4 @@
-{
+export default {
     "language": "pt-br",
     "app": {
         "title": "<%= modulenameUpper %>",
@@ -6,31 +6,21 @@
         "menu": "Menu",
         "add": "Adicionar",
         "export": "Exportar",
+        "select": "Selecione",
         "persistedSuccessfully": "Salvo com Sucesso!"
     },
     
     "dataTable": {
-        "sEmptyTable": "Nenhum registro encontrado",
-        "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
-        "sInfoEmpty": "Mostrando 0 até 0 de 0 registros",
-        "sInfoFiltered": "(Filtrados de _MAX_ registros)",
-        "sInfoPostFix": "",
-        "sInfoThousands": ".",
-        "sLengthMenu": "_MENU_ resultados por página",
-        "sLoadingRecords": "Carregando...",
-        "sProcessing": "Processando...",
-        "sZeroRecords": "Nenhum registro encontrado",
-        "sSearch": "Pesquisar",
-        "oPaginate": {
-            "sNext": "Próximo",
-            "sPrevious": "Anterior",
-            "sFirst": "Primeiro",
-            "sLast": "Último"
-        },
-        "oAria": {
-            "sSortAscending": ": Ordenar colunas de forma ascendente",
-            "sSortDescending": ": Ordenar colunas de forma descendente"
-        }
+        "count": "Mostrando de {from} à {to} de {count} resultados|{count} resultados|Um resultado",
+        "filter": "Filtrar Resultados:",
+        "filterPlaceholder": "Buscar",
+        "limit": "Resultados:",
+        "noResults": "Nenhum Resultado",
+        "page": "Página:",
+        "filterBy": "Filtrar por {column}",
+        "loading": "Carregando...",
+        "defaultOption": "Selecione {column}"
+
     },
     
     "dateFormat": {
@@ -42,7 +32,18 @@
         "week": "DD/MM/YY",
         "month": "DD/MM/YY",
         "quarter": "DD/MM/YY",
-        "year": "DD/MM/YY"
+        "year": "DD/MM/YY",
+        "date": "DD/MM/YYYY",
+        "datetime": "DD/MM/YYYY hh:mm",
+        "time": "hh:mm",
+        "datemask": "##/##/####",
+        "datetimemask": "##/##/#### ##:##"
+    },
+    
+    "boolean": {
+        "true": "Sim",
+        "false": "Não"
+
     },
     
     "login": {
@@ -87,4 +88,4 @@
     } 
     %>
     }
-}
+};

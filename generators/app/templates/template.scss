@@ -32,6 +32,10 @@ body {
     background-color: $background !important;
 }
 
+a {
+    cursor: pointer;
+}
+
 /* Layout */
 
 .wrapper {
@@ -106,7 +110,7 @@ body {
 }
 
 .content-wrapper, .right-side {
-    min-height: 100%;
+    min-height: 916px;
     z-index: 800;
 }
 
@@ -266,12 +270,14 @@ a {
         .icon-bar {
             display: none;
         }
+        
+        @media (min-width: 768px) {
+            display: none;
+        }
     }
     .navbar .nav > li {
-        &.user > a > {
-            .fa, .glyphicon, .ion {
-                margin-right: 5px;
-            }
+        &.user > a > .fa, .glyphicon, .ion {
+            margin-right: 5px;
         }
         > a > .label {
             position: absolute;
@@ -587,14 +593,14 @@ a {
             margin-right: 10px;
             margin-top: 3px;
         }
-        &.active > {
-            a > .fa-angle-left {
+        &.active {
+            > a > .fa-angle-left {
                 -webkit-transform: rotate(-90deg);
                 -ms-transform: rotate(-90deg);
                 -o-transform: rotate(-90deg);
                 transform: rotate(-90deg);
             }
-            .treeview-menu {
+            > .treeview-menu {
                 display: block;
             }
         }
@@ -662,20 +668,20 @@ a {
                 padding-bottom: 5px;
                 border-bottom-right-radius: 4px;
             }
-            &:hover > {
-                a > span:not(.pull-right), .treeview-menu {
+            &:hover {
+                > a > span:not(.pull-right), .treeview-menu {
                     display: block !important;
                     position: absolute;
                     width: 180px;
                     left: 50px;
                 }
-                a > span {
+                > a > span {
                     top: 0;
                     margin-left: -3px;
                     padding: 12px 5px 12px 20px;
                     background-color: inherit;
                 }
-                .treeview-menu {
+                > .treeview-menu {
                     top: 44px;
                     margin-left: 0;
                 }
@@ -686,11 +692,9 @@ a {
             -webkit-transform: translateZ(0);
         }
         .sidebar-menu {
-            > li > {
-                a > span, .treeview-menu, a > .pull-right {
-                    display: none !important;
-                    -webkit-transform: translateZ(0);
-                }
+            > li > a > span, .treeview-menu, a > .pull-right {
+                display: none !important;
+                -webkit-transform: translateZ(0);
             }
             li.header {
                 display: none !important;
@@ -1041,17 +1045,17 @@ a {
     }
 }
 
-.navbar-nav > {
-    .notifications-menu > .dropdown-menu, .messages-menu > .dropdown-menu, .tasks-menu > .dropdown-menu {
+.navbar-nav {
+    > .notifications-menu > .dropdown-menu, .messages-menu > .dropdown-menu, .tasks-menu > .dropdown-menu {
         width: 280px;
         padding: 0 0 0 0;
         margin: 0;
         top: 100%;
     }
-    .notifications-menu > .dropdown-menu > li, .messages-menu > .dropdown-menu > li, .tasks-menu > .dropdown-menu > li {
+    > .notifications-menu > .dropdown-menu > li, .messages-menu > .dropdown-menu > li, .tasks-menu > .dropdown-menu > li {
         position: relative;
     }
-    .notifications-menu > .dropdown-menu > li.header, .messages-menu > .dropdown-menu > li.header, .tasks-menu > .dropdown-menu > li.header {
+    > .notifications-menu > .dropdown-menu > li.header, .messages-menu > .dropdown-menu > li.header, .tasks-menu > .dropdown-menu > li.header {
         border-top-left-radius: 4px;
         border-top-right-radius: 4px;
         border-bottom-right-radius: 0;
@@ -1062,7 +1066,7 @@ a {
         color: #444444;
         font-size: 14px;
     }
-    .notifications-menu > .dropdown-menu > li.footer > a, .messages-menu > .dropdown-menu > li.footer > a, .tasks-menu > .dropdown-menu > li.footer > a {
+    > .notifications-menu > .dropdown-menu > li.footer > a, .messages-menu > .dropdown-menu > li.footer > a, .tasks-menu > .dropdown-menu > li.footer > a {
         border-top-left-radius: 0;
         border-top-right-radius: 0;
         border-bottom-right-radius: 4px;
@@ -1074,28 +1078,28 @@ a {
         color: #444 !important;
         text-align: center;
     }
-    .notifications-menu > .dropdown-menu > li.footer > a:hover, .messages-menu > .dropdown-menu > li.footer > a:hover, .tasks-menu > .dropdown-menu > li.footer > a:hover {
+    > .notifications-menu > .dropdown-menu > li.footer > a:hover, .messages-menu > .dropdown-menu > li.footer > a:hover, .tasks-menu > .dropdown-menu > li.footer > a:hover {
         text-decoration: none;
         font-weight: normal;
     }
-    .notifications-menu > .dropdown-menu > li .menu, .messages-menu > .dropdown-menu > li .menu, .tasks-menu > .dropdown-menu > li .menu {
+    > .notifications-menu > .dropdown-menu > li .menu, .messages-menu > .dropdown-menu > li .menu, .tasks-menu > .dropdown-menu > li .menu {
         max-height: 200px;
         margin: 0;
         padding: 0;
         list-style: none;
         overflow-x: hidden;
     }
-    .notifications-menu > .dropdown-menu > li .menu > li > a, .messages-menu > .dropdown-menu > li .menu > li > a, .tasks-menu > .dropdown-menu > li .menu > li > a {
+    > .notifications-menu > .dropdown-menu > li .menu > li > a, .messages-menu > .dropdown-menu > li .menu > li > a, .tasks-menu > .dropdown-menu > li .menu > li > a {
         display: block;
         white-space: nowrap;
         /* Prevent text from breaking */
         border-bottom: 1px solid #f4f4f4;
     }
-    .notifications-menu > .dropdown-menu > li .menu > li > a:hover, .messages-menu > .dropdown-menu > li .menu > li > a:hover, .tasks-menu > .dropdown-menu > li .menu > li > a:hover {
+    > .notifications-menu > .dropdown-menu > li .menu > li > a:hover, .messages-menu > .dropdown-menu > li .menu > li > a:hover, .tasks-menu > .dropdown-menu > li .menu > li > a:hover {
         background: #f4f4f4;
         text-decoration: none;
     }
-    .notifications-menu > .dropdown-menu > li .menu > li > a {
+    > .notifications-menu > .dropdown-menu > li .menu > li > a {
         color: #444444;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -1106,7 +1110,7 @@ a {
             }
         }
     }
-    .messages-menu > .dropdown-menu > li .menu > li > a {
+    > .messages-menu > .dropdown-menu > li .menu > li > a {
         margin: 0;
         padding: 10px 10px;
         > {
@@ -1145,7 +1149,7 @@ a {
             clear: both;
         }
     }
-    .tasks-menu > .dropdown-menu > li .menu > li > a {
+    > .tasks-menu > .dropdown-menu > li .menu > li > a {
         padding: 10px;
         > {
             h3 {
@@ -1160,7 +1164,7 @@ a {
             }
         }
     }
-    .user-menu {
+    > .user-menu {
         > .dropdown-menu {
             border-top-right-radius: 0;
             border-top-left-radius: 0;
@@ -1247,11 +1251,9 @@ a {
 }
 
 @media (max-width: 991px) {
-    .navbar-nav > {
-        .notifications-menu > .dropdown-menu > li.footer > a, .messages-menu > .dropdown-menu > li.footer > a, .tasks-menu > .dropdown-menu > li.footer > a {
-            background: #fff !important;
-            color: #444 !important;
-        }
+    .navbar-nav > .notifications-menu > .dropdown-menu > li.footer > a, .messages-menu > .dropdown-menu > li.footer > a, .tasks-menu > .dropdown-menu > li.footer > a {
+        background: #fff !important;
+        color: #444 !important;
     }
 }
 
@@ -2910,15 +2912,11 @@ a {
 
 .table-bordered {
     border: 1px solid #f4f4f4;
-    > {
-        thead > tr > th, tbody > tr > th, tfoot > tr > th, thead > tr > td, tbody > tr > td, tfoot > tr > td {
-            border: 1px solid #f4f4f4;
-        }
-        thead > tr > {
-            th, td {
-                border-bottom-width: 2px;
-            }
-        }
+    > thead > tr > th, tbody > tr > th, tfoot > tr > th, thead > tr > td, tbody > tr > td, tfoot > tr > td {
+        border: 1px solid #f4f4f4;
+    }
+    > thead > tr > th, td {
+        border-bottom-width: 2px;
     }
 }
 
@@ -5445,7 +5443,7 @@ table.text-center {
     > a {
         border-left: 3px solid transparent;
     }
-    &:hover > a, &.active > a {
+    &:hover > a, .router-link-active {
         color: $menu-selected-text;
         background: $menu-selected;
         border-left-color: $brand-primary;
@@ -5513,6 +5511,23 @@ table.text-center {
     &:hover {
         background-color: #3b8ab8;
     }
+}
+
+.table .VueTables__sortable {
+    position: relative;
+    padding-right: 25px;
+    
+    .glyphicon {
+        position: absolute;
+        top: 50%;
+        margin-top: -7px;
+        right: 2px;
+        opacity: 0.6;
+    }
+}
+
+.VueTables__search label, .VueTables__limit label {
+    margin-right: 5px;
 }
 
 @media (max-width: 767px) {

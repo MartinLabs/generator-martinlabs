@@ -1,27 +1,16 @@
-(function(){
-    var martinlabs = require("ml-js-commons"),
-        URL = require("./const/url");
-    
-    var url = martinlabs.url(location.href);
+import Vue from 'vue';
+import VueMask from 'v-mask';
+import VueMoment from 'vue-moment';
+import App from './controller/App.vue';
+import AppRouter from './service/AppRouter';
+import AppTranslator from './service/AppTranslator';
+import AppResource from './service/AppResource';
 
-<% if (loginsys) { %>
-    if (!url.file.length || url.file === URL.login) {
-        require("./controller/index")();
-    }
-<% } %>
-    if (url.file === URL.home) {
-        require("./controller/home")();
-    }
-<% for (var i in urlConstants.listPages) { %>
-    if (url.file === URL.listPages.<%= i %>) {
-        require("./controller/list<%= i %>.js")();
-    }
-<% 
-} 
+Vue.use(VueMask);
+Vue.use(VueMoment);
 
-for (var i in urlConstants.persistPages) { %>
-    if (url.file === URL.persistPages.<%= i %>) {
-        require("./controller/persist<%= i %>.js")();
-    }
-<% } %>
-})();
+new Vue({
+    el: '#app',
+    router: AppRouter,
+    render: h => h(App)
+});
