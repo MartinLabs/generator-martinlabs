@@ -15,13 +15,13 @@ Vue.http.interceptors.push((request, next) => {
 
 export default new (function () {<% 
     if (loginsys) { %> 
-    this.login = Vue.resource("../ws/Crud/Login");<% 
+    this.login = Vue.resource("../ws/<%= modulenameUpper %>/Login");<% 
     } 
     for (var i in tables) {
         var table = tables[i];
         if (table.inCrud && !table.isNtoNtable) {
     %>
-    this.<%= table.classLowerCamel %> = Vue.resource("../ws/Crud/<%= table.className %>{/id}");<%
+    this.<%= table.classLowerCamel %> = Vue.resource("../ws/<%= modulenameUpper %>/<%= table.className %>{/id}");<%
         }
     }
     %>

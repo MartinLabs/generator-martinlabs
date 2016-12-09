@@ -3,9 +3,9 @@
     <default>
         
         <section class="content-header">
-            <a href="#/persist<%= table.className %>" class="pull-right btn btn-success">
+            <router-link to="/persist<%= table.className %>" class="pull-right btn btn-success">
                 <span class="glyphicon glyphicon-plus"></span> {{ $t("app.add") }}
-            </a>
+            </router-link>
             <h1>
                 {{ $t("classes.<%= table.className %>.title") }}
             </h1>
@@ -28,7 +28,7 @@
                                 	for (var i in table.columns) { 
                                 		var c = table.columns[i]; 
                                 	%>
-                                    <adap-th :store="adapStore" name="<%= !c.referencedTable ? c.propertyName : c.notIdPropertyName %>">{{ $t("classes.<%= table.className %>.columns.<%= !c.referencedTable ? c.propertyName : c.notIdPropertyName %>") }}</adap-th><% } %>
+                                    <adap-th :store="adapStore" name="<%= c.column_name %>">{{ $t("classes.<%= table.className %>.columns.<%= !c.referencedTable ? c.propertyName : c.notIdPropertyName %>") }}</adap-th><% } %>
                                 </tr>
                             </thead>
                             <tbody>
@@ -38,16 +38,16 @@
 						                var c = table.columns[i]; 
 						                if (!c.referencedTable) {
 						                    if (c.data_type === "date") { %>
-						                    <td>{{ item.<%= c.propertyName %> | moment($t("dateFormat.date")) }}</td><% 
+                                    <td>{{ item.<%= c.propertyName %> | moment($t("dateFormat.date")) }}</td><% 
                                             } else if (["time", "datetime", "timestamp"].indexOf(c.data_type) > -1) { %>
-                                            <td>{{ item.<%= c.propertyName %> | moment($t("dateFormat.datetime")) }}</td><% 
+                                    <td>{{ item.<%= c.propertyName %> | moment($t("dateFormat.datetime")) }}</td><% 
 						                    } else if (c.javaType === "Boolean" || c.javaType === "boolean") { %>
-						                    <td>{{ item.<%= c.propertyName %> == null ? null : item.<%= c.propertyName %> ? $t("boolean.true") : $t("boolean.false") }}</td><% 
+                                    <td>{{ item.<%= c.propertyName %> == null ? null : item.<%= c.propertyName %> ? $t("boolean.true") : $t("boolean.false") }}</td><% 
 						                    } else { %>
-					                    	<td>{{ item.<%= c.propertyName %> }}</td><%
+                                    <td>{{ item.<%= c.propertyName %> }}</td><%
 						                    }
 						                } else { %>
-						                	<td>{{ item.<%= c.notIdPropertyName %> != null && item.<%= c.notIdPropertyName %>.<%= c.referencedTable.idColumn.propertyName %> != null ? item.<%= c.notIdPropertyName %>.<%= c.referencedTable.idColumn.propertyName %> : null }}</td><%
+                                    <td>{{ item.<%= c.notIdPropertyName %> != null && item.<%= c.notIdPropertyName %>.<%= c.referencedTable.idColumn.propertyName %> != null ? item.<%= c.notIdPropertyName %>.<%= c.referencedTable.idColumn.propertyName %> : null }}</td><%
 						                }
 						            }
 						            %>

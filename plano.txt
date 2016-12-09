@@ -1,7 +1,6 @@
+- quando a string tem no máximo 1 ou 2 caracteres da pau no test pq to usando "Hey"
+- quando não tem string na tabela da pau no test pq to buscando por "lorem", nesse caso tem q buscar por "1"
 - gerar watch no grunt
-- um JS no service para fazer as requisições, todos passam por ele (inclur o bodyRequest nele)
-- usar mascara em vez de datepicker, e diferenciar data de datahora pelo tipo no mysql
-- usar vue.js
 
 - se a coluna for "ativo" poder inativa-la e não exibir a linha inativa no listar
 - se a coluna for "email" deve validar como e-mail no persist
@@ -10,11 +9,13 @@
 - se a coluna for "url" deve validar no persist; no listar, ao clicar deve abrir nova aba
 - smartType especifico para colocar NOW() no insert
 - ler comentario contendo "martinlabs-generator:ignore" e ignorar coluna
-- gerar testes unitários
 
-- exportar em csv da tabela inteira (não só da tabela exibida)
+- graficos
+- exportar csv via client
+- exportar csv total via servidor
+
 - em todos os WS além de token tem que enviar versão do client para validar se é muito antiga e sistema operacional
 - gerar "esqueci a senha"
-- ideia do koba: separar packages do ws em list, get, update
+- lista de itens conectados ao meu usuário
 - poder alterar "minha conta"
 - gerar create.sql

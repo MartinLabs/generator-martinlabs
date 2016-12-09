@@ -32,7 +32,7 @@ public class <%= table.className %>Dao extends DaoWrapper {
             return <%= table.classLowerCamel %>;
         }, id);
     }
-    
+    <% if (table.isReferenced) { %>
     public List<<%= table.className %>> list(){
         return selectList("SELECT "<% 
         for (var i in table.columns) { var c = table.columns[i]; %>
@@ -46,7 +46,7 @@ public class <%= table.className %>Dao extends DaoWrapper {
             return <%= table.classLowerCamel %>;
         });
     }
-
+    <% } %>
     public List<<%= table.className %>> list(
         String query,
         Integer page,
@@ -106,7 +106,7 @@ public class <%= table.className %>Dao extends DaoWrapper {
             <% for (var i in table.columns) { var c = table.columns[i]; %>
             + "IFNULL(<%= c.column_name %>, '')<%= (i < table.columns.length -1 ? ',' : '') %> "<% } %>
             +")) LIKE LOWER(?) ", 
-            search);
+            "%" + search + "%");
     }
     
     public int update(<%= table.className %> <%= table.classLowerCamel %>){
@@ -129,4 +129,11 @@ public class <%= table.className %>Dao extends DaoWrapper {
         for (var i in table.columns) { var c = table.columns[i]; if (c.extra !== "auto_increment") { %>
             <%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>()<%= i < table.columns.length -1 ? ',' : '' %><% }} %>).key;
     }
+
+    <% if (table.idColumn.referencedTable) { %>
+    public boolean exist<%= table.className %>(long id) {
+        return exist("SELECT <%= table.idColumn.column_name %> FROM <%= table.name %> WHERE <%= table.idColumn.column_name %> = ? ", id);
+    }
+    <% } %>
+
 }

@@ -21,13 +21,4 @@ public class LoginServiceDao extends DaoWrapper{
                 + "AND <%= table.passwordColumn.column_name %> = sha1(?) ", 
                 account, password);
     }
-    
-    public Long getID(String account, String password) {
-        return selectFirstLong(""
-                + "SELECT <%= table.idColumn.column_name %> "
-                + "FROM <%= table.name %> "
-                + "WHERE <%= table.accountColumn.column_name %> = ? "
-                + "AND <%= table.passwordColumn.column_name %> = sha1(?) ", 
-                account, password);
-    }
 }

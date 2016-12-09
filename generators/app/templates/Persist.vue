@@ -153,14 +153,31 @@ export default {
     components: { Default },
     data: function() {
         return {
-            <%= table.classLowerCamel %>: { grupoDoPrincipal: {}, tagPrincipal: [] }<% 
+            <%= table.classLowerCamel %>: {<%
+                var colocarVirgula = false;
+                for (var i in table.columns) { 
+                    var col = table.columns[i];
+                    if (col.extra !== "auto_increment" && col.referencedTable) {
+                %><%= colocarVirgula ? ',' : '' %>
+                <%= col.notIdPropertyName %>: {} <%
+                        colocarVirgula = true;
+                    }
+                }
+                for (var i in table.NtoNcolumns) { 
+                    var col = table.NtoNcolumns[i];
+                %><%= colocarVirgula ? ',' : '' %>
+                <%= col.NtoNtable.classLowerCamel %>: []<%
+                    colocarVirgula = true;
+                }
+                %>
+            }<% 
             var antiRepeat = [];
             for (var i in table.columns) { 
                 var c = table.columns[i]; 
                 if (c.referencedTable && antiRepeat.indexOf(c.referencedTable.className) < 0) {
                     antiRepeat.push(c.referencedTable.className);
             %>,
-                    all<%= c.referencedTable.className %>: {}<%
+                all<%= c.referencedTable.className %>: {}<%
                 }
             }
 
@@ -170,24 +187,23 @@ export default {
                 if (antiRepeat.indexOf(c.otherTable.className) < 0) {
                     antiRepeat.push(c.otherTable.className);
             %>,
-                    all<%= c.otherTable.className %>: {}<%
+                all<%= c.otherTable.className %>: {}<%
                 }
             }
             %>
         }
     }, 
     computed: {<%
-var colocarVirgula = false;
+colocarVirgula = false;
 for (var i in table.NtoNcolumns) { 
-    colocarVirgula = true;
-    var col = table.NtoNcolumns[i]; %>
+    var col = table.NtoNcolumns[i]; %><%= colocarVirgula ? ',' : '' %><% colocarVirgula = true; %>
         <%= col.NtoNtable.classLowerCamel %>Ids: {
             get: function() {
                 var <%= col.NtoNtable.classLowerCamel %>Ids = [];
                 for (let item of this.<%= table.classLowerCamel %>.<%= col.NtoNtable.classLowerCamel %>) {
                     <%= col.NtoNtable.classLowerCamel %>Ids.push(item.<%= col.otherTable.idColumn.propertyName %>);
                 }
-                return tagPrincipalIds;
+                return <%= col.NtoNtable.classLowerCamel %>Ids;
             },
             set: function(val) {
                 this.<%= table.classLowerCamel %>.<%= col.NtoNtable.classLowerCamel %> = [];
@@ -204,7 +220,7 @@ for (var i in table.columns) { var col = table.columns[i];
 
         if (col.data_type === "date") {
 
-%><%= colocarVirgula ? ',' : '' %>
+%><%= colocarVirgula ? ',' : '' %><% colocarVirgula = true; %>
 
         <%= col.propertyName %>Rendered: {
             get: function() {
@@ -216,7 +232,7 @@ for (var i in table.columns) { var col = table.columns[i];
         }<% 
 
         } else if (["time", "datetime", "timestamp"].indexOf(col.data_type) > -1) { 
-%><%= colocarVirgula ? ',' : '' %>
+%><%= colocarVirgula ? ',' : '' %><% colocarVirgula = true; %>
 
         <%= col.propertyName %>Rendered: {
             get: function() {

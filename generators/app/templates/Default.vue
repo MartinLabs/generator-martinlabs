@@ -2,12 +2,12 @@
     <div class="wrapper">
         <div class="hold-transition skin-blue sidebar-mini" :class="{ 'sidebar-open': sidebarOpen }">
             <header class="main-header">
-                <a href="#/home" class="logo">
+                <router-link to="/home" class="logo">
                     <!-- mini logo for sidebar mini 50x50 pixels -->
                     <span class="logo-mini"><b></b></span>
                     <!-- logo for regular state and mobile devices -->
                     <span class="logo-lg"><b>{{ $t("app.title") }}</b></span>
-                </a>
+                </router-link>
                 <!-- Header Navbar: style can be found in header.less -->
                 <nav class="navbar navbar-static-top">
                     <a class="sidebar-toggle" role="button" @click="sidebarOpen = !sidebarOpen">
@@ -32,12 +32,12 @@
                     <ul class="sidebar-menu">
                         <li class="header">Menu</li>
 
-                        <li><a href="#/home">{{ $t("home.title") }}</a></li><% 
+                        <li><router-link to="/home">{{ $t("home.title") }}</router-link></li><% 
                         for (var i in tables) { 
                         	var table = tables[i];
                         	if (table.inCrud && !table.isNtoNtable) {
 					    %>
-                        <li><a href="#/list<%= table.className %>">{{ $t("classes.<%= table.className %>.title") }}</a></li><%
+                        <li><router-link to="/list<%= table.className %>">{{ $t("classes.<%= table.className %>.title") }}</router-link></li><%
                         	}
                     	} %>
 

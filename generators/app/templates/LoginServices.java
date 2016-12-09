@@ -5,12 +5,9 @@ import <%= props.daoPackage %>.LoginServiceDao;
 import br.com.martinlabs.commons.SecurityUtils;
 import br.com.martinlabs.commons.exceptions.RespException;
 import com.google.gson.Gson;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.sql.Connection;
 import br.com.martinlabs.commons.LanguageHolder;
-import br.com.martinlabs.usecase.ErrorCode;
+import <%= props.package %>.ErrorCode;
 
 
 /**
@@ -19,7 +16,7 @@ import br.com.martinlabs.usecase.ErrorCode;
  */
 public class LoginServices {
 
-    private static final String CRIPTOGRAPHY_HASH = "<%= Math.random().toString(36).substring(7) %>";
+    protected static final String CRIPTOGRAPHY_HASH = "<%= Math.random().toString(36).substring(7) %>";
     private Connection con;
 
     public LoginServices(Connection con) {
@@ -48,18 +45,14 @@ public class LoginServices {
     
     public boolean checkLogin(String token) {
         LoginHolder login = tokenToLogin(token);
-        return checkLogin(login.account, login.password);
+        return login != null && checkLogin(login.account, login.password);
     }
     
-    private String loginToToken(String account, String password) {
+    protected String loginToToken(String account, String password) {
         String token = new Gson().toJson(new LoginHolder(account, password));
         token = SecurityUtils.encrypt(token, CRIPTOGRAPHY_HASH);
         
-        try {
-            token = URLEncoder.encode(token, "UTF-8");
-        } catch (UnsupportedEncodingException ex) {
-            ex.printStackTrace();
-        }
+        token = SecurityUtils.encode(token, "UTF-8");
         
         return token;
     }
@@ -67,30 +60,25 @@ public class LoginServices {
     private LoginHolder tokenToLogin(String token) {
         
         if (token == null) {
-            throw new RespException(ErrorCode.INVALID_LOGIN, LanguageHolder.instance.pleaseLogin());
+            return null;
         }
 
-        try {
-            token = URLDecoder.decode(token, "UTF-8");
-        } catch (UnsupportedEncodingException ex) {
-            ex.printStackTrace();
-        }
+        token = SecurityUtils.decode(token, "UTF-8");
         
         token = SecurityUtils.decrypt(token, CRIPTOGRAPHY_HASH);
         
         if (token == null) {
-            throw new RespException(ErrorCode.INVALID_LOGIN, LanguageHolder.instance.pleaseLogin());
+            return null;
         }
         
-        LoginHolder loginHolder = new Gson().fromJson(token, LoginHolder.class);
-        if (loginHolder == null) {
-            throw new RespException(ErrorCode.INVALID_LOGIN, LanguageHolder.instance.pleaseLogin());
+        try {
+            return new Gson().fromJson(token, LoginHolder.class);
+        } catch (Exception e) {
+            return null;
         }
-        
-        return loginHolder;
     }
 
-    public class LoginHolder {
+    public static class LoginHolder {
         private String account;
         private String password;
 
@@ -103,16 +91,8 @@ public class LoginServices {
             return account;
         }
 
-        public void setAccount(String Account) {
-            this.account = Account;
-        }
-
         public String getPassword() {
             return password;
-        }
-
-        public void setPassword(String Password) {
-            this.password = Password;
         }
 
     }

@@ -60,9 +60,15 @@ public class <%= table.className %> {
         this.<%= cx.notIdPropertyName %> = <%= cx.notIdPropertyName %>;
     }
 
+    <% if (cx.is_nullable === "YES") { %>
+    public <%= cx.javaType %> get<%= cx.propertyNameUpper %>() {
+        return <%= cx.notIdPropertyName %> == null ? null : <%= cx.notIdPropertyName %>.get<%= cx.referencedTable.idColumn.propertyNameUpper %>();
+    }
+    <% } else { %>
     public <%= cx.javaType %> get<%= cx.propertyNameUpper %>() {
         return <%= cx.notIdPropertyName %> == null ? 0 : <%= cx.notIdPropertyName %>.get<%= cx.referencedTable.idColumn.propertyNameUpper %>();
     }
+    <% } %>
 
     public void set<%= cx.propertyNameUpper %>(<%= cx.javaType %> <%= cx.propertyName %>) {
         if (<%= cx.notIdPropertyName %> == null) {

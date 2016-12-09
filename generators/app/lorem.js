@@ -50,7 +50,7 @@ var urls = [
 	"http://g1.globo.com/"
 ];
 
-var lorem = function(maxsize) {
+var lorem = function(maxsize, startWithLorem) {
 	if (maxsize === 1) {
 		return words[Math.floor(Math.random() * words.length)];
 	}
@@ -58,9 +58,17 @@ var lorem = function(maxsize) {
 	var pretext = "";
 	var text = "";
 	while (pretext.length < maxsize) {
-		var iW = Math.floor(Math.random() * words.length);
+		var iW;
+
+		if (!text.length && startWithLorem) {
+			iW = 0;
+		} else {
+			var iW = Math.floor(Math.random() * words.length);
+		}
+		
 		var rS = Math.floor(Math.random() * 15);
 		var iS = rS < 8 ? 0 : rS < 12 ? 1 : 2;
+
 		pretext = text + words[iW] + separators[iS];
 		if (pretext.length < maxsize) {
 			text = pretext;

@@ -19,8 +19,8 @@ import javax.ws.rs.ext.ExceptionMapper;<%
 
 if (loginsys) { 
 %>
-import br.com.martinlabs.usecase.crud.process.LoginServices;
-import br.com.martinlabs.usecase.crud.process.LoginServices.LoginHolder;<%
+import <%= processPackage %>.LoginServices;
+import <%= processPackage %>.LoginServices.LoginHolder;<%
 } 
 
 for (var i in tables) {

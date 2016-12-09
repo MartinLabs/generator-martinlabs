@@ -65,6 +65,14 @@ if (props.loginsys) { %>
         String orderRequest,
         Boolean asc) {
         
+        if (page == null) {
+            throw new RespException(1,  LanguageHolder.instance.cannotBeNull("Page"));
+        }
+        
+        if (limit == null) {
+            throw new RespException(2,  LanguageHolder.instance.cannotBeNull("Limit"));
+        }
+        
     <% if (props.loginsys) { %>
         loginS.allowAccess(token);
     <% } %>
@@ -74,7 +82,6 @@ if (props.loginsys) { %>
 
         PagedResp resp = new PagedResp<>(list<%= table.className %>);
 
-        resp.setRecordsTotal(dao.count());
         if (!Strings.isNullOrEmpty(query)) {
             resp.setCount(dao.count(query));
         } else {
@@ -169,15 +176,22 @@ for (var i in table.columns) {
     if (c.javaType === "String") {
         if (c.is_nullable === "NO") {
         %>
-        if (<%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>() != null && <%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>().length() > <%= c.character_maximum_length %>) {
+        if (<%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>().length() > <%= c.character_maximum_length %>) {
             throw new RespException(<%= c.ordinal_position %>, LanguageHolder.instance.lengthCannotBeMoreThan("<%= c.propertyNatural %>", <%= c.character_maximum_length %>));
         }<%
         } else {
         %>
-        if (<%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>().length() > <%= c.character_maximum_length %>) {
+        if (<%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>() != null && <%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>().length() > <%= c.character_maximum_length %>) {
             throw new RespException(<%= c.ordinal_position %>, LanguageHolder.instance.lengthCannotBeMoreThan("<%= c.propertyNatural %>", <%= c.character_maximum_length %>));
         }<%
         }
+    }
+
+    if (c.referencedTable && c.is_nullable === "NO") {
+%>
+        if (<%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>() == 0) {
+            throw new RespException(<%= c.ordinal_position %>,  LanguageHolder.instance.cannotBeNull("<%= c.propertyNatural %>"));
+        }<% 
     }
 } %>
 
@@ -186,23 +200,25 @@ for (var i in table.columns) {
     <% } %>
         <%= table.className %>Dao dao = new <%= table.className %>Dao(con);
 
-        long id<%= table.className %>;
-        if (<%= table.classLowerCamel %>.get<%= table.idColumn.propertyNameUpper %>() > 0) {
-            id<%= table.className %> = <%= table.classLowerCamel %>.get<%= table.idColumn.propertyNameUpper %>();
-            
-            int affectedRows = dao.update(<%= table.classLowerCamel %>);
-
-            if (affectedRows == 0) {
-                throw new RespException(LanguageHolder.instance.unexpectedError());
+        <% if (!table.idColumn.referencedTable) { %>
+            long id<%= table.className %>;
+            if (<%= table.classLowerCamel %>.get<%= table.idColumn.propertyNameUpper %>() > 0) {
+                id<%= table.className %> = <%= table.classLowerCamel %>.get<%= table.idColumn.propertyNameUpper %>();
+                
+                dao.update(<%= table.classLowerCamel %>);
+            } else {
+                id<%= table.className %> = dao.insert(<%= table.classLowerCamel %>);
+                <%= table.classLowerCamel %>.set<%= table.idColumn.propertyNameUpper %>(id<%= table.className %>);
             }
-        } else {
-            id<%= table.className %> = dao.insert(<%= table.classLowerCamel %>);
-            <%= table.classLowerCamel %>.set<%= table.idColumn.propertyNameUpper %>(id<%= table.className %>);
-
-            if (id<%= table.className %> == 0) {
-                throw new RespException(LanguageHolder.instance.unexpectedError());
+        <% } else { %>
+            long id<%= table.className %> = <%= table.classLowerCamel %>.get<%= table.idColumn.propertyNameUpper %>();
+            boolean exist = dao.exist<%= table.className %>(id<%= table.className %>);
+            if (exist) {
+                dao.update(<%= table.classLowerCamel %>);
+            } else {
+                dao.insert(<%= table.classLowerCamel %>);
             }
-        }
+        <% } %>
 
     <% for (var i in table.NtoNcolumns) { var col = table.NtoNcolumns[i]; %>
         <%= col.NtoNtable.className %>Dao <%= col.NtoNtable.classLowerCamel %>Dao = new <%= col.NtoNtable.className %>Dao(con);
@@ -210,12 +226,12 @@ for (var i in table.columns) {
         <%= col.NtoNtable.classLowerCamel %>Dao.removeAllFrom<%= table.className %>(id<%= table.className %>);
         
         if (<%= table.classLowerCamel %>.get<%= col.NtoNtable.className %>() != null) {
-            for (<%= col.otherTable.className %> <%= col.otherTable.classLowerCamel %> : <%= table.classLowerCamel %>.get<%= col.NtoNtable.className %>()) {
-                int affectedRows = <%= col.NtoNtable.classLowerCamel %>Dao.insert(<%= col.otherTable.classLowerCamel %>.get<%= col.otherTable.idColumn.propertyNameUpper %>(), id<%= table.className %>);
-                
-                if (affectedRows == 0) {
-                    throw new RespException(LanguageHolder.instance.unexpectedError());
-                }
+            for (<%= col.otherTable.className %> <%= col.otherTable.classLowerCamel %> : <%= table.classLowerCamel %>.get<%= col.NtoNtable.className %>()) {<% 
+                if (col.NtoNtable.columns[0].referencedTable.className === table.className) { %>
+                <%= col.NtoNtable.classLowerCamel %>Dao.insert(id<%= table.className %>, <%= col.otherTable.classLowerCamel %>.get<%= col.otherTable.idColumn.propertyNameUpper %>());<% 
+                } else { %>
+                <%= col.NtoNtable.classLowerCamel %>Dao.insert(<%= col.otherTable.classLowerCamel %>.get<%= col.otherTable.idColumn.propertyNameUpper %>(), id<%= table.className %>);<% 
+                } %>
             }
         }
     <% } %>

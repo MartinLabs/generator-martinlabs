@@ -253,14 +253,17 @@ module.exports = yeoman.generators.Base.extend({
 
     generateProjectProps: function() {
         this.props.javaFolder = "src/main/java/"+this.props.package.replace(/\./g, '\/');
+        this.props.testFolder = "src/test/java/"+this.props.package.replace(/\./g, '\/');
         this.props.daoPackage = this.props.package + ".dao";
         this.props.daoFolder = this.props.javaFolder + "/dao";
         this.props.modelPackage = this.props.package + ".model";
         this.props.modelFolder = this.props.javaFolder + "/model";
         this.props.modulePackage = this.props.package + "." + this.props.modulename;
         this.props.moduleFolder = this.props.javaFolder + "/" + this.props.modulename;
+        this.props.moduleTestFolder = this.props.testFolder + "/" + this.props.modulename;
         this.props.processPackage = this.props.modulePackage + ".process";
         this.props.processFolder = this.props.moduleFolder + "/process";
+        this.props.processTestFolder = this.props.moduleTestFolder + "/process";
         this.props.responsePackage = this.props.modulePackage + ".response";
         this.props.responseFolder = this.props.moduleFolder + "/response";
         this.props.wsPackage = this.props.modulePackage + ".ws";
@@ -399,6 +402,51 @@ module.exports = yeoman.generators.Base.extend({
                     }]
                 }]
             }]
+        }, {
+            groupId: ["org.jacoco"],
+            artifactId: ["jacoco-maven-plugin"],
+            version: ["0.7.1.201405082137"],
+            executions: [{
+                execution: [
+                    {
+                        goals: [{ goal: ["prepare-agent"] }]
+                    },
+                    {
+                          id: ["report"],
+                          phase: ["prepare-package"],
+                          goals: [{ goal: ["report"] }]
+                    },
+                    {
+                        id: ["check"],
+                        goals: [{ goal: ["check"] }],
+                        configuration: [{
+                            rules: [{
+                                rule: [{
+                                    "$": { implementation: "org.jacoco.maven.RuleConfiguration" },
+                                    element: ["BUNDLE"],
+                                    limits: [{
+                                        limit: [{
+                                            "$": { implementation: "org.jacoco.report.check.Limit" },
+                                            counter: ["INSTRUCTION"],
+                                            value: ["COVEREDRATIO"],
+                                            minimum: ["0.96"]
+                                        }]
+                                    }]
+                                }]
+                            }],
+                            excludes: [{
+                                exclude: [
+                                    "**/Router.*",
+                                    "**/ErrorCode.*",
+                                    "**/GsonContextResolver.*",
+                                    "**/ServletListener.*",
+                                    "**/model/*.*"
+                                ]
+                            }]
+                        }]
+                    }
+                ]
+            }]
         }];
 
         for (var i in pluginsToAdd) {
@@ -407,7 +455,7 @@ module.exports = yeoman.generators.Base.extend({
             for (var j in this.props.pom.project.build[0].plugins[0].plugin) {
                 var b = this.props.pom.project.build[0].plugins[0].plugin[j];
 
-                if (bta.groupId[0] === b.groupId[0] && bta.artifactId[0] === b.artifactId[0]) {
+                if (b.groupId && b.artifactId && bta.groupId[0] === b.groupId[0] && bta.artifactId[0] === b.artifactId[0]) {
                     exist = true;
 
                     if (bta.configuration && bta.configuration.length && bta.configuration[0].source) {
@@ -817,7 +865,7 @@ module.exports = yeoman.generators.Base.extend({
 
         this.fs.copyTpl(
             this.templatePath('ErrorCode.java'),
-            this.destinationPath(this.props.javaFolder+"/ErrorCode.java"), 
+            this.destinationPath(this.props.javaFolder+"/ErrorCode.java"),
             this.props);
 
         this.fs.copyTpl(
@@ -865,6 +913,11 @@ module.exports = yeoman.generators.Base.extend({
                         params);
 
                     this.fs.copyTpl(
+                        this.templatePath('ProcessTest.java'),
+                        this.destinationPath(this.props.processTestFolder+"/"+table.className+"ProcessTest.java"),
+                        params);
+
+                    this.fs.copyTpl(
                         this.templatePath('Response.java'),
                         this.destinationPath(this.props.responseFolder+"/"+table.className+"Resp.java"),
                         params);
@@ -889,6 +942,11 @@ module.exports = yeoman.generators.Base.extend({
                 this.templatePath('LoginServices.java'),
                 this.destinationPath(this.props.processFolder+"/LoginServices.java"),
                 paramsLogin);
+
+            this.fs.copyTpl(
+                this.templatePath('LoginServicesTest.java'),
+                this.destinationPath(this.props.processTestFolder+"/LoginServicesTest.java"),
+                this.props);
         }
     },
 
@@ -988,9 +1046,10 @@ module.exports = yeoman.generators.Base.extend({
     },
 
     writeHtmlFiles: function() {
-        this.fs.copy(
+        this.fs.copyTpl(
             this.templatePath('index.html'),
-            this.destinationPath("src/main/webapp/" + this.props.modulename + "/index.html"));
+            this.destinationPath("src/main/webapp/" + this.props.modulename + "/index.html"),
+            this.props);
     },
 
     writeGruntConfig: function() {
@@ -1177,6 +1236,10 @@ module.exports = yeoman.generators.Base.extend({
             return index + 1;
         }
 
+        if (column.column_key === "PRI") {
+            return index + 1;
+        }
+
         if (column.referencedTable) {
             if (index == 0) {
                 return 1; //the first one is connected with the other first one's
@@ -1185,12 +1248,12 @@ module.exports = yeoman.generators.Base.extend({
             }
         }
 
-        if (column.column_key === "PRI") {
-            return index + 1;
-        }
-
         if (column.smartType === "email") {
-            return "\"" + lorem(1) + "@gmail.com\"";
+            if (index == 0) {
+                return "\"user@gmail.com\""; //the first one will be user@gmail.com
+            } else {
+                return "\"" + lorem(1) + "@gmail.com\"";
+            }
         }
 
         if (column.smartType === "password") {
@@ -1206,7 +1269,7 @@ module.exports = yeoman.generators.Base.extend({
         }
 
         if (["char", "varchar", "text"].indexOf(column.data_type) > -1) {
-            return "\"" + lorem(column.character_maximum_length) + "\"";
+            return "\"" + lorem(column.character_maximum_length, index === 0) + "\"";
         }
 
         else if (["float", "double", "real", "double precision", "numeric", "decimal"].indexOf(column.data_type) > -1) {
@@ -1237,23 +1300,23 @@ module.exports = yeoman.generators.Base.extend({
 
     _generateSmartType: function(column) {
 
-        if (this._regexTestExactInsensitive(this.props.columnNamePatterns.active, column.column_name)) {
+        if (column.data_type === "tinyint" && this._regexTestExactInsensitive(this.props.columnNamePatterns.active, column.column_name)) {
             return "active";
         }
 
-        else if (this._regexTestExactInsensitive(this.props.columnNamePatterns.email, column.column_name)) {
+        else if (column.javaType === "String" && this._regexTestExactInsensitive(this.props.columnNamePatterns.email, column.column_name)) {
             return "email";
         }
 
-        else if (this._regexTestExactInsensitive(this.props.columnNamePatterns.password, column.column_name)) {
+        else if (column.javaType === "String" && this._regexTestExactInsensitive(this.props.columnNamePatterns.password, column.column_name)) {
             return "password";
         }
 
-        else if (this._regexTestExactInsensitive(this.props.columnNamePatterns.imageUrl, column.column_name)) {
+        else if (column.javaType === "String" && this._regexTestExactInsensitive(this.props.columnNamePatterns.imageUrl, column.column_name)) {
             return "imageUrl";
         }
 
-        else if (this._regexTestExactInsensitive(this.props.columnNamePatterns.url, column.column_name)) {
+        else if (column.javaType === "String" && this._regexTestExactInsensitive(this.props.columnNamePatterns.url, column.column_name)) {
             return "url";
         }
 
