@@ -21,7 +21,7 @@ import AppBus from '../service/AppBus';
 export default {
     name: "Login", 
     methods: {
-        login: function(e) {
+        login(e) {
             e.preventDefault();
 
             AppResource.login.save({

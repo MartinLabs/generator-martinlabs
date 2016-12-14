@@ -43,7 +43,9 @@
                                     <td>{{ item.<%= c.propertyName %> | moment($t("dateFormat.datetime")) }}</td><% 
 						                    } else if (c.javaType === "Boolean" || c.javaType === "boolean") { %>
                                     <td>{{ item.<%= c.propertyName %> == null ? null : item.<%= c.propertyName %> ? $t("boolean.true") : $t("boolean.false") }}</td><% 
-						                    } else { %>
+						                    } else if (c.javaType === "String") { %>
+                                    <td>{{ item.<%= c.propertyName %> | truncate("140") }}</td><%
+                                            } else { %>
                                     <td>{{ item.<%= c.propertyName %> }}</td><%
 						                    }
 						                } else { %>
@@ -83,17 +85,17 @@ import AdapStore from '../adaptable/Store.js';
 export default {
     name: "Home",
     components: { Default, AdapTh, AdapPagination, AdapSearchfield },
-    data: function() {
+    data() {
         return {
             list: [],
             adapStore: new AdapStore("<%= table.idColumn.propertyName %>", (params) => this.populateList(params))
         }
     }, 
-    mounted: function() {
+    mounted() {
         this.adapStore.search();
     },
     methods: {
-        populateList: function(params) {
+        populateList(params) {
             AppResource.<%= table.classLowerCamel %>.query(_.assign({<% if (props.loginsys) { %> 
                 token: simpleStorage.get("token<%= props.modulenameUpper %>") || null<% } %>
             }, params)).then((resp) => {
@@ -105,9 +107,21 @@ export default {
                 }
             });
         },
-        openPersist: function(item) {
+        openPersist(item) {
             this.$router.push(`/persist<%= table.className %>/${item.<%= table.idColumn.propertyName %>}`);
         }
+    },
+  
+    filters: {
+
+        truncate(string, value) {
+            if (string.length > value) {
+                return string.substring(0, value) + '...';
+            } else {
+                return string;
+            }
+        }
+
     }
 }
 </script>

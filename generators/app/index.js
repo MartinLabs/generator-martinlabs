@@ -905,6 +905,9 @@ module.exports = yeoman.generators.Base.extend({
                     this.destinationPath(this.props.daoFolder+"/"+table.className+"Dao.java"),
                     params);
 
+                console.info("TABLE:" + table.className);
+                console.info("IN CRUD:" + table.inCrud);
+
                 if (table.inCrud) {
 
                     this.fs.copyTpl(
@@ -1269,7 +1272,7 @@ module.exports = yeoman.generators.Base.extend({
         }
 
         if (["char", "varchar", "text"].indexOf(column.data_type) > -1) {
-            return "\"" + lorem(column.character_maximum_length, index === 0) + "\"";
+            return "\"" + lorem(Math.min(2000, column.character_maximum_length), index === 0) + "\"";
         }
 
         else if (["float", "double", "real", "double precision", "numeric", "decimal"].indexOf(column.data_type) > -1) {

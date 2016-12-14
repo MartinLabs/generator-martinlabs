@@ -89,8 +89,21 @@ public class <%= table.className %>ProcessTest extends DaoUnitTestWrapper {
 
     @Test
     public void testListWithQuery() {
-        String token = loginS.loginToToken("user@gmail.com", SecurityUtils.sha1("abcabc"));
-        String query = "lorem";
+        String token = loginS.loginToToken("user@gmail.com", SecurityUtils.sha1("abcabc"));<%
+        var existStringColumn = false;
+        for (var i in table.columns) {
+            var c = table.columns[i];
+            if (c.javaType === "String") {
+                existStringColumn = true;
+                break;
+            }
+        }
+        if (existStringColumn) {
+        %>
+        String query = "lorem";<% 
+        } else { %>
+        String query = "1";<% 
+        } %>
         Integer page = 0;
         Integer limit = 20;
         String orderRequest = null;
@@ -153,7 +166,7 @@ for (var i in table.columns) {
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(1);<% 
         		} else if (cx.javaType === "String") {
     	%>
-        <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("Hey");<% 
+        <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("X");<% 
         		} else if (cx.javaType === "Date") {
     	%>
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(new Date());<% 
@@ -171,21 +184,21 @@ for (var i in table.columns) {
     if (c.javaType === "String" && c.propertyName != table.idColumn.propertyName) {
         %>
     @Test(expected = RespException.class)
-    public void testPersist<%= c.propertyNameUpper %>Length<%= c.character_maximum_length + 1 %>() {
+    public void testPersist<%= c.propertyNameUpper %>Length<%= Math.min(65500, c.character_maximum_length) + 1 %>() {
         String token = loginS.loginToToken("user@gmail.com", SecurityUtils.sha1("abcabc"));
         <%= table.className %> <%= table.classLowerCamel %> = new <%= table.className %>(); <%
         for (var j in table.columns) { 
 		    var cx = table.columns[j]; 
 		    if (cx.propertyName == c.propertyName) {
 		%>
-        <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("He<%= new Array(cx.character_maximum_length).join('y') %>");<% 
+        <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("He<%= new Array(Math.min(65500, cx.character_maximum_length)).join('y') %>");<% 
 		    } else if (cx.is_nullable === "NO" && (cx.propertyName != table.idColumn.propertyName || cx.referencedTable)) { 
 		    	if (["double", "long"].indexOf(cx.javaType) > -1) {
     	%>
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(1);<% 
         		} else if (cx.javaType === "String") {
     	%>
-        <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("Hey");<% 
+        <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("X");<% 
         		} else if (cx.javaType === "Date") {
     	%>
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(new Date());<% 
@@ -212,7 +225,7 @@ for (var i in table.columns) {
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(1);<% 
         		} else if (cx.javaType === "String") {
     	%>
-        <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("Hey");<% 
+        <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("X");<% 
         		} else if (cx.javaType === "Date") {
     	%>
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(new Date());<% 
@@ -238,7 +251,7 @@ for (var i in table.columns) {
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(1);<% 
         		} else if (cx.javaType === "String") {
     	%>
-        <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("Hey");<% 
+        <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("X");<% 
         		} else if (cx.javaType === "Date") {
     	%>
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(new Date());<% 
@@ -270,7 +283,7 @@ for (var i in table.columns) {
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(1);<% 
         		} else if (cx.javaType === "String") {
     	%>
-        <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("Hey");<% 
+        <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("X");<% 
         		} else if (cx.javaType === "Date") {
     	%>
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(new Date());<% 
@@ -316,7 +329,7 @@ for (var i in table.columns) {
             1<% 
                 } else if (c.javaType === "String") { 
             %>
-            "Hey"<% 
+            "X"<% 
                 } else if (c.javaType === "Date") { 
             %>
             new Date()<% 
@@ -335,7 +348,7 @@ for (var i in table.columns) {
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(1);<% 
                 } else if (cx.javaType === "String") {
         %>
-        <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("Hey");<% 
+        <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("X");<% 
                 } else if (cx.javaType === "Date") {
         %>
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(new Date());<% 

@@ -66,11 +66,11 @@ import simpleStorage from 'simpleStorage.js';
 
 export default {
     name: "Default",
-    data: function() {
+    data() {
         return  { sidebarOpen: false };
     },
     methods: {
-        logout: function() {
+        logout() {
             simpleStorage.deleteKey("token<%= modulenameUpper %>");
             this.$router.push("/login");
         }

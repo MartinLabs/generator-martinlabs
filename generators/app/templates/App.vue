@@ -15,7 +15,7 @@ import AppBus from '../service/AppBus';
 export default {
     name: "App",
     components: { alert },
-    data: function() {
+    data() {
         return {
             showAlert: false,
             alertType: "danger",
@@ -23,7 +23,7 @@ export default {
             alertMessage: ""
         };
     },
-    created: function() {
+    created() {
         AppBus.$on("alert", function (type, message, duration) {
             this.alertType = type;
             this.alertMessage = message;

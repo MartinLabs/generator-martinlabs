@@ -16,7 +16,7 @@
 export default {
     name: "adap-pagination",
     props: ["store", "pageSize"],
-    mounted: function() {
+    mounted() {
         if (this.pageSize) {
             this.store.setPageSize(this.pageSize);
         }

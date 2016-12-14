@@ -176,13 +176,13 @@ for (var i in table.columns) {
     if (c.javaType === "String") {
         if (c.is_nullable === "NO") {
         %>
-        if (<%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>().length() > <%= c.character_maximum_length %>) {
-            throw new RespException(<%= c.ordinal_position %>, LanguageHolder.instance.lengthCannotBeMoreThan("<%= c.propertyNatural %>", <%= c.character_maximum_length %>));
+        if (<%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>().length() > <%= Math.min(65500, c.character_maximum_length) %>) {
+            throw new RespException(<%= c.ordinal_position %>, LanguageHolder.instance.lengthCannotBeMoreThan("<%= c.propertyNatural %>", <%= Math.min(65500, c.character_maximum_length) %>));
         }<%
         } else {
         %>
-        if (<%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>() != null && <%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>().length() > <%= c.character_maximum_length %>) {
-            throw new RespException(<%= c.ordinal_position %>, LanguageHolder.instance.lengthCannotBeMoreThan("<%= c.propertyNatural %>", <%= c.character_maximum_length %>));
+        if (<%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>() != null && <%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>().length() > <%= Math.min(65500, c.character_maximum_length) %>) {
+            throw new RespException(<%= c.ordinal_position %>, LanguageHolder.instance.lengthCannotBeMoreThan("<%= c.propertyNatural %>", <%= Math.min(65500, c.character_maximum_length) %>));
         }<%
         }
     }

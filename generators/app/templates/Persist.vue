@@ -36,7 +36,9 @@
                                 </option>
                             </select>
                         </div>
-                    <% } else if (col.javaType === "String") { %>
+                    <% } else if (col.javaType === "String") { 
+                        if (col.character_maximum_length <= 255) {
+                    %>
                         <div class="form-group">
                             <label for="input-<%= col.propertyName %>" 
                                 class="control-label"> 
@@ -46,7 +48,20 @@
                                 v-model="<%= table.classLowerCamel %>.<%= col.propertyName %>"
                                 class="form-control" <%= col.is_nullable !== "YES" ? "required" : "" %>>
                         </div>
-                    <% } else if (["Double", "double"].indexOf(col.javaType) > -1) { %>
+                    <% 
+                        } else {
+                    %>
+                        <div class="form-group">
+                            <label for="input-<%= col.propertyName %>" 
+                                class="control-label"> 
+                                {{ $t("classes.<%= table.className %>.columns.<%= col.propertyName %>") }}</label>
+                            <textarea id="input-<%= col.propertyName %>" 
+                                v-model="<%= table.classLowerCamel %>.<%= col.propertyName %>"
+                                class="form-control" rows="3" <%= col.is_nullable !== "YES" ? "required" : "" %>></textarea>
+                        </div>
+                    <%
+                        }
+                    } else if (["Double", "double"].indexOf(col.javaType) > -1) { %>
                         <div class="form-group">
                             <label for="input-<%= col.propertyName %>" 
                                 class="control-label">
@@ -151,7 +166,7 @@ var AppTranslator = require('../service/AppTranslator').default;
 export default {
     name: "Persist<%= table.className %>",
     components: { Default },
-    data: function() {
+    data() {
         return {
             <%= table.classLowerCamel %>: {<%
                 var colocarVirgula = false;
@@ -198,14 +213,14 @@ colocarVirgula = false;
 for (var i in table.NtoNcolumns) { 
     var col = table.NtoNcolumns[i]; %><%= colocarVirgula ? ',' : '' %><% colocarVirgula = true; %>
         <%= col.NtoNtable.classLowerCamel %>Ids: {
-            get: function() {
+            get() {
                 var <%= col.NtoNtable.classLowerCamel %>Ids = [];
                 for (let item of this.<%= table.classLowerCamel %>.<%= col.NtoNtable.classLowerCamel %>) {
                     <%= col.NtoNtable.classLowerCamel %>Ids.push(item.<%= col.otherTable.idColumn.propertyName %>);
                 }
                 return <%= col.NtoNtable.classLowerCamel %>Ids;
             },
-            set: function(val) {
+            set(val) {
                 this.<%= table.classLowerCamel %>.<%= col.NtoNtable.classLowerCamel %> = [];
                 for (let item of val) {
                     this.<%= table.classLowerCamel %>.<%= col.NtoNtable.classLowerCamel %>.push({ <%= col.otherTable.idColumn.propertyName %>: item });
@@ -223,10 +238,10 @@ for (var i in table.columns) { var col = table.columns[i];
 %><%= colocarVirgula ? ',' : '' %><% colocarVirgula = true; %>
 
         <%= col.propertyName %>Rendered: {
-            get: function() {
+            get() {
                 return this.renderDate(this.<%= table.classLowerCamel %>.<%= col.propertyName %>);
             },
-            set: function(val) {
+            set(val) {
                 this.<%= table.classLowerCamel %>.<%= col.propertyName %> = this.transformToDate(val);
             }
         }<% 
@@ -235,10 +250,10 @@ for (var i in table.columns) { var col = table.columns[i];
 %><%= colocarVirgula ? ',' : '' %><% colocarVirgula = true; %>
 
         <%= col.propertyName %>Rendered: {
-            get: function() {
+            get() {
                 return this.renderDatetime(this.<%= table.classLowerCamel %>.<%= col.propertyName %>);
             },
-            set: function(val) {
+            set(val) {
                 this.<%= table.classLowerCamel %>.<%= col.propertyName %> = this.transformToDatetime(val);
             }
         }<% 
@@ -247,7 +262,7 @@ for (var i in table.columns) { var col = table.columns[i];
     }
 } %>
     },
-    mounted: function() {
+    mounted() {
         var id = this.$route.params.id || 0;
         AppResource.<%= table.classLowerCamel %>.get({ 
             id: id<% if (props.loginsys) { %>,
@@ -283,7 +298,7 @@ for (var i in table.columns) { var col = table.columns[i];
         });
     },
     methods: {
-        persist: function(e) {
+        persist(e) {
             e.preventDefault();
 
             AppResource.<%= table.classLowerCamel %>.save({
@@ -297,24 +312,24 @@ for (var i in table.columns) { var col = table.columns[i];
                 }
             });
         },
-        renderDate: function(date) {
+        renderDate(date) {
             if (date) {
                 return moment(date).format(AppTranslator.data.dateFormat.date);
             } else {
                 return null;
             }
         },
-        transformToDate: function(visual) {
+        transformToDate(visual) {
             return moment(visual, AppTranslator.data.dateFormat.date).format();
         },
-        renderDatetime: function(date) {
+        renderDatetime(date) {
             if (date) {
                 return moment(date).format(AppTranslator.data.dateFormat.datetime);
             } else {
                 return null;
             }
         },
-        transformToDatetime: function(visual) {
+        transformToDatetime(visual) {
             return moment(visual, AppTranslator.data.dateFormat.datetime).format();
         }
     }

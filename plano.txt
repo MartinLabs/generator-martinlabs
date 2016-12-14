@@ -1,7 +1,9 @@
-- quando a string tem no máximo 1 ou 2 caracteres da pau no test pq to usando "Hey"
-- quando não tem string na tabela da pau no test pq to buscando por "lorem", nesse caso tem q buscar por "1"
-- gerar watch no grunt
+FACEIS DE ARRUMAR
 
+BUGFIXES E MAIS URGENTES
+- quando existem 2 colunas primary key na tabela o persist fica zuado
+
+SMART TYPE
 - se a coluna for "ativo" poder inativa-la e não exibir a linha inativa no listar
 - se a coluna for "email" deve validar como e-mail no persist
 - se a coluna for "password" deve fazer sha1 no js e sha1 no insert/update; se estiver em branco no update não alterar; não exibir no listar
@@ -10,10 +12,13 @@
 - smartType especifico para colocar NOW() no insert
 - ler comentario contendo "martinlabs-generator:ignore" e ignorar coluna
 
-- graficos
+OUTRAS FEATURES
+- graficos valor x hora
 - exportar csv via client
 - exportar csv total via servidor
+- gerar watch no grunt
 
+EXISTE IMPEDIMENTO OU PRECISA SER PENSADO MELHOR
 - em todos os WS além de token tem que enviar versão do client para validar se é muito antiga e sistema operacional
 - gerar "esqueci a senha"
 - lista de itens conectados ao meu usuário
