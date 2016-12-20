@@ -1,18 +1,25 @@
 FACEIS DE ARRUMAR
+- adap-th => adap-orderby (ver itrack)
 
 BUGFIXES E MAIS URGENTES
+- quando a primary key é foreign key fica estranho de editar, pq vc altera a primary key? não, vc altera o cara errado
 - quando existem 2 colunas primary key na tabela o persist fica zuado
+- erro no teste unitario se a coluna de login n for de e-mail
 
 SMART TYPE
-- se a coluna for "ativo" poder inativa-la e não exibir a linha inativa no listar
-- se a coluna for "email" deve validar como e-mail no persist
-- se a coluna for "password" deve fazer sha1 no js e sha1 no insert/update; se estiver em branco no update não alterar; não exibir no listar
 - se a coluna for "imageUrl" deve exibir uma imagem no listar
+- se a coluna for "ativo" poder inativa-la e não exibir a linha inativa no listar
+- se a coluna for "password" deve fazer sha1 no js e no insert/update; se estiver em branco no update não alterar; nunca incluir no select, validar minimo de 6 chats, não mostrar na lista
 - se a coluna for "url" deve validar no persist; no listar, ao clicar deve abrir nova aba
 - smartType especifico para colocar NOW() no insert
 - ler comentario contendo "martinlabs-generator:ignore" e ignorar coluna
 
 OUTRAS FEATURES
+- talvez exista uma forma de separar lógicas geradas de lógicas personalizadas e podermos gerar a lógica gerada sempre que mudar o banco sem perder a personalizada (talvez se o model se auto-validasse e o dao tivesse uma separação)
+- gerar teste unitário para o model
+- organizar o generator para que possamos configurar quais templates irá usar em um outro arquivo
+- perguntar se quer rodar o dados.sql
+- rodar mvn
 - graficos valor x hora
 - exportar csv via client
 - exportar csv total via servidor

@@ -38,6 +38,7 @@ import com.google.common.base.Strings;
 import java.util.List;
 import br.com.martinlabs.commons.LanguageHolder;
 import br.com.martinlabs.commons.PagedResp;
+import br.com.martinlabs.commons.Validator;
 import java.sql.Connection;
 
 /**
@@ -184,6 +185,20 @@ for (var i in table.columns) {
         if (<%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>() != null && <%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>().length() > <%= Math.min(65500, c.character_maximum_length) %>) {
             throw new RespException(<%= c.ordinal_position %>, LanguageHolder.instance.lengthCannotBeMoreThan("<%= c.propertyNatural %>", <%= Math.min(65500, c.character_maximum_length) %>));
         }<%
+        }
+
+        if (c.smartType === "email") {
+            if (c.is_nullable === "NO") {
+            %>
+        if (!Validator.isEmail(<%= table.classLowerCamel %>.get<%= c.propertyNameUpper%>())) {
+            throw new RespException(<%= c.ordinal_position %>, LanguageHolder.instance.isNotAValidEmail("<%= c.propertyNatural %>"));
+        }<%
+            } else {
+                %>
+        if (<%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>() != null && !Validator.isEmail(<%= table.classLowerCamel %>.get<%= c.propertyNameUpper%>())) {
+            throw new RespException(<%= c.ordinal_position %>, LanguageHolder.instance.isNotAValidEmail("<%= c.propertyNatural %>"));
+        }<%
+            }
         }
     }
 

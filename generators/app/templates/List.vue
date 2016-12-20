@@ -83,7 +83,7 @@ import AdapSearchfield from '../adaptable/searchfield.vue';
 import AdapStore from '../adaptable/Store.js';
 
 export default {
-    name: "Home",
+    name: "List<%= table.className %>",
     components: { Default, AdapTh, AdapPagination, AdapSearchfield },
     data() {
         return {

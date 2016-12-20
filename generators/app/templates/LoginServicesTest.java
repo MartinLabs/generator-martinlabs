@@ -4,6 +4,8 @@ import br.com.martinlabs.commons.DaoUnitTestWrapper;
 import br.com.martinlabs.commons.SecurityUtils;
 import br.com.martinlabs.commons.exceptions.RespException;
 import java.sql.Connection;
+import java.sql.SQLException;
+import javax.naming.NamingException;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -17,13 +19,8 @@ public class LoginServicesTest extends DaoUnitTestWrapper {
     private LoginServices subject;
     private String token;
     
-    public LoginServicesTest() {
+    public LoginServicesTest() throws NamingException, SQLException {
         super("<%= datasource %>", "<%= database %>");
-    }
-    
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
         Connection con = getConnection();
         subject = new LoginServices(con);
         token = subject.loginToToken("user@gmail.com", SecurityUtils.sha1("abcabc"));

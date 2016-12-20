@@ -37,14 +37,14 @@
                             </select>
                         </div>
                     <% } else if (col.javaType === "String") { 
-                        if (col.character_maximum_length <= 255) {
+                        if (col.character_maximum_length <= 255 || col.smartType) {
                     %>
                         <div class="form-group">
                             <label for="input-<%= col.propertyName %>" 
                                 class="control-label"> 
                                 {{ $t("classes.<%= table.className %>.columns.<%= col.propertyName %>") }}</label>
                             <input id="input-<%= col.propertyName %>" 
-                                type="text" 
+                                type="<%= col.smartType === 'email' ? 'email' : col.smartType === 'password' ? 'password' : 'text' %>" 
                                 v-model="<%= table.classLowerCamel %>.<%= col.propertyName %>"
                                 class="form-control" <%= col.is_nullable !== "YES" ? "required" : "" %>>
                         </div>

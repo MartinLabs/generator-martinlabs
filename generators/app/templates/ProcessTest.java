@@ -18,6 +18,8 @@ import br.com.martinlabs.commons.PagedResp;
 import br.com.martinlabs.commons.SecurityUtils;
 import br.com.martinlabs.commons.exceptions.RespException;
 import java.sql.Connection;
+import java.sql.SQLException;
+import javax.naming.NamingException;
 import java.util.ArrayList;
 import java.util.Date;
 import static org.junit.Assert.*;
@@ -34,13 +36,8 @@ public class <%= table.className %>ProcessTest extends DaoUnitTestWrapper {
     private LoginServices loginS;
     private <%= table.className %>Process subject;
 
-    public <%= table.className %>ProcessTest() {
+    public <%= table.className %>ProcessTest() throws NamingException, SQLException {
         super("<%= props.datasource %>", "<%= props.database %>");
-    }
-    
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
         con = getConnection();
         subject = new <%= table.className %>Process(con);
         loginS = new LoginServices(con);
@@ -90,15 +87,15 @@ public class <%= table.className %>ProcessTest extends DaoUnitTestWrapper {
     @Test
     public void testListWithQuery() {
         String token = loginS.loginToToken("user@gmail.com", SecurityUtils.sha1("abcabc"));<%
-        var existStringColumn = false;
+        var existPureStringColumn = false;
         for (var i in table.columns) {
             var c = table.columns[i];
-            if (c.javaType === "String") {
-                existStringColumn = true;
+            if (c.javaType === "String" && !c.smartType) {
+                existPureStringColumn = true;
                 break;
             }
         }
-        if (existStringColumn) {
+        if (existPureStringColumn) {
         %>
         String query = "lorem";<% 
         } else { %>
@@ -165,8 +162,13 @@ for (var i in table.columns) {
     	%>
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(1);<% 
         		} else if (cx.javaType === "String") {
+                    if (cx.smartType === "email") {
+        %>
+        <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("any@email.com");<% 
+                    } else {
     	%>
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("X");<% 
+                    }
         		} else if (cx.javaType === "Date") {
     	%>
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(new Date());<% 
@@ -197,8 +199,13 @@ for (var i in table.columns) {
     	%>
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(1);<% 
         		} else if (cx.javaType === "String") {
-    	%>
+                    if (cx.smartType === "email") {
+        %>
+        <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("any@email.com");<% 
+                    } else {
+        %>
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("X");<% 
+                    }
         		} else if (cx.javaType === "Date") {
     	%>
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(new Date());<% 
@@ -209,6 +216,39 @@ for (var i in table.columns) {
         
         subject.persist(<%= table.classLowerCamel %>, token);
     } <%
+        if (c.smartType === "email") { %>
+    @Test(expected = RespException.class)
+    public void testPersist<%= c.propertyNameUpper %>AsInvalidEmail() {
+        String token = loginS.loginToToken("user@gmail.com", SecurityUtils.sha1("abcabc"));
+        <%= table.className %> <%= table.classLowerCamel %> = new <%= table.className %>(); <%
+        for (var j in table.columns) { 
+            var cx = table.columns[j]; 
+            if (cx.propertyName == c.propertyName) {
+        %>
+        <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("notAnEmail");<% 
+            } else if (cx.is_nullable === "NO" && (cx.propertyName != table.idColumn.propertyName || cx.referencedTable)) { 
+                if (["double", "long"].indexOf(cx.javaType) > -1) {
+        %>
+        <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(1);<% 
+                } else if (cx.javaType === "String") {
+                    if (cx.smartType === "email") {
+        %>
+        <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("any@email.com");<% 
+                    } else {
+        %>
+        <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("X");<% 
+                    }
+                } else if (cx.javaType === "Date") {
+        %>
+        <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(new Date());<% 
+                }
+            } 
+        } 
+        %>
+        
+        subject.persist(<%= table.classLowerCamel %>, token);
+    } <%
+        }
     }
 
 } %>
@@ -224,8 +264,13 @@ for (var i in table.columns) {
     	%>
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(1);<% 
         		} else if (cx.javaType === "String") {
-    	%>
+                    if (cx.smartType === "email") {
+        %>
+        <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("any@email.com");<% 
+                    } else {
+        %>
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("X");<% 
+                    }
         		} else if (cx.javaType === "Date") {
     	%>
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(new Date());<% 
@@ -250,8 +295,13 @@ for (var i in table.columns) {
     	%>
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(1);<% 
         		} else if (cx.javaType === "String") {
-    	%>
+                    if (cx.smartType === "email") {
+        %>
+        <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("any@email.com");<% 
+                    } else {
+        %>
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("X");<% 
+                    }
         		} else if (cx.javaType === "Date") {
     	%>
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(new Date());<% 
@@ -282,8 +332,13 @@ for (var i in table.columns) {
     	%>
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(1);<% 
         		} else if (cx.javaType === "String") {
-    	%>
+                    if (cx.smartType === "email") {
+        %>
+        <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("any@email.com");<% 
+                    } else {
+        %>
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("X");<% 
+                    }
         		} else if (cx.javaType === "Date") {
     	%>
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(new Date());<% 
@@ -347,8 +402,13 @@ for (var i in table.columns) {
         %>
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(1);<% 
                 } else if (cx.javaType === "String") {
+                    if (cx.smartType === "email") {
+        %>
+        <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("any@email.com");<% 
+                    } else {
         %>
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("X");<% 
+                    }
                 } else if (cx.javaType === "Date") {
         %>
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(new Date());<% 

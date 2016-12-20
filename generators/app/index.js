@@ -905,9 +905,6 @@ module.exports = yeoman.generators.Base.extend({
                     this.destinationPath(this.props.daoFolder+"/"+table.className+"Dao.java"),
                     params);
 
-                console.info("TABLE:" + table.className);
-                console.info("IN CRUD:" + table.inCrud);
-
                 if (table.inCrud) {
 
                     this.fs.copyTpl(
@@ -1060,6 +1057,16 @@ module.exports = yeoman.generators.Base.extend({
         var done = this.async();
         jsonfile.spaces = 4;
 
+        try {
+            fs.mkdirSync(this.destinationRoot() + "/src");
+        } catch (e) {}
+        try {
+            fs.mkdirSync(this.destinationRoot() + "/src/main");
+        } catch (e) {}
+        try {
+            fs.mkdirSync(this.destinationRoot() + "/src/main/webapp");
+        } catch (e) {}
+
         jsonfile.writeFile("src/main/webapp/package.json", self.props.npmPackage, function(err) {
 
             jsonfile.writeFile("src/main/webapp/browserify.json", self.props.browserify, function(err) {
@@ -1114,12 +1121,20 @@ module.exports = yeoman.generators.Base.extend({
 
 
         var metaInfCtxAsXml = new xml2js.Builder().buildObject(this.props.metaInfCtx);
+
         try {
             fs.mkdirSync(this.destinationRoot() + "/src");
+        } catch (e) {}
+        try {
             fs.mkdirSync(this.destinationRoot() + "/src/main");
+        } catch (e) {}
+        try {
             fs.mkdirSync(this.destinationRoot() + "/src/main/webapp");
+        } catch (e) {}
+        try {
             fs.mkdirSync(this.destinationRoot() + "/src/main/webapp/META-INF");
         } catch (e) {}
+        
         fs.writeFileSync(this.destinationRoot() + "/src/main/webapp/META-INF/context.xml", metaInfCtxAsXml, "utf8");
     },
 

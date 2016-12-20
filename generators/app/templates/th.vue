@@ -1,8 +1,8 @@
 <template>
 
-    <th @click="store.setOrder(name)">
+    <th @click="store.setOrder(name)" :class="{ 'dropup': !store.asc }">
         <slot></slot>
-        <span :class="{ glyphicon: store.orderBy === name, 'glyphicon-chevron-up': store.orderBy === name && store.asc, 'glyphicon-chevron-down': store.orderBy === name && !store.asc }"></span>
+        <span :class="{ 'caret': store.orderBy === name }"></span>
     </th>
 
 </template>
@@ -10,7 +10,7 @@
 <script>
 export default {
     name: "adap-th",
-    props: ["store", "name"],
+    props: ["store", "name"]
 }
 </script>
 
