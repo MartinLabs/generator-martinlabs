@@ -164,51 +164,8 @@ for (var j in table.NtoNcolumns) {
         return resp;
     }
 
-    public Long persist(<%= table.className %> <%= table.classLowerCamel %><% if (props.loginsys) { %>, String token<% } %>) {<% 
-for (var i in table.columns) { 
-    var c = table.columns[i]; 
-    if (c.is_nullable === "NO" && (c.javaType === "String" || c.javaType === "Date")) { 
-%>
-        if (<%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>() == null) {
-            throw new RespException(<%= c.ordinal_position %>,  LanguageHolder.instance.cannotBeNull("<%= c.propertyNatural %>"));
-        }<% 
-    }
-
-    if (c.javaType === "String") {
-        if (c.is_nullable === "NO") {
-        %>
-        if (<%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>().length() > <%= Math.min(65500, c.character_maximum_length) %>) {
-            throw new RespException(<%= c.ordinal_position %>, LanguageHolder.instance.lengthCannotBeMoreThan("<%= c.propertyNatural %>", <%= Math.min(65500, c.character_maximum_length) %>));
-        }<%
-        } else {
-        %>
-        if (<%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>() != null && <%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>().length() > <%= Math.min(65500, c.character_maximum_length) %>) {
-            throw new RespException(<%= c.ordinal_position %>, LanguageHolder.instance.lengthCannotBeMoreThan("<%= c.propertyNatural %>", <%= Math.min(65500, c.character_maximum_length) %>));
-        }<%
-        }
-
-        if (c.smartType === "email") {
-            if (c.is_nullable === "NO") {
-            %>
-        if (!Validator.isEmail(<%= table.classLowerCamel %>.get<%= c.propertyNameUpper%>())) {
-            throw new RespException(<%= c.ordinal_position %>, LanguageHolder.instance.isNotAValidEmail("<%= c.propertyNatural %>"));
-        }<%
-            } else {
-                %>
-        if (<%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>() != null && !Validator.isEmail(<%= table.classLowerCamel %>.get<%= c.propertyNameUpper%>())) {
-            throw new RespException(<%= c.ordinal_position %>, LanguageHolder.instance.isNotAValidEmail("<%= c.propertyNatural %>"));
-        }<%
-            }
-        }
-    }
-
-    if (c.referencedTable && c.is_nullable === "NO") {
-%>
-        if (<%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>() == 0) {
-            throw new RespException(<%= c.ordinal_position %>,  LanguageHolder.instance.cannotBeNull("<%= c.propertyNatural %>"));
-        }<% 
-    }
-} %>
+    public Long persist(<%= table.className %> <%= table.classLowerCamel %><% if (props.loginsys) { %>, String token<% } %>) {
+        <%= table.classLowerCamel %>.validate();
 
     <% if (props.loginsys) { %>
         loginS.allowAccess(token);

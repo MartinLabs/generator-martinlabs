@@ -1,16 +1,15 @@
 <template>
 
-    <th @click="store.setOrder(name)" :class="{ 'dropup': !store.asc }">
+    <div @click="store.setOrder(name)" style="cursor:pointer" :class="{ 'dropup': !store.asc }">
         <slot></slot>
         <span :class="{ 'caret': store.orderBy === name }"></span>
-    </th>
+    </div>
 
 </template>
 
 <script>
 export default {
-    name: "adap-th",
+    name: "adap-orderby",
     props: ["store", "name"]
 }
 </script>
-

@@ -28,7 +28,7 @@
                                 	for (var i in table.columns) { 
                                 		var c = table.columns[i]; 
                                 	%>
-                                    <adap-th :store="adapStore" name="<%= c.column_name %>">{{ $t("classes.<%= table.className %>.columns.<%= !c.referencedTable ? c.propertyName : c.notIdPropertyName %>") }}</adap-th><% } %>
+                                    <th><adap-orderby :store="adapStore" name="<%= c.column_name %>">{{ $t("classes.<%= table.className %>.columns.<%= !c.referencedTable ? c.propertyName : c.notIdPropertyName %>") }}</adap-orderby></th><% } %>
                                 </tr>
                             </thead>
                             <tbody>
@@ -77,14 +77,14 @@ import _ from 'lodash';
 import moment from "moment";
 import AppResource from '../service/AppResource';
 import AppBus from '../service/AppBus';
-import AdapTh from '../adaptable/th.vue';
-import AdapPagination from '../adaptable/pagination.vue';
-import AdapSearchfield from '../adaptable/searchfield.vue';
-import AdapStore from '../adaptable/Store.js';
+import AdapOrderby from '../adap-table/orderby.vue';
+import AdapPagination from '../adap-table/pagination.vue';
+import AdapSearchfield from '../adap-table/searchfield.vue';
+import AdapStore from '../adap-table/Store.js';
 
 export default {
     name: "List<%= table.className %>",
-    components: { Default, AdapTh, AdapPagination, AdapSearchfield },
+    components: { Default, AdapOrderby, AdapPagination, AdapSearchfield },
     data() {
         return {
             list: [],
@@ -107,15 +107,19 @@ export default {
                 }
             });
         },
-        openPersist(item) {
-            this.$router.push(`/persist<%= table.className %>/${item.<%= table.idColumn.propertyName %>}`);
+        openPersist(item) {<%
+        if (!table.idColumn.referencedTable) { %>
+            this.$router.push(`/persist<%= table.className %>/${item.<%= table.idColumn.propertyName %>}`);<% 
+        } else { %>
+            this.$router.push(`/persist<%= table.className %>/${item.<%= table.idColumn.notIdPropertyName %>.<%= table.idColumn.referencedTable.idColumn.propertyName %>}`);<% 
+            } %>
         }
     },
   
     filters: {
 
         truncate(string, value) {
-            if (string.length > value) {
+            if (string && string.length > value) {
                 return string.substring(0, value) + '...';
             } else {
                 return string;

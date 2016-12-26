@@ -258,6 +258,7 @@ module.exports = yeoman.generators.Base.extend({
         this.props.daoFolder = this.props.javaFolder + "/dao";
         this.props.modelPackage = this.props.package + ".model";
         this.props.modelFolder = this.props.javaFolder + "/model";
+        this.props.modelTestFolder = this.props.testFolder + "/model";
         this.props.modulePackage = this.props.package + "." + this.props.modulename;
         this.props.moduleFolder = this.props.javaFolder + "/" + this.props.modulename;
         this.props.moduleTestFolder = this.props.testFolder + "/" + this.props.modulename;
@@ -436,11 +437,7 @@ module.exports = yeoman.generators.Base.extend({
                             }],
                             excludes: [{
                                 exclude: [
-                                    "**/Router.*",
-                                    "**/ErrorCode.*",
-                                    "**/GsonContextResolver.*",
-                                    "**/ServletListener.*",
-                                    "**/model/*.*"
+                                    "**/Router.*"
                                 ]
                             }]
                         }]
@@ -878,6 +875,11 @@ module.exports = yeoman.generators.Base.extend({
             this.destinationPath(this.props.moduleFolder+"/Router.java"), 
             this.props);
 
+        this.fs.copyTpl(
+            this.templatePath('OtherTest.java'),
+            this.destinationPath(this.props.testFolder+"/OtherTest.java"), 
+            this.props);
+
         for (var i in this.props.tables) {
             var table = this.props.tables[i];
 
@@ -898,6 +900,11 @@ module.exports = yeoman.generators.Base.extend({
                 this.fs.copyTpl(
                     this.templatePath('Model.java'),
                     this.destinationPath(this.props.modelFolder+"/"+table.className+".java"),
+                    params);
+
+                this.fs.copyTpl(
+                    this.templatePath('ModelTest.java'),
+                    this.destinationPath(this.props.modelTestFolder+"/"+table.className+"Test.java"),
                     params);
 
                 this.fs.copyTpl(
@@ -973,19 +980,19 @@ module.exports = yeoman.generators.Base.extend({
 
         this.fs.copy(
             this.templatePath('pagination.vue'),
-            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/adaptable/pagination.vue"));
+            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/adap-table/pagination.vue"));
 
         this.fs.copy(
-            this.templatePath('th.vue'),
-            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/adaptable/th.vue"));
+            this.templatePath('orderby.vue'),
+            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/adap-table/orderby.vue"));
 
         this.fs.copy(
             this.templatePath('searchfield.vue'),
-            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/adaptable/searchfield.vue"));
+            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/adap-table/searchfield.vue"));
 
         this.fs.copy(
             this.templatePath('Store.js'),
-            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/adaptable/Store.js"));
+            this.destinationPath("src/main/webapp/src/" + this.props.modulename + "/js/adap-table/Store.js"));
 
         this.fs.copyTpl(
             this.templatePath('AppResource.js'),

@@ -1,10 +1,9 @@
 FACEIS DE ARRUMAR
-- adap-th => adap-orderby (ver itrack)
 
 BUGFIXES E MAIS URGENTES
-- quando a primary key é foreign key fica estranho de editar, pq vc altera a primary key? não, vc altera o cara errado
 - quando existem 2 colunas primary key na tabela o persist fica zuado
 - erro no teste unitario se a coluna de login n for de e-mail
+- guardar informações sobre colunas nos Models, assim podemos reutilizar e refatorar facilmente (exemplo no fim da pagina)
 
 SMART TYPE
 - se a coluna for "imageUrl" deve exibir uma imagem no listar
@@ -15,8 +14,7 @@ SMART TYPE
 - ler comentario contendo "martinlabs-generator:ignore" e ignorar coluna
 
 OUTRAS FEATURES
-- talvez exista uma forma de separar lógicas geradas de lógicas personalizadas e podermos gerar a lógica gerada sempre que mudar o banco sem perder a personalizada (talvez se o model se auto-validasse e o dao tivesse uma separação)
-- gerar teste unitário para o model
+- se a coluna for unique, validar se já existe
 - organizar o generator para que possamos configurar quais templates irá usar em um outro arquivo
 - perguntar se quer rodar o dados.sql
 - rodar mvn
@@ -26,8 +24,45 @@ OUTRAS FEATURES
 - gerar watch no grunt
 
 EXISTE IMPEDIMENTO OU PRECISA SER PENSADO MELHOR
+- generator Android/iOS (model e listar)
 - em todos os WS além de token tem que enviar versão do client para validar se é muito antiga e sistema operacional
 - gerar "esqueci a senha"
 - lista de itens conectados ao meu usuário
 - poder alterar "minha conta"
 - gerar create.sql
+
+
+
+
+Guardar informações sobre colunas nos Models, assim podemos reutilizar e refatorar facilmente:
+
+public Carga getCarga(long id){
+    return selectOne("SELECT * "
+        + "FROM carga "
+        + "INNER JOIN carga_destinatario "
+        + "ON carga.idCargaPk = carga_destinatario.idCargaFk "
+        + "INNER JOIN destinatario AS d "
+        + "ON d.idDestinatarioPk = carga_destinatario.idDestinatarioFk "
+        + "WHERE carga.idCargaPk = ? ", 
+    rs -> {
+        Carga carga = Carga.buildAll(rs); //não precisa passar "carga" pq é o default
+        carga.setDestinatario(Destinatario.buildApresentacao(rs, "d")); //passando "d" como alias, o default seria "destinatario"
+        return carga;
+    }, id);
+}
+
+public void insertCarga(Carga carga){
+    return update("INSERT INTO carga ("
+        + colsInsert(Carga.COLUMNS_INSERT_ALL)
+        + ") "
+        + "VALUES "
+        + generateInsertCommas(1, Carga.COLUMNS_INSERT_ALL.length),
+        carga.getDataInsertAll());
+}
+
+public void updateCarga(Carga carga){
+    return update("UPDATE carga SET "
+        + colsUpdate(Carga.COLUMNS_UPDATE_ALL)
+        + "WHERE idCargaPk = ? ",
+        carga.getDataUpdateAllWith(carga.getIdCargaPk()));
+}

@@ -18,9 +18,12 @@
                 if (col.extra !== "auto_increment") {
 
                     if (col.referencedTable) { %>
-                        <div class="form-group">
+                        <div class="form-group"<% 
+                        if (col.propertyName == table.idColumn.propertyName) { 
+                        %> v-if="!<%= table.classLowerCamel %>.<%= col.notIdPropertyName %>.<%= col.referencedTable.idColumn.propertyName %>"<% 
+                        } %>>
                             <label for="input-<%= col.propertyName %>" 
-                                class="control-label"> 
+                                class="control-label required"> 
                                 {{ $t("classes.<%= table.className %>.columns.<%= col.notIdPropertyName %>") }}</label>
                             <select id="input-<%= col.propertyName %>"
                                 v-model="<%= table.classLowerCamel %>.<%= col.notIdPropertyName %>.<%= col.referencedTable.idColumn.propertyName %>" 
@@ -39,7 +42,7 @@
                     <% } else if (col.javaType === "String") { 
                         if (col.character_maximum_length <= 255 || col.smartType) {
                     %>
-                        <div class="form-group">
+                        <div class="form-group <%= col.is_nullable !== 'YES' ? 'required' : '' %>">
                             <label for="input-<%= col.propertyName %>" 
                                 class="control-label"> 
                                 {{ $t("classes.<%= table.className %>.columns.<%= col.propertyName %>") }}</label>
@@ -51,7 +54,7 @@
                     <% 
                         } else {
                     %>
-                        <div class="form-group">
+                        <div class="form-group <%= col.is_nullable !== 'YES' ? 'required' : '' %>">
                             <label for="input-<%= col.propertyName %>" 
                                 class="control-label"> 
                                 {{ $t("classes.<%= table.className %>.columns.<%= col.propertyName %>") }}</label>
@@ -62,7 +65,7 @@
                     <%
                         }
                     } else if (["Double", "double"].indexOf(col.javaType) > -1) { %>
-                        <div class="form-group">
+                        <div class="form-group <%= col.is_nullable !== 'YES' ? 'required' : '' %>">
                             <label for="input-<%= col.propertyName %>" 
                                 class="control-label">
                                 {{ $t("classes.<%= table.className %>.columns.<%= col.propertyName %>") }}</label>
@@ -73,7 +76,7 @@
                                 class="form-control" <%= col.is_nullable !== "YES" ? "required" : "" %>>
                         </div>
                     <% } else if (["Long", "long"].indexOf(col.javaType) > -1) { %>
-                        <div class="form-group">
+                        <div class="form-group <%= col.is_nullable !== 'YES' ? 'required' : '' %>">
                             <label for="input-<%= col.propertyName %>" 
                                 class="control-label">
                                 {{ $t("classes.<%= table.className %>.columns.<%= col.propertyName %>") }}</label>
@@ -84,7 +87,7 @@
                                 class="form-control" <%= col.is_nullable !== "YES" ? "required" : "" %>>
                         </div>
                     <% } else if (col.data_type === "date") { %>
-                        <div class="form-group">
+                        <div class="form-group <%= col.is_nullable !== 'YES' ? 'required' : '' %>">
                             <label for="input-<%= col.propertyName %>" 
                                 class="control-label">
                                 {{ $t("classes.<%= table.className %>.columns.<%= col.propertyName %>") }}</label>
@@ -97,7 +100,7 @@
                                 class="form-control" <%= col.is_nullable !== "YES" ? "required" : "" %>/>
                         </div>
                     <% } else if (["time", "datetime", "timestamp"].indexOf(col.data_type) > -1) { %>
-                        <div class="form-group">
+                        <div class="form-group <%= col.is_nullable !== 'YES' ? 'required' : '' %>">
                             <label class="control-label">
                                 {{ $t("classes.<%= table.className %>.columns.<%= col.propertyName %>") }}</label>
                             <input 

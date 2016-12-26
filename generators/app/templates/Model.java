@@ -1,5 +1,8 @@
 package <%= props.modelPackage %>;
 
+import br.com.martinlabs.commons.LanguageHolder;
+import br.com.martinlabs.commons.Validator;
+import br.com.martinlabs.commons.exceptions.RespException;
 import java.util.Date;
 import java.util.List;
 
@@ -39,6 +42,53 @@ public class <%= table.className %> {
         this.<%= cn.NtoNtable.classLowerCamel %> = other.<%= cn.NtoNtable.classLowerCamel %>;<% 
         } %>
     }
+
+    public void validate() {<% 
+for (var i in table.columns) { 
+    var c = table.columns[i]; 
+    if (c.is_nullable === "NO" && (c.javaType === "String" || c.javaType === "Date")) { 
+%>
+        if (get<%= c.propertyNameUpper %>() == null) {
+            throw new RespException(<%= c.ordinal_position %>,  LanguageHolder.instance.cannotBeNull("<%= c.propertyNatural %>"));
+        }<% 
+    }
+
+    if (c.javaType === "String") {
+        if (c.is_nullable === "NO") {
+        %>
+        if (get<%= c.propertyNameUpper %>().length() > <%= Math.min(65500, c.character_maximum_length) %>) {
+            throw new RespException(<%= c.ordinal_position %>, LanguageHolder.instance.lengthCannotBeMoreThan("<%= c.propertyNatural %>", <%= Math.min(65500, c.character_maximum_length) %>));
+        }<%
+        } else {
+        %>
+        if (get<%= c.propertyNameUpper %>() != null && get<%= c.propertyNameUpper %>().length() > <%= Math.min(65500, c.character_maximum_length) %>) {
+            throw new RespException(<%= c.ordinal_position %>, LanguageHolder.instance.lengthCannotBeMoreThan("<%= c.propertyNatural %>", <%= Math.min(65500, c.character_maximum_length) %>));
+        }<%
+        }
+
+        if (c.smartType === "email") {
+            if (c.is_nullable === "NO") {
+            %>
+        if (!Validator.isEmail(get<%= c.propertyNameUpper%>())) {
+            throw new RespException(<%= c.ordinal_position %>, LanguageHolder.instance.isNotAValidEmail("<%= c.propertyNatural %>"));
+        }<%
+            } else {
+                %>
+        if (get<%= c.propertyNameUpper %>() != null && !Validator.isEmail(get<%= c.propertyNameUpper%>())) {
+            throw new RespException(<%= c.ordinal_position %>, LanguageHolder.instance.isNotAValidEmail("<%= c.propertyNatural %>"));
+        }<%
+            }
+        }
+    }
+
+    if (c.referencedTable && c.is_nullable === "NO") {
+%>
+        if (get<%= c.propertyNameUpper %>() == 0) {
+            throw new RespException(<%= c.ordinal_position %>,  LanguageHolder.instance.cannotBeNull("<%= c.propertyNatural %>"));
+        }<% 
+    }
+} %>    
+    }
     
 <% for (var j in table.columns) { 
     var cx = table.columns[j]; 
@@ -62,7 +112,7 @@ public class <%= table.className %> {
 
     <% if (cx.is_nullable === "YES") { %>
     public <%= cx.javaType %> get<%= cx.propertyNameUpper %>() {
-        return <%= cx.notIdPropertyName %> == null ? null : <%= cx.notIdPropertyName %>.get<%= cx.referencedTable.idColumn.propertyNameUpper %>();
+        return <%= cx.notIdPropertyName %> == null || <%= cx.notIdPropertyName %>.get<%= cx.referencedTable.idColumn.propertyNameUpper %>() == 0 ? null : <%= cx.notIdPropertyName %>.get<%= cx.referencedTable.idColumn.propertyNameUpper %>();
     }
     <% } else { %>
     public <%= cx.javaType %> get<%= cx.propertyNameUpper %>() {
