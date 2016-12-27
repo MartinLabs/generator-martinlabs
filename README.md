@@ -24,7 +24,7 @@ Today we are using martinlabs-commons dependency, which is on MavenCentral but i
 ## Features
 
 First of all, the code is clean, you will understand what is happening, I will make a video later to show everything you need to know.
-- A server that is ready for use in a Native Mobile App, no server-side rendering, it is all a Resp API
+- A server that is ready for use in a Native Mobile App, no server-side rendering, it is all a Rest API
 - Simple Login system with a criptographed token storing credentials
 - Transactions: when something throws an exception all database rollsback to it's original state before the operation begin
 - Pure MySQL connection, No ORM. Why? It's easiest to make powerful queries with high performance without ORM, and since we have a generator, we do not need an ORM to create simple queries for us
