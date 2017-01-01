@@ -40,7 +40,7 @@ public class <%= table.className %>Dao extends DaoWrapper {
             for (var i in c.referencedTable.columns) { var rc = c.referencedTable.columns[i]; %>
             + "<%= rc.column_name + (i < c.referencedTable.columns.length -1 ? ',' : '') %> "<% } %>
             + "FROM <%= c.referencedTable.name %> "
-            + "INNER JOIN <%= table.name %> ON <%= c.referencedTable.idColumn.column_name %> = <%= c.column_name %> "
+            + "INNER JOIN <%= table.name %> ON <%= c.referencedTable.primaryColumns[0].column_name %> = <%= c.column_name %> "
             + "WHERE <%= other.column_name %> = ? ", 
         rs -> {
             <%= c.referencedTable.className %> <%= c.referencedTable.classLowerCamel %> = new <%= c.referencedTable.className %>();
@@ -59,7 +59,7 @@ public class <%= table.className %>Dao extends DaoWrapper {
             for (var i in c.referencedTable.columns) { var rc = c.referencedTable.columns[i]; %>
             + "<%= rc.column_name + (i < c.referencedTable.columns.length -1 ? ',' : '') %> "<% } %>
             + "FROM <%= c.referencedTable.name %> "
-            + "INNER JOIN <%= table.name %> ON <%= c.referencedTable.idColumn.column_name %> = <%= c.column_name %> "
+            + "INNER JOIN <%= table.name %> ON <%= c.referencedTable.primaryColumns[0].column_name %> = <%= c.column_name %> "
             + "WHERE <%= other.column_name %> = ? ", 
         rs -> {
             <%= c.referencedTable.className %> <%= c.referencedTable.classLowerCamel %> = new <%= c.referencedTable.className %>();

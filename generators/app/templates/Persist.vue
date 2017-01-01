@@ -19,17 +19,17 @@
 
                     if (col.referencedTable) { %>
                         <div class="form-group"<% 
-                        if (col.propertyName == table.idColumn.propertyName) { 
-                        %> v-if="!<%= table.classLowerCamel %>.<%= col.notIdPropertyName %>.<%= col.referencedTable.idColumn.propertyName %>"<% 
+                        if (col.column_key == "PRI") { 
+                        %> v-if="!<%= table.classLowerCamel %>.<%= col.notIdPropertyName %>.<%= col.referencedTable.primaryColumns[0].propertyName %>"<% 
                         } %>>
                             <label for="input-<%= col.propertyName %>" 
                                 class="control-label required"> 
                                 {{ $t("classes.<%= table.className %>.columns.<%= col.notIdPropertyName %>") }}</label>
                             <select id="input-<%= col.propertyName %>"
-                                v-model="<%= table.classLowerCamel %>.<%= col.notIdPropertyName %>.<%= col.referencedTable.idColumn.propertyName %>" 
+                                v-model="<%= table.classLowerCamel %>.<%= col.notIdPropertyName %>.<%= col.referencedTable.primaryColumns[0].propertyName %>" 
                                 class="form-control" required>
                                 <option value="">{{ $t("app.select") }}</option>
-                                <option v-for="item in all<%= col.referencedTable.className %>" :value="item.<%= col.referencedTable.idColumn.propertyName %>">
+                                <option v-for="item in all<%= col.referencedTable.className %>" :value="item.<%= col.referencedTable.primaryColumns[0].propertyName %>">
                                 {{ 
                                     ""
                                 <% for (var j in col.referencedTable.columns) { var r = col.referencedTable.columns[j]; %>
@@ -134,7 +134,7 @@
                             <div>
                                 <div v-for="item in all<%= col.otherTable.className %>" class='checkbox'>
                                     <label>
-                                        <input type='checkbox' :value='item.<%= col.otherTable.idColumn.propertyName %>' v-model="<%= col.NtoNtable.classLowerCamel %>Ids">
+                                        <input type='checkbox' :value='item.<%= col.otherTable.primaryColumns[0].propertyName %>' v-model="<%= col.NtoNtable.classLowerCamel %>Ids">
                                         {{
                                         ""
                                         <% for (var j in col.otherTable.columns) { var r = col.otherTable.columns[j]; %>
@@ -172,65 +172,70 @@ export default {
     data() {
         return {
             <%= table.classLowerCamel %>: {<%
-                var colocarVirgula = false;
-                for (var i in table.columns) { 
-                    var col = table.columns[i];
-                    if (col.extra !== "auto_increment" && col.referencedTable) {
+var colocarVirgula = false;
+for (var i in table.columns) { 
+    var col = table.columns[i];
+    if (col.extra !== "auto_increment" && col.referencedTable) {
                 %><%= colocarVirgula ? ',' : '' %>
                 <%= col.notIdPropertyName %>: {} <%
-                        colocarVirgula = true;
-                    }
-                }
-                for (var i in table.NtoNcolumns) { 
-                    var col = table.NtoNcolumns[i];
+        colocarVirgula = true;
+    }
+}
+for (var i in table.NtoNcolumns) { 
+    var col = table.NtoNcolumns[i];
                 %><%= colocarVirgula ? ',' : '' %>
                 <%= col.NtoNtable.classLowerCamel %>: []<%
-                    colocarVirgula = true;
-                }
-                %>
+    colocarVirgula = true;
+}
+%>
             }<% 
-            var antiRepeat = [];
-            for (var i in table.columns) { 
-                var c = table.columns[i]; 
-                if (c.referencedTable && antiRepeat.indexOf(c.referencedTable.className) < 0) {
-                    antiRepeat.push(c.referencedTable.className);
+var antiRepeat = [];
+for (var i in table.columns) { 
+    var c = table.columns[i]; 
+    if (c.referencedTable && antiRepeat.indexOf(c.referencedTable.className) < 0) {
+        antiRepeat.push(c.referencedTable.className);
             %>,
-                all<%= c.referencedTable.className %>: {}<%
-                }
-            }
+            all<%= c.referencedTable.className %>: {}<%
+    }
+}
 
-            antiRepeat = [];
-            for (var i in table.NtoNcolumns) { 
-                var c = table.NtoNcolumns[i]; 
-                if (antiRepeat.indexOf(c.otherTable.className) < 0) {
-                    antiRepeat.push(c.otherTable.className);
+antiRepeat = [];
+for (var i in table.NtoNcolumns) { 
+    var c = table.NtoNcolumns[i]; 
+    if (antiRepeat.indexOf(c.otherTable.className) < 0) {
+        antiRepeat.push(c.otherTable.className);
             %>,
-                all<%= c.otherTable.className %>: {}<%
-                }
-            }
-            %>
-        }
+            all<%= c.otherTable.className %>: {}<%
+    }
+}
+%>
+        };
     }, 
     computed: {<%
 colocarVirgula = false;
 for (var i in table.NtoNcolumns) { 
-    var col = table.NtoNcolumns[i]; %><%= colocarVirgula ? ',' : '' %><% colocarVirgula = true; %>
+    var col = table.NtoNcolumns[i]; 
+    %><%= colocarVirgula ? ',' : '' %><% 
+    colocarVirgula = true; 
+%>
         <%= col.NtoNtable.classLowerCamel %>Ids: {
             get() {
                 var <%= col.NtoNtable.classLowerCamel %>Ids = [];
                 for (let item of this.<%= table.classLowerCamel %>.<%= col.NtoNtable.classLowerCamel %>) {
-                    <%= col.NtoNtable.classLowerCamel %>Ids.push(item.<%= col.otherTable.idColumn.propertyName %>);
+                    <%= col.NtoNtable.classLowerCamel %>Ids.push(item.<%= col.otherTable.primaryColumns[0].propertyName %>);
                 }
                 return <%= col.NtoNtable.classLowerCamel %>Ids;
             },
             set(val) {
                 this.<%= table.classLowerCamel %>.<%= col.NtoNtable.classLowerCamel %> = [];
                 for (let item of val) {
-                    this.<%= table.classLowerCamel %>.<%= col.NtoNtable.classLowerCamel %>.push({ <%= col.otherTable.idColumn.propertyName %>: item });
+                    this.<%= table.classLowerCamel %>.<%= col.NtoNtable.classLowerCamel %>.push({ <%= col.otherTable.primaryColumns[0].propertyName %>: item });
                 }
             }
         }
-<% } 
+<% 
+
+} 
 
 for (var i in table.columns) { var col = table.columns[i];
 
@@ -238,8 +243,10 @@ for (var i in table.columns) { var col = table.columns[i];
 
         if (col.data_type === "date") {
 
-%><%= colocarVirgula ? ',' : '' %><% colocarVirgula = true; %>
-
+%><%= colocarVirgula ? ',' : '' %>
+<% 
+            colocarVirgula = true; 
+%>
         <%= col.propertyName %>Rendered: {
             get() {
                 return this.renderDate(this.<%= table.classLowerCamel %>.<%= col.propertyName %>);
@@ -250,7 +257,9 @@ for (var i in table.columns) { var col = table.columns[i];
         }<% 
 
         } else if (["time", "datetime", "timestamp"].indexOf(col.data_type) > -1) { 
-%><%= colocarVirgula ? ',' : '' %><% colocarVirgula = true; %>
+%><%= colocarVirgula ? ',' : '' %><% 
+            colocarVirgula = true; 
+%>
 
         <%= col.propertyName %>Rendered: {
             get() {
@@ -263,37 +272,50 @@ for (var i in table.columns) { var col = table.columns[i];
 
         }
     }
-} %>
+} 
+%>
     },
     mounted() {
-        var id = this.$route.params.id || 0;
-        AppResource.<%= table.classLowerCamel %>.get({ 
-            id: id<% if (props.loginsys) { %>,
-            token: simpleStorage.get("token<%= props.modulenameUpper %>") || null<% } %>
+        AppResource.<%= table.classLowerCamel %>.get({
+<% 
+if (table.primaryColumns.length == 1) {
+    %>id: this.$route.params.id || 0<%
+} else {
+    for (var k in table.primaryColumns) {
+        %><%= k > 0 ? ',' : '' %>
+            <%= table.primaryColumns[k].propertyName %>: this.$route.params.<%= table.primaryColumns[k].propertyName %> || 0<%
+    } 
+}
+
+if (props.loginsys) { 
+%>,
+            token: simpleStorage.get("token<%= props.modulenameUpper %>") || null<% 
+} 
+%>
         }).then((resp) => {
             if (resp.body.success) {
                 if (resp.body.data.<%= table.classLowerCamel %>) {
                     this.<%= table.classLowerCamel %> = resp.body.data.<%= table.classLowerCamel %>;
                 }<% 
-            var antiRepeat = [];
-            for (var i in table.columns) { 
-                var c = table.columns[i]; 
-                if (c.referencedTable && antiRepeat.indexOf(c.referencedTable.className) < 0) {
-                    antiRepeat.push(c.referencedTable.className);
-            %>
+var antiRepeat = [];
+for (var i in table.columns) { 
+    var c = table.columns[i]; 
+    if (c.referencedTable && antiRepeat.indexOf(c.referencedTable.className) < 0) {
+        antiRepeat.push(c.referencedTable.className);
+%>
                     this.all<%= c.referencedTable.className %> = resp.body.data.all<%= c.referencedTable.className %>;<%
-                }
-            }
+    }
+}
 
-            antiRepeat = [];
-            for (var i in table.NtoNcolumns) { 
-                var c = table.NtoNcolumns[i]; 
-                if (antiRepeat.indexOf(c.otherTable.className) < 0) {
-                    antiRepeat.push(c.otherTable.className);
-            %>
+antiRepeat = [];
+for (var i in table.NtoNcolumns) { 
+    var c = table.NtoNcolumns[i]; 
+    if (antiRepeat.indexOf(c.otherTable.className) < 0) {
+        antiRepeat.push(c.otherTable.className);
+%>
                     this.all<%= c.otherTable.className %> = resp.body.data.all<%= c.otherTable.className %>;<%
-                }
-            }
+    }
+}
             %>
             } else {
                 AppBus.$emit("alert", "danger", resp.body.message, 3000);

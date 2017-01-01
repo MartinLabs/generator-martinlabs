@@ -15,7 +15,7 @@ public class LoginServiceDao extends DaoWrapper{
     
     public boolean existAccount(String account, String password) {
         return exist(""
-                + "SELECT <%= table.idColumn.column_name %> "
+                + "SELECT <%= table.primaryColumns[0].column_name %> "
                 + "FROM <%= table.name %> "
                 + "WHERE <%= table.accountColumn.column_name %> = ? "
                 + "AND <%= table.passwordColumn.column_name %> = sha1(?) ", 

@@ -21,7 +21,15 @@ export default new (function () {<%
         var table = tables[i];
         if (table.inCrud && !table.isNtoNtable) {
     %>
-    this.<%= table.classLowerCamel %> = Vue.resource("../ws/<%= modulenameUpper %>/<%= table.className %>{/id}");<%
+    this.<%= table.classLowerCamel %> = Vue.resource("../ws/<%= modulenameUpper %>/<%= table.className %><% 
+if (table.primaryColumns.length == 1) {
+    %>{/id}<%
+} else {
+    for (var k in table.primaryColumns) {
+        %>{/<%= table.primaryColumns[k].propertyName %>}<%
+    } 
+}
+        %>");<%
         }
     }
     %>

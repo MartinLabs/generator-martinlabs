@@ -16,14 +16,14 @@ public class <%= table.className %>Test {
 
 for (var i in table.columns) { 
     var c = table.columns[i]; 
-    if (c.is_nullable === "NO" && (c.propertyName != table.idColumn.propertyName || (c.propertyName == table.idColumn.propertyName && c.referencedTable)) && (c.javaType === "String" || c.javaType === "Date" || c.referencedTable)) { 
+    if (c.is_nullable === "NO" && (c.column_key != "PRI" || (c.column_key == "PRI" && c.referencedTable)) && (c.javaType === "String" || c.javaType === "Date" || c.referencedTable)) { 
 %>
     @Test(expected = RespException.class)
     public void testValidateNo<%= c.propertyNameUpper %>() {
         <%= table.className %> <%= table.classLowerCamel %> = new <%= table.className %>(); <%
         for (var j in table.columns) { 
             var cx = table.columns[j]; 
-            if (cx.is_nullable === "NO" && cx.propertyName != c.propertyName && (cx.propertyName != table.idColumn.propertyName || cx.referencedTable)) { 
+            if (cx.is_nullable === "NO" && cx.propertyName != c.propertyName && (cx.column_key != "PRI" || cx.referencedTable)) { 
                 if (["double", "long"].indexOf(cx.javaType) > -1) {
         %>
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(1);<% 
@@ -49,7 +49,7 @@ for (var i in table.columns) {
 
     }
 
-    if (c.javaType === "String" && c.propertyName != table.idColumn.propertyName) {
+    if (c.javaType === "String" && c.column_key != "PRI") {
         %>
     @Test(expected = RespException.class)
     public void testValidate<%= c.propertyNameUpper %>Length<%= Math.min(65500, c.character_maximum_length) + 1 %>() {
@@ -59,7 +59,7 @@ for (var i in table.columns) {
             if (cx.propertyName == c.propertyName) {
         %>
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("He<%= new Array(Math.min(65500, cx.character_maximum_length)).join('y') %>");<% 
-            } else if (cx.is_nullable === "NO" && (cx.propertyName != table.idColumn.propertyName || cx.referencedTable)) { 
+            } else if (cx.is_nullable === "NO" && (cx.column_key != "PRI" || cx.referencedTable)) { 
                 if (["double", "long"].indexOf(cx.javaType) > -1) {
         %>
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(1);<% 
@@ -90,7 +90,7 @@ for (var i in table.columns) {
             if (cx.propertyName == c.propertyName) {
         %>
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("notAnEmail");<% 
-            } else if (cx.is_nullable === "NO" && (cx.propertyName != table.idColumn.propertyName || cx.referencedTable)) { 
+            } else if (cx.is_nullable === "NO" && (cx.column_key != "PRI" || cx.referencedTable)) { 
                 if (["double", "long"].indexOf(cx.javaType) > -1) {
         %>
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(1);<% 
@@ -122,7 +122,7 @@ for (var i in table.columns) {
         <%= table.className %> <%= table.classLowerCamel %> = new <%= table.className %>(); <%
         for (var j in table.columns) { 
             var cx = table.columns[j]; 
-            if (cx.is_nullable === "NO" && (cx.propertyName != table.idColumn.propertyName || cx.referencedTable)) { 
+            if (cx.is_nullable === "NO" && (cx.column_key != "PRI" || cx.referencedTable)) { 
                 if (["double", "long"].indexOf(cx.javaType) > -1) {
         %>
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(1);<% 
@@ -153,7 +153,7 @@ for (var i in table.columns) {
             if (cx.referencedTable) { %>
         <%= table.classLowerCamel %>.set<%= cx.notIdPropertyNameUpper %>(new <%= cx.referencedTable.className %>());<%
 			}
-            if (cx.is_nullable === "NO" && (cx.propertyName != table.idColumn.propertyName || cx.referencedTable)) { 
+            if (cx.is_nullable === "NO" && (cx.column_key != "PRI" || cx.referencedTable)) { 
                 if (["double", "long"].indexOf(cx.javaType) > -1) {
         %>
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(1);<% 
@@ -177,7 +177,7 @@ for (var i in table.columns) {
         %>
         <%= table.classLowerCamel %>.set<%= col.NtoNtable.className %>(new ArrayList<>());
         <%= col.otherTable.className %> <%= col.otherTable.classLowerCamel %> = new <%= col.otherTable.className %>();
-        <%= col.otherTable.classLowerCamel %>.set<%= col.otherTable.idColumn.propertyNameUpper %>(1);
+        <%= col.otherTable.classLowerCamel %>.set<%= col.otherTable.primaryColumns[0].propertyNameUpper %>(1);
         <%= table.classLowerCamel %>.get<%= col.NtoNtable.className %>().add(<%= col.otherTable.classLowerCamel %>);<%
         }
         %>

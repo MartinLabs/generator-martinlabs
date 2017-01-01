@@ -36,15 +36,19 @@ for (var i in tables) {
     var table = tables[i];
     if (table.inCrud && !table.isNtoNtable) {
 %>
-        { path: '/persist<%= table.className %>', component: Persist<%= table.className %> },<% 
+        { path: '/persist<%= table.className %>', component: Persist<%= table.className %> },
+        { path: '/persist<%= table.className %><% 
+if (table.primaryColumns.length == 1) {
+    %>/:id<%
+} else {
+    for (var k in table.primaryColumns) {
+        %>/:<%= table.primaryColumns[k].propertyName %><%
+    } 
+}
+        %>', component: Persist<%= table.className %> },<% 
     } 
 } 
-
-for (var i in tables) { 
-    var table = tables[i];
-    if (table.inCrud && !table.isNtoNtable) {
 %>
-        { path: '/persist<%= table.className %>/:id', component: Persist<%= table.className %> },<% } } %>
         { path: '/', redirect: '/login' },
         { path: '*', redirect: '/home' }
     ]

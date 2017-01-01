@@ -59,13 +59,38 @@ for (var i in tables) {
 	if (!table.isNtoNtable && table.inCrud) {
 %>   
     @GET
-    @Path("/<%= table.className %>/{id}")
-    public OpResp<<%= table.className %>Resp> get<%= table.className %>(
-            @PathParam("id") Long id,
+    @Path("/<%= table.className %><% 
+if (table.primaryColumns.length == 1) {
+    %>/{id}<%
+} else {
+    for (var k in table.primaryColumns) {
+        %>/{<%= table.primaryColumns[k].propertyName %>}<%
+    } 
+}
+        %>")
+    public OpResp<<%= table.className %>Resp> get<%= table.className %>(<% 
+if (table.primaryColumns.length == 1) {
+%>
+            @PathParam("id") Long id,<%
+} else {
+    for (var k in table.primaryColumns) {
+%>
+            @PathParam("<%= table.primaryColumns[k].propertyName %>") Long <%= table.primaryColumns[k].propertyName %>,<%
+    }
+} 
+%>
             @QueryParam("token") String token) {
 
         return pipe.handle(con -> {
-            return new <%= table.className %>Process(con).get(id, token);
+            return new <%= table.className %>Process(con).get(<% 
+if (table.primaryColumns.length == 1) {
+    %>id, <%
+} else {
+    for (var k in table.primaryColumns) {
+        %><%= table.primaryColumns[k].propertyName %>, <%
+    } 
+}
+                %>token);
         });
     }
 

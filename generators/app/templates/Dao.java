@@ -18,35 +18,69 @@ public class <%= table.className %>Dao extends DaoWrapper {
         super(con);
     }
     
-    public <%= table.className %> get(long id){
+    public <%= table.className %> get(<% 
+for (var k in table.primaryColumns) {
+    %><%= k > 0 ? ', ' : '' %>long <%= table.primaryColumns[k].propertyName %><%
+} 
+%>){
         return selectOne("SELECT "<% 
-        for (var i in table.columns) { var c = table.columns[i]; %>
-            + "<%= c.column_name + (i < table.columns.length -1 ? ',' : '') %> "<% } %>
+for (var i in table.columns) { 
+    var c = table.columns[i]; 
+%>
+            + "<%= c.column_name + (i < table.columns.length -1 ? ',' : '') %> "<% 
+} 
+%>
             + "FROM <%= table.name %> "
-            + "WHERE <%= table.idColumn.column_name %> = ? ", 
+            + "WHERE <%= table.primaryColumns[0].column_name %> = ? "<% 
+for (var j = 1; j < table.primaryColumns.length; j++) { 
+%>
+            + "AND <%= table.primaryColumns[j].column_name %> = ? "<%
+}
+%>, 
         rs -> {
             <%= table.className %> <%= table.classLowerCamel %> = new <%= table.className %>();
-            <% for (var i in table.columns) { var c = table.columns[i]; %>
-            <%= table.classLowerCamel %>.set<%= c.propertyNameUpper %>(rs.<%= c.resultSetGetter %>("<%= c.column_name %>"));<% } %>
-            
+<% 
+for (var i in table.columns) { 
+    var c = table.columns[i]; 
+%>
+            <%= table.classLowerCamel %>.set<%= c.propertyNameUpper %>(rs.<%= c.resultSetGetter %>("<%= c.column_name %>"));
+<% 
+} 
+%>
             return <%= table.classLowerCamel %>;
-        }, id);
+        }<% 
+for (var k in table.primaryColumns) {
+        %>, <%= table.primaryColumns[k].propertyName %><%
+} 
+        %>);
     }
-    <% if (table.isReferenced) { %>
+<% 
+if (table.isReferenced) { 
+%>
     public List<<%= table.className %>> list(){
         return selectList("SELECT "<% 
-        for (var i in table.columns) { var c = table.columns[i]; %>
-            + "<%= c.column_name + (i < table.columns.length -1 ? ',' : '') %> "<% } %>
+    for (var i in table.columns) { var c = table.columns[i]; 
+%>
+            + "<%= c.column_name + (i < table.columns.length -1 ? ',' : '') %> "<% 
+    } 
+%>
             + "FROM <%= table.name %> ", 
         rs -> {
             <%= table.className %> <%= table.classLowerCamel %> = new <%= table.className %>();
-            <% for (var i in table.columns) { var c = table.columns[i]; %>
-            <%= table.classLowerCamel %>.set<%= c.propertyNameUpper %>(rs.<%= c.resultSetGetter %>("<%= c.column_name %>"));<% } %>
+<% 
+    for (var i in table.columns) { 
+        var c = table.columns[i]; 
+%>
+            <%= table.classLowerCamel %>.set<%= c.propertyNameUpper %>(rs.<%= c.resultSetGetter %>("<%= c.column_name %>"));<% 
+    } 
+%>
             
             return <%= table.classLowerCamel %>;
         });
     }
-    <% } %>
+<% 
+} 
+%>
     public List<<%= table.className %>> list(
         String query,
         Integer page,
@@ -55,19 +89,25 @@ public class <%= table.className %>Dao extends DaoWrapper {
         Boolean asc){
 
         HashMap<String, String> orderRequestAndColumn = new HashMap<>();
-
-        <% for (var i in table.columns) { var c = table.columns[i]; %>
-        orderRequestAndColumn.put("<%= c.column_name %>", "<%= c.column_name %>");<% } %>
-
+<% 
+for (var i in table.columns) { var c = table.columns[i]; 
+%>
+        orderRequestAndColumn.put("<%= c.column_name %>", "<%= c.column_name %>");
+<% 
+} 
+%>
         String orderColumn = orderRequestAndColumn.get(orderRequest);
 
         ArrayList<Object> params = new ArrayList<>();
         String where = "";
 
         if (!Strings.isNullOrEmpty(query)) {
-            where = "WHERE LOWER(CONCAT("
-            <% for (var i in table.columns) { var c = table.columns[i]; %>
-            + "IFNULL(<%= c.column_name %>, '')<%= (i < table.columns.length -1 ? ',' : '') %> "<% } %>
+            where = "WHERE LOWER(CONCAT("<% 
+for (var i in table.columns) { var c = table.columns[i]; 
+%>
+            + "IFNULL(<%= c.column_name %>, '')<%= (i < table.columns.length -1 ? ',' : '') %> "<% 
+} 
+%>
             +")) LIKE LOWER(?) ";
             params.add("%" + query + "%");
         }
@@ -76,16 +116,25 @@ public class <%= table.className %>Dao extends DaoWrapper {
         params.add(limit);
 
         return selectList("SELECT "<% 
-        for (var i in table.columns) { var c = table.columns[i]; %>
-            + "<%= c.column_name + (i < table.columns.length -1 ? ',' : '') %> "<% } %>
+for (var i in table.columns) { 
+    var c = table.columns[i]; 
+%>
+            + "<%= c.column_name + (i < table.columns.length -1 ? ',' : '') %> "<% 
+} 
+%>
             + "FROM <%= table.name %> "
             + where
             + (orderColumn != null ? "ORDER BY " + orderColumn + " " + (asc ? "ASC " : "DESC ") : "")
             + "LIMIT ?, ? ", 
         rs -> {
             <%= table.className %> <%= table.classLowerCamel %> = new <%= table.className %>();
-            <% for (var i in table.columns) { var c = table.columns[i]; %>
-            <%= table.classLowerCamel %>.set<%= c.propertyNameUpper %>(rs.<%= c.resultSetGetter %>("<%= c.column_name %>"));<% } %>
+<% 
+for (var i in table.columns) { 
+    var c = table.columns[i]; 
+%>
+            <%= table.classLowerCamel %>.set<%= c.propertyNameUpper %>(rs.<%= c.resultSetGetter %>("<%= c.column_name %>"));<% 
+} 
+%>
             
             return <%= table.classLowerCamel %>;
         }, params.toArray());
@@ -93,47 +142,107 @@ public class <%= table.className %>Dao extends DaoWrapper {
     
     public Integer count(){
         return selectFirstInt("SELECT "
-            + "COUNT(<%= table.idColumn.column_name %>) "
+            + "COUNT(<%= table.primaryColumns[0].column_name %>) "
             + "FROM <%= table.name %> ");
     }
     
     public Integer count(String search) {
 
         return selectFirstInt("SELECT "
-            + "COUNT(<%= table.idColumn.column_name %>) "
+            + "COUNT(<%= table.primaryColumns[0].column_name %>) "
             + "FROM <%= table.name %> "
-            + "WHERE LOWER(CONCAT("
-            <% for (var i in table.columns) { var c = table.columns[i]; %>
-            + "IFNULL(<%= c.column_name %>, '')<%= (i < table.columns.length -1 ? ',' : '') %> "<% } %>
+            + "WHERE LOWER(CONCAT("<% 
+for (var i in table.columns) { 
+    var c = table.columns[i]; 
+%>
+            + "IFNULL(<%= c.column_name %>, '')<%= (i < table.columns.length -1 ? ',' : '') %> "<% 
+} 
+%>
             +")) LIKE LOWER(?) ", 
             "%" + search + "%");
     }
     
     public int update(<%= table.className %> <%= table.classLowerCamel %>){
         return update("UPDATE <%= table.name %> SET "<% 
-        for (var i in table.columns) { var c = table.columns[i]; if (c.extra !== "auto_increment") { %>
-            + "<%= c.column_name %> = ?<%= i < table.columns.length -1 ? ',' : '' %> "<% }} %>
-            + "WHERE <%= table.idColumn.column_name %> = ? ",<% 
-        for (var i in table.columns) { var c = table.columns[i]; if (c.extra !== "auto_increment") { %>
-            <%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>(),<% }} %>
-            <%= table.classLowerCamel %>.get<%= table.idColumn.propertyNameUpper %>()).affectedRows;
+for (var i in table.columns) { 
+    var c = table.columns[i]; 
+    if (c.extra !== "auto_increment" && c.column_key != "PRI") { 
+%>
+            + "<%= c.column_name %> = ?<%= i < table.columns.length -1 ? ',' : '' %> "<% 
+    }
+} 
+%>
+            + "WHERE <%= table.primaryColumns[0].column_name %> = ? "<% 
+for (var j = 1; j < table.primaryColumns.length; j++) { 
+%>
+            + "AND <%= table.primaryColumns[j].column_name %> = ? "<%
+}
+        %>,<% 
+for (var i in table.columns) { 
+    var c = table.columns[i]; 
+    if (c.extra !== "auto_increment" && c.column_key != "PRI") { 
+%>
+            <%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>(),<% 
+    }
+} 
+%>
+            <%= table.classLowerCamel %>.get<%= table.primaryColumns[0].propertyNameUpper %>()<%
+for (var j = 1; j < table.primaryColumns.length; j++) { 
+            %>,
+            <%= table.classLowerCamel %>.get<%= table.primaryColumns[j].propertyNameUpper %>()<%
+}
+            %>).affectedRows;
     }
     
     public long insert(<%= table.className %> <%= table.classLowerCamel %>){
         return update("INSERT INTO <%= table.name %> ( "<% 
-        for (var i in table.columns) { var c = table.columns[i]; if (c.extra !== "auto_increment") { %>
-            + "<%= c.column_name + (i < table.columns.length -1 ? ',' : '') %> "<% }} %>
+for (var i in table.columns) { 
+    var c = table.columns[i]; 
+    if (c.extra !== "auto_increment") { 
+%>
+            + "<%= c.column_name + (i < table.columns.length -1 ? ',' : '') %> "<% 
+    }
+} 
+%>
             + ") VALUES ( "
-            + "<% for (var i in table.columns) { var c = table.columns[i]; if (c.extra !== 'auto_increment') { %>?<%= i < table.columns.length -1 ? ',' : '' %><% }} %>"
+            + "<% 
+for (var i in table.columns) { 
+    var c = table.columns[i]; 
+    if (c.extra !== 'auto_increment') { 
+        %>?<%= i < table.columns.length -1 ? ',' : '' %><% 
+    }
+} 
+%>"
             + ") ",<% 
-        for (var i in table.columns) { var c = table.columns[i]; if (c.extra !== "auto_increment") { %>
-            <%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>()<%= i < table.columns.length -1 ? ',' : '' %><% }} %>).key;
+for (var i in table.columns) { 
+    var c = table.columns[i]; 
+    if (c.extra !== "auto_increment") { 
+%>
+            <%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>()<%= i < table.columns.length -1 ? ',' : '' %><% 
     }
+} 
+        %>).key;
+    }
+<% 
+if (table.primaryColumns.length > 1 || table.primaryColumns[0].referencedTable) { 
+%>
+    public boolean exist<%= table.className %>(<% 
+    for (var k in table.primaryColumns) {
+        %><%= k > 0 ? ', ' : '' %>long <%= table.primaryColumns[k].propertyName %><%
+    } %>) {
+        return exist("SELECT <%= table.primaryColumns[0].column_name %> FROM <%= table.name %> "
+            + "WHERE <%= table.primaryColumns[0].column_name %> = ? "<% 
+        for (var j = 1; j < table.primaryColumns.length; j++) { %>
+            + "AND <%= table.primaryColumns[j].column_name %> = ? "<%
+        }
 
-    <% if (table.idColumn.referencedTable) { %>
-    public boolean exist<%= table.className %>(long id) {
-        return exist("SELECT <%= table.idColumn.column_name %> FROM <%= table.name %> WHERE <%= table.idColumn.column_name %> = ? ", id);
+        for (var k in table.primaryColumns) {
+            %>, <%= table.primaryColumns[k].propertyName %><%
+        } 
+        %>);
     }
-    <% } %>
+<% 
+} 
+%>
 
 }

@@ -791,13 +791,14 @@ module.exports = yeoman.generators.Base.extend({
                 isLoginTable = true;
             }
 
+            table.primaryColumns = [];
             var primaryIndex = 0;
             for (var k = table.columns.length - 1; k >= 0; k--) {
                 var col = table.columns[k];
 
                 //primary key
                 if (col.column_key === "PRI") {
-                    table.idColumn = col;
+                    table.primaryColumns.push(col);
                     col.primaryIndex = primaryIndex;
                     primaryIndex++;
                 }

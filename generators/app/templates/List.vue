@@ -43,13 +43,17 @@
                                     <td>{{ item.<%= c.propertyName %> | moment($t("dateFormat.datetime")) }}</td><% 
 						                    } else if (c.javaType === "Boolean" || c.javaType === "boolean") { %>
                                     <td>{{ item.<%= c.propertyName %> == null ? null : item.<%= c.propertyName %> ? $t("boolean.true") : $t("boolean.false") }}</td><% 
-						                    } else if (c.javaType === "String") { %>
+						                    } else if (c.javaType === "String") { 
+                                                if (c.smartType === "imageUrl") { %>
+                                    <td><img :src="item.<%= c.propertyName %>" class="img-rounded" style="height: 100px"/></td><%
+                                                } else { %>
                                     <td>{{ item.<%= c.propertyName %> | truncate("140") }}</td><%
+                                                } 
                                             } else { %>
                                     <td>{{ item.<%= c.propertyName %> }}</td><%
 						                    }
 						                } else { %>
-                                    <td>{{ item.<%= c.notIdPropertyName %> != null && item.<%= c.notIdPropertyName %>.<%= c.referencedTable.idColumn.propertyName %> != null ? item.<%= c.notIdPropertyName %>.<%= c.referencedTable.idColumn.propertyName %> : null }}</td><%
+                                    <td>{{ item.<%= c.notIdPropertyName %> != null && item.<%= c.notIdPropertyName %>.<%= c.referencedTable.primaryColumns[0].propertyName %> != null ? item.<%= c.notIdPropertyName %>.<%= c.referencedTable.primaryColumns[0].propertyName %> : null }}</td><%
 						                }
 						            }
 						            %>
@@ -88,8 +92,8 @@ export default {
     data() {
         return {
             list: [],
-            adapStore: new AdapStore("<%= table.idColumn.propertyName %>", (params) => this.populateList(params))
-        }
+            adapStore: new AdapStore("<%= table.primaryColumns[0].propertyName %>", (params) => this.populateList(params))
+        };
     }, 
     mounted() {
         this.adapStore.search();
@@ -107,12 +111,17 @@ export default {
                 }
             });
         },
-        openPersist(item) {<%
-        if (!table.idColumn.referencedTable) { %>
-            this.$router.push(`/persist<%= table.className %>/${item.<%= table.idColumn.propertyName %>}`);<% 
-        } else { %>
-            this.$router.push(`/persist<%= table.className %>/${item.<%= table.idColumn.notIdPropertyName %>.<%= table.idColumn.referencedTable.idColumn.propertyName %>}`);<% 
-            } %>
+        openPersist(item) {
+            this.$router.push(`/persist<%= table.className %><%
+for (var k in table.primaryColumns) {
+    var idp = table.primaryColumns[k];
+    if (!idp.referencedTable) {
+        %>/${item.<%= idp.propertyName %>}<%
+    } else {
+        %>/${item.<%= idp.notIdPropertyName %>.<%= idp.referencedTable.primaryColumns[0].propertyName %>}<%
+    }
+}
+                %>`);
         }
     },
   

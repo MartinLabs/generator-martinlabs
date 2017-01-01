@@ -87,20 +87,20 @@ public class <%= table.className %>ProcessTest extends DaoUnitTestWrapper {
     @Test
     public void testListWithQuery() {
         String token = loginS.loginToToken("user@gmail.com", SecurityUtils.sha1("abcabc"));<%
-        var existPureStringColumn = false;
-        for (var i in table.columns) {
-            var c = table.columns[i];
-            if (c.javaType === "String" && !c.smartType) {
-                existPureStringColumn = true;
-                break;
-            }
-        }
-        if (existPureStringColumn) {
+var existPureStringColumn = false;
+for (var i in table.columns) {
+    var c = table.columns[i];
+    if (c.javaType === "String" && !c.smartType) {
+        existPureStringColumn = true;
+        break;
+    }
+}
+if (existPureStringColumn) {
         %>
         String query = "lorem";<% 
-        } else { %>
+} else { %>
         String query = "1";<% 
-        } %>
+} %>
         Integer page = 0;
         Integer limit = 20;
         String orderRequest = null;
@@ -117,9 +117,12 @@ public class <%= table.className %>ProcessTest extends DaoUnitTestWrapper {
     @Test
     public void testGet() {
         String token = loginS.loginToToken("user@gmail.com", SecurityUtils.sha1("abcabc"));
-        long id = 1;
 
-        <%= table.className %>Resp result = subject.get(id, token);
+        <%= table.className %>Resp result = subject.get(<% 
+for (var k in table.primaryColumns) {
+    %>1, <%
+}
+            %> token);
         assertNotNull(result);
         assertNotNull(result.get<%= table.className %>());<%
 antiRepeat = [];
@@ -150,27 +153,27 @@ for (var j in table.NtoNcolumns) {
     public void testPersist() {
         String token = loginS.loginToToken("user@gmail.com", SecurityUtils.sha1("abcabc"));
         <%= table.className %> <%= table.classLowerCamel %> = new <%= table.className %>(); <%
-        for (var j in table.columns) { 
-            var cx = table.columns[j]; 
-            if (cx.is_nullable === "NO" && (cx.propertyName != table.idColumn.propertyName || cx.referencedTable)) { 
-                if (["double", "long"].indexOf(cx.javaType) > -1) {
-        %>
+for (var j in table.columns) { 
+    var cx = table.columns[j]; 
+    if (cx.is_nullable === "NO" && (cx.column_key != "PRI" || cx.referencedTable)) { 
+        if (["double", "long"].indexOf(cx.javaType) > -1) {
+%>
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(1);<% 
-                } else if (cx.javaType === "String") {
-                    if (cx.smartType === "email") {
-        %>
+        } else if (cx.javaType === "String") {
+            if (cx.smartType === "email") {
+%>
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("any@email.com");<% 
-                    } else {
-        %>
+            } else {
+%>
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("X");<% 
-                    }
-                } else if (cx.javaType === "Date") {
-        %>
+            }
+        } else if (cx.javaType === "Date") {
+%>
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(new Date());<% 
-                }
-            } 
-        } 
-        %>
+        }
+    } 
+} 
+%>
         
         Long result = subject.persist(<%= table.classLowerCamel %>, token);
         assertNotNull(result);
@@ -181,138 +184,189 @@ for (var j in table.NtoNcolumns) {
     public void testPersistWith<%= col.NtoNtable.className %>() {
         String token = loginS.loginToToken("user@gmail.com", SecurityUtils.sha1("abcabc"));
         <%= table.className %> <%= table.classLowerCamel %> = new <%= table.className %>(); <%
-        for (var j in table.columns) { 
-            var cx = table.columns[j]; 
-            if (cx.is_nullable === "NO" && (cx.propertyName != table.idColumn.propertyName || cx.referencedTable)) { 
-                if (["double", "long"].indexOf(cx.javaType) > -1) {
-        %>
+    for (var j in table.columns) { 
+        var cx = table.columns[j]; 
+        if (cx.is_nullable === "NO" && (cx.column_key != "PRI" || cx.referencedTable)) { 
+            if (["double", "long"].indexOf(cx.javaType) > -1) {
+%>
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(1);<% 
-                } else if (cx.javaType === "String") {
-                    if (cx.smartType === "email") {
-        %>
+            } else if (cx.javaType === "String") {
+                if (cx.smartType === "email") {
+%>
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("any@email.com");<% 
-                    } else {
-        %>
+                } else {
+%>
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("X");<% 
-                    }
-                } else if (cx.javaType === "Date") {
-        %>
-        <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(new Date());<% 
                 }
-            } 
+            } else if (cx.javaType === "Date") {
+%>
+        <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(new Date());<% 
+            }
         } 
-        %>
+    } 
+%>
         <%= table.classLowerCamel %>.set<%= col.NtoNtable.className %>(new ArrayList<>());
         <%= col.otherTable.className %> <%= col.otherTable.classLowerCamel %> = new <%= col.otherTable.className %>();
-        <%= col.otherTable.classLowerCamel %>.set<%= col.otherTable.idColumn.propertyNameUpper %>(1);
+        <%= col.otherTable.classLowerCamel %>.set<%= col.otherTable.primaryColumns[0].propertyNameUpper %>(1);
         <%= table.classLowerCamel %>.get<%= col.NtoNtable.className %>().add(<%= col.otherTable.classLowerCamel %>);
         
         Long result = subject.persist(<%= table.classLowerCamel %>, token);
         assertNotNull(result);
         assertTrue(result > 0);
     }
-<% } %>
-<% if (!table.idColumn.referencedTable) { %>
+<% 
+} 
+
+if (!table.primaryColumns[0].referencedTable) { 
+%>
     @Test
     public void testPersistUpdating() {
         String token = loginS.loginToToken("user@gmail.com", SecurityUtils.sha1("abcabc"));
         <%= table.className %> <%= table.classLowerCamel %> = new <%= table.className %>(); 
-        <%= table.classLowerCamel %>.set<%= table.idColumn.propertyNameUpper %>(1);<%
-        for (var j in table.columns) { 
-            var cx = table.columns[j]; 
-            if (cx.is_nullable === "NO" && cx.propertyName != table.idColumn.propertyName) { 
-                if (["double", "long"].indexOf(cx.javaType) > -1) {
-        %>
+        <%= table.classLowerCamel %>.set<%= table.primaryColumns[0].propertyNameUpper %>(1);<%
+    for (var j in table.columns) { 
+        var cx = table.columns[j]; 
+        if (cx.is_nullable === "NO" && cx.column_key != "PRI") { 
+            if (["double", "long"].indexOf(cx.javaType) > -1) {
+%>
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(1);<% 
-                } else if (cx.javaType === "String") {
-                    if (cx.smartType === "email") {
-        %>
+            } else if (cx.javaType === "String") {
+                if (cx.smartType === "email") {
+%>
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("any@email.com");<% 
-                    } else {
-        %>
+                } else {
+%>
         <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("X");<% 
-                    }
-                } else if (cx.javaType === "Date") {
-        %>
-        <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(new Date());<% 
                 }
-            } 
+            } else if (cx.javaType === "Date") {
+%>
+        <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(new Date());<% 
+            }
         } 
-        %>
+    } 
+%>
         
         Long result = subject.persist(<%= table.classLowerCamel %>, token);
         assertNotNull(result);
         assertTrue(result > 0);
     }
-<% } else { %>
+<% 
+} else { 
+%>
     @Test
     public void testPersistInserting() {
         String token = loginS.loginToToken("user@gmail.com", SecurityUtils.sha1("abcabc"));
-        
-        long id = DaoWrapper.updateForTest(con, "INSERT INTO <%= table.idColumn.referencedTable.name %> ( "<% 
+        <%= table.className %> <%= table.classLowerCamel %> = new <%= table.className %>();
+<% 
+    for (var i in table.primaryColumns) {
+        var primaryCol = table.primaryColumns[i];
+%>
+        long <%= primaryCol.propertyName %> = DaoWrapper.updateForTest(con, "INSERT INTO <%= primaryCol.referencedTable.name %> ( "<% 
         var colocarVirgula = false;
-        for (var i in table.idColumn.referencedTable.columns) { 
-            var c = table.idColumn.referencedTable.columns[i]; 
-            if (c.extra !== "auto_increment" && c.is_nullable === "NO") { %>
+        for (var i in primaryCol.referencedTable.columns) { 
+            var c = primaryCol.referencedTable.columns[i]; 
+            if (c.extra !== "auto_increment" && c.is_nullable === "NO") { 
+%>
             + "<%= colocarVirgula ? ',' : '' %><%= c.column_name %> "<% 
                 colocarVirgula = true;
             }
         } 
-        colocarVirgula = false;
-        %>
-            + ") VALUES ( "
-            + "<% for (var i in table.idColumn.referencedTable.columns) { 
-                var c = table.idColumn.referencedTable.columns[i]; 
-                if (c.extra !== 'auto_increment' && c.is_nullable === 'NO') {
-                    %><%= colocarVirgula ? ',' : '' %>?<% 
-                    colocarVirgula = true;
+        if (!colocarVirgula) {
+            for (var i in primaryCol.referencedTable.columns) { 
+                var c = primaryCol.referencedTable.columns[i]; 
+                if (c.extra !== "auto_increment") { 
+%>
+            + "<%= c.column_name %> "<% 
+                    break;
                 }
-            } %>"
+            } 
+        }
+        colocarVirgula = false;
+%>
+            + ") VALUES ( "
+            + "<% 
+        for (var i in primaryCol.referencedTable.columns) { 
+            var c = primaryCol.referencedTable.columns[i]; 
+            if (c.extra !== 'auto_increment' && c.is_nullable === 'NO') {
+                %><%= colocarVirgula ? ',' : '' %>?<% 
+                colocarVirgula = true;
+            }
+        }
+        if (!colocarVirgula) {
+            %>?<%
+        }
+
+         %>"
             + ") ",<% 
         colocarVirgula = false;
-        for (var i in table.idColumn.referencedTable.columns) { 
-            var c = table.idColumn.referencedTable.columns[i]; 
+        for (var i in primaryCol.referencedTable.columns) { 
+            var c = primaryCol.referencedTable.columns[i]; 
             if (c.extra !== "auto_increment" && c.is_nullable === "NO") { %><%= colocarVirgula ? ',' : '' %><% 
-                if (["double", "long", "boolean"].indexOf(c.javaType) > -1) { %>
+                if (["double", "long", "boolean"].indexOf(c.javaType) > -1) { 
+%>
             1<% 
                 } else if (c.javaType === "String") { 
-            %>
+%>
             "X"<% 
                 } else if (c.javaType === "Date") { 
-            %>
+%>
             new Date()<% 
                 }
                 colocarVirgula = true;
             }
-        } %>).key;
-        
-        <%= table.className %> <%= table.classLowerCamel %> = new <%= table.className %>(); 
-        <%= table.classLowerCamel %>.set<%= table.idColumn.propertyNameUpper %>(id);<%
-        for (var j in table.columns) { 
-            var cx = table.columns[j]; 
-            if (cx.is_nullable === "NO" && cx.propertyName != table.idColumn.propertyName) { 
-                if (["double", "long"].indexOf(cx.javaType) > -1) {
-        %>
-        <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(1);<% 
-                } else if (cx.javaType === "String") {
-                    if (cx.smartType === "email") {
-        %>
-        <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("any@email.com");<% 
-                    } else {
-        %>
-        <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("X");<% 
-                    }
-                } else if (cx.javaType === "Date") {
-        %>
-        <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(new Date());<% 
-                }
-            } 
         } 
-        %>
+        if (!colocarVirgula) {
+            for (var i in primaryCol.referencedTable.columns) { 
+                var c = primaryCol.referencedTable.columns[i]; 
+                if (c.extra !== "auto_increment") {
+                    if (["double", "long", "boolean"].indexOf(c.javaType) > -1) { 
+%>
+            1<% 
+                    } else if (c.javaType === "String") { 
+%>
+            "X"<% 
+                    } else if (c.javaType === "Date") { 
+%>
+            new Date()<% 
+                    }
+                    break;
+                }
+            }
+        }
+
+        %>).key;
+         
+        <%= table.classLowerCamel %>.set<%= primaryCol.propertyNameUpper %>(<%= primaryCol.propertyName %>);
+<%
+    }
+
+    for (var j in table.columns) { 
+        var cx = table.columns[j]; 
+        if (cx.is_nullable === "NO" && cx.column_key != "PRI") { 
+            if (["double", "long"].indexOf(cx.javaType) > -1) {
+%>
+        <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(1);<% 
+            } else if (cx.javaType === "String") {
+                if (cx.smartType === "email") {
+%>
+        <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("any@email.com");<% 
+                } else {
+%>
+        <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("X");<% 
+                }
+            } else if (cx.javaType === "Date") {
+%>
+        <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(new Date());<% 
+            }
+        } 
+    } 
+%>
         
         Long result = subject.persist(<%= table.classLowerCamel %>, token);
         assertNotNull(result);
         assertTrue(result > 0);
     }
-<% } %>
+<% 
+} 
+%>
 }

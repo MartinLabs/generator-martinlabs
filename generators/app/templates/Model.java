@@ -112,11 +112,11 @@ for (var i in table.columns) {
 
     <% if (cx.is_nullable === "YES") { %>
     public <%= cx.javaType %> get<%= cx.propertyNameUpper %>() {
-        return <%= cx.notIdPropertyName %> == null || <%= cx.notIdPropertyName %>.get<%= cx.referencedTable.idColumn.propertyNameUpper %>() == 0 ? null : <%= cx.notIdPropertyName %>.get<%= cx.referencedTable.idColumn.propertyNameUpper %>();
+        return <%= cx.notIdPropertyName %> == null || <%= cx.notIdPropertyName %>.get<%= cx.referencedTable.primaryColumns[0].propertyNameUpper %>() == 0 ? null : <%= cx.notIdPropertyName %>.get<%= cx.referencedTable.primaryColumns[0].propertyNameUpper %>();
     }
     <% } else { %>
     public <%= cx.javaType %> get<%= cx.propertyNameUpper %>() {
-        return <%= cx.notIdPropertyName %> == null ? 0 : <%= cx.notIdPropertyName %>.get<%= cx.referencedTable.idColumn.propertyNameUpper %>();
+        return <%= cx.notIdPropertyName %> == null ? 0 : <%= cx.notIdPropertyName %>.get<%= cx.referencedTable.primaryColumns[0].propertyNameUpper %>();
     }
     <% } %>
 
@@ -125,7 +125,7 @@ for (var i in table.columns) {
             <%= cx.notIdPropertyName %> = new <%= cx.referencedTable.className %>();
         }
         
-        <%= cx.notIdPropertyName %>.set<%= cx.referencedTable.idColumn.propertyNameUpper %>(<%= cx.propertyName %>);
+        <%= cx.notIdPropertyName %>.set<%= cx.referencedTable.primaryColumns[0].propertyNameUpper %>(<%= cx.propertyName %>);
     }
     <% } 
 } 

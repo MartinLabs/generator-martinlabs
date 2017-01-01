@@ -48,18 +48,28 @@ import java.sql.Connection;
 public class <%= table.className %>Process {
 
     private Connection con;<% 
-if (props.loginsys) { %>
+if (props.loginsys) { 
+%>
     private LoginServices loginS;
-<% } %>
+<% 
+} 
+%>
     public <%= table.className %>Process(Connection con) {
         this.con = con;<% 
-if (props.loginsys) { %>
+if (props.loginsys) { 
+%>
         loginS = new LoginServices(con);
-<% } %>
+<% 
+} 
+%>
     }
 
-    public PagedResp<<%= table.className %>> list(<% if (props.loginsys) { %>
-        String token, <% } %>
+    public PagedResp<<%= table.className %>> list(<% 
+if (props.loginsys) { 
+%>
+        String token, <% 
+} 
+%>
         String query,
         Integer page,
         Integer limit,
@@ -72,11 +82,14 @@ if (props.loginsys) { %>
         
         if (limit == null) {
             throw new RespException(2,  LanguageHolder.instance.cannotBeNull("Limit"));
-        }
-        
-    <% if (props.loginsys) { %>
+        }      
+<% 
+if (props.loginsys) { 
+%>
         loginS.allowAccess(token);
-    <% } %>
+<% 
+} 
+%>
         <%= table.className %>Dao dao = new <%= table.className %>Dao(con);
 
         List<<%= table.className %>> list<%= table.className %> = dao.list(query, page, limit, orderRequest, asc);
@@ -92,9 +105,15 @@ if (props.loginsys) { %>
         return resp;
     }
 
-    public <%= table.className %>Resp get(long id<% if (props.loginsys) { %>, String token<% } %>) {
-        
-<% if (props.loginsys) { 
+    public <%= table.className %>Resp get(<% 
+for (var k in table.primaryColumns) {
+    %><%= k > 0 ? ', ' : '' %>long <%= table.primaryColumns[k].propertyName %><%
+} 
+if (props.loginsys) { 
+    %>, String token<% 
+} 
+    %>) {<% 
+if (props.loginsys) { 
 %>
         loginS.allowAccess(token);
 <% 
@@ -104,7 +123,6 @@ antiRepeat = [];
 antiRepeat.push(table.className);
 %>
         <%= table.className %>Dao <%= table.classLowerCamel %>Dao = new <%= table.className %>Dao(con);<% 
-
 for (var i in table.columns) { 
     var c = table.columns[i]; 
     if (c.referencedTable && antiRepeat.indexOf(c.referencedTable.className) < 0) {
@@ -126,18 +144,25 @@ for (var i in table.NtoNcolumns) {
 %>
         <%= table.className %>Resp resp = new <%= table.className %>Resp();
 
-        if (id > 0) {
-            <%= table.className %> <%= table.classLowerCamel %> = <%= table.classLowerCamel %>Dao.get(id);
+        if (<%= table.primaryColumns[0].propertyName %> > 0) {
+            <%= table.className %> <%= table.classLowerCamel %> = <%= table.classLowerCamel %>Dao.get(<% 
+for (var k in table.primaryColumns) {
+                %><%= k > 0 ? ', ' : '' %><%= table.primaryColumns[k].propertyName %><%
+} 
+                %>);
             resp.set<%= table.className %>(<%= table.classLowerCamel %>);<% 
-        for (var i in table.NtoNcolumns) { 
-            var c = table.NtoNcolumns[i]; 
-        %>
-            <%= table.classLowerCamel %>.set<%= c.NtoNtable.className %>(<%= c.NtoNtable.classLowerCamel %>Dao.list<%= c.otherTable.className %>Of<%= table.className %>(id));
-        <% 
-        } 
-        %>
+for (var i in table.NtoNcolumns) { 
+    var c = table.NtoNcolumns[i]; 
+%>
+            <%= table.classLowerCamel %>.set<%= c.NtoNtable.className %>(<%= c.NtoNtable.classLowerCamel %>Dao.list<%= c.otherTable.className %>Of<%= table.className %>(<% 
+for (var k in table.primaryColumns) {
+                %><%= k > 0 ? ', ' : '' %><%= table.primaryColumns[k].propertyName %><%
+} 
+                %>));
+<% 
+} 
+%>
         }<% 
-
 antiRepeat = [];
 for (var j in table.columns) { 
     var cx = table.columns[j]; 
@@ -166,33 +191,43 @@ for (var j in table.NtoNcolumns) {
 
     public Long persist(<%= table.className %> <%= table.classLowerCamel %><% if (props.loginsys) { %>, String token<% } %>) {
         <%= table.classLowerCamel %>.validate();
-
-    <% if (props.loginsys) { %>
+<% 
+if (props.loginsys) { 
+%>
         loginS.allowAccess(token);
-    <% } %>
+<% 
+} 
+%>
         <%= table.className %>Dao dao = new <%= table.className %>Dao(con);
-
-        <% if (!table.idColumn.referencedTable) { %>
-            long id<%= table.className %>;
-            if (<%= table.classLowerCamel %>.get<%= table.idColumn.propertyNameUpper %>() > 0) {
-                id<%= table.className %> = <%= table.classLowerCamel %>.get<%= table.idColumn.propertyNameUpper %>();
-                
-                dao.update(<%= table.classLowerCamel %>);
-            } else {
-                id<%= table.className %> = dao.insert(<%= table.classLowerCamel %>);
-                <%= table.classLowerCamel %>.set<%= table.idColumn.propertyNameUpper %>(id<%= table.className %>);
-            }
-        <% } else { %>
-            long id<%= table.className %> = <%= table.classLowerCamel %>.get<%= table.idColumn.propertyNameUpper %>();
-            boolean exist = dao.exist<%= table.className %>(id<%= table.className %>);
-            if (exist) {
-                dao.update(<%= table.classLowerCamel %>);
-            } else {
-                dao.insert(<%= table.classLowerCamel %>);
-            }
-        <% } %>
-
-    <% for (var i in table.NtoNcolumns) { var col = table.NtoNcolumns[i]; %>
+<% 
+if (table.primaryColumns.length < 2 && !table.primaryColumns[0].referencedTable) { 
+%>
+        long id<%= table.className %>;
+        if (<%= table.classLowerCamel %>.get<%= table.primaryColumns[0].propertyNameUpper %>() > 0) {
+            id<%= table.className %> = <%= table.classLowerCamel %>.get<%= table.primaryColumns[0].propertyNameUpper %>();
+            
+            dao.update(<%= table.classLowerCamel %>);
+        } else {
+            id<%= table.className %> = dao.insert(<%= table.classLowerCamel %>);
+            <%= table.classLowerCamel %>.set<%= table.primaryColumns[0].propertyNameUpper %>(id<%= table.className %>);
+        }
+<% 
+} else { 
+%>
+        long id<%= table.className %> = <%= table.classLowerCamel %>.get<%= table.primaryColumns[0].propertyNameUpper %>();
+        boolean exist = dao.exist<%= table.className %>(<% 
+for (var i in table.primaryColumns) { 
+            %><%= i > 0 ? ', ' : '' %><%= table.classLowerCamel %>.get<%= table.primaryColumns[i].propertyNameUpper %>()<% 
+            } %>);
+        if (exist) {
+            dao.update(<%= table.classLowerCamel %>);
+        } else {
+            dao.insert(<%= table.classLowerCamel %>);
+        }
+<% 
+} 
+for (var i in table.NtoNcolumns) { var col = table.NtoNcolumns[i]; 
+%>
         <%= col.NtoNtable.className %>Dao <%= col.NtoNtable.classLowerCamel %>Dao = new <%= col.NtoNtable.className %>Dao(con);
     
         <%= col.NtoNtable.classLowerCamel %>Dao.removeAllFrom<%= table.className %>(id<%= table.className %>);
@@ -200,14 +235,15 @@ for (var j in table.NtoNcolumns) {
         if (<%= table.classLowerCamel %>.get<%= col.NtoNtable.className %>() != null) {
             for (<%= col.otherTable.className %> <%= col.otherTable.classLowerCamel %> : <%= table.classLowerCamel %>.get<%= col.NtoNtable.className %>()) {<% 
                 if (col.NtoNtable.columns[0].referencedTable.className === table.className) { %>
-                <%= col.NtoNtable.classLowerCamel %>Dao.insert(id<%= table.className %>, <%= col.otherTable.classLowerCamel %>.get<%= col.otherTable.idColumn.propertyNameUpper %>());<% 
+                <%= col.NtoNtable.classLowerCamel %>Dao.insert(id<%= table.className %>, <%= col.otherTable.classLowerCamel %>.get<%= col.otherTable.primaryColumns[0].propertyNameUpper %>());<% 
                 } else { %>
-                <%= col.NtoNtable.classLowerCamel %>Dao.insert(<%= col.otherTable.classLowerCamel %>.get<%= col.otherTable.idColumn.propertyNameUpper %>(), id<%= table.className %>);<% 
+                <%= col.NtoNtable.classLowerCamel %>Dao.insert(<%= col.otherTable.classLowerCamel %>.get<%= col.otherTable.primaryColumns[0].propertyNameUpper %>(), id<%= table.className %>);<% 
                 } %>
             }
         }
-    <% } %>
-
+<% 
+} 
+%>
         return id<%= table.className %>;
     }
 
