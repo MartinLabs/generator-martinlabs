@@ -1,20 +1,19 @@
 FACEIS DE ARRUMAR
 
 BUGFIXES E MAIS URGENTES
-- quando existem 2 colunas primary key na tabela o persist fica zuado
 - erro no teste unitario se a coluna de login n for de e-mail
 
 SMART TYPE
 - se a coluna for "ativo" poder inativa-la e não exibir a linha inativa no listar
 - se a coluna for "password" deve fazer sha1 no js e no insert/update; se estiver em branco no update não alterar; nunca incluir no select, validar minimo de 6 chats, não mostrar na lista
 - se a coluna for "url" deve validar no persist; no listar, ao clicar deve abrir nova aba
-- smartType especifico para colocar NOW() no insert
+- smartType especifico para colocar NOW() no insert ou no update
 - ler comentario contendo "martinlabs-generator:ignore" e ignorar coluna
 
 OUTRAS FEATURES
 - se a coluna for unique, validar se já existe
 - guardar informações sobre colunas nos Models, assim podemos reutilizar e refatorar facilmente (exemplo no fim da pagina)
-- organizar o generator para que possamos configurar quais templates irá usar em um outro arquivo
+- organizar o generator para que possamos configurar em um arquivo externo os templates que irá usar
 - perguntar se quer rodar o dados.sql
 - rodar mvn
 - graficos valor x hora
