@@ -43,8 +43,7 @@ for (var j = 1; j < table.primaryColumns.length; j++) {
 for (var i in table.columns) { 
     var c = table.columns[i]; 
 %>
-            <%= table.classLowerCamel %>.set<%= c.propertyNameUpper %>(rs.<%= c.resultSetGetter %>("<%= c.column_name %>"));
-<% 
+            <%= table.classLowerCamel %>.set<%= c.propertyNameUpper %>(rs.<%= c.resultSetGetter %>("<%= c.column_name %>"));<% 
 } 
 %>
             return <%= table.classLowerCamel %>;
@@ -92,8 +91,7 @@ if (table.isReferenced) {
 <% 
 for (var i in table.columns) { var c = table.columns[i]; 
 %>
-        orderRequestAndColumn.put("<%= c.column_name %>", "<%= c.column_name %>");
-<% 
+        orderRequestAndColumn.put("<%= c.column_name %>", "<%= c.column_name %>");<% 
 } 
 %>
         String orderColumn = orderRequestAndColumn.get(orderRequest);
@@ -243,6 +241,34 @@ if (table.primaryColumns.length > 1 || table.primaryColumns[0].referencedTable) 
     }
 <% 
 } 
+
+for (var i in table.columns) { 
+    var c = table.columns[i];
+
+    if (c.column_key === "UNI") {
+%>
+    public boolean exist<%= c.propertyNameUpper %>(<%= c.javaType %> <%= c.propertyName %><% 
+        for (var k in table.primaryColumns) {
+            %>, long <%= table.primaryColumns[k].propertyName %><%
+        } %>) {
+        return exist("SELECT <%= c.column_name %> FROM <%= table.name %> "
+            + "WHERE <%= c.column_name %> = ? "<% 
+        for (var j = 0; j < table.primaryColumns.length; j++) { 
+%>
+            + "AND <%= table.primaryColumns[j].column_name %> != ? "<%
+        }
+%>, 
+            <%= c.propertyName %><%
+        for (var k in table.primaryColumns) {
+%>, 
+            <%= table.primaryColumns[k].propertyName %><%
+        } 
+%>
+%>);
+    }
+<%
+    }
+}
 %>
 
 }

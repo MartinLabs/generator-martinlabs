@@ -87,6 +87,7 @@ public class <%= table.className %>ProcessTest extends DaoUnitTestWrapper {
     @Test
     public void testListWithQuery() {
         String token = loginS.loginToToken("user@gmail.com", SecurityUtils.sha1("abcabc"));<%
+
 var existPureStringColumn = false;
 for (var i in table.columns) {
     var c = table.columns[i];
@@ -96,11 +97,13 @@ for (var i in table.columns) {
     }
 }
 if (existPureStringColumn) {
-        %>
+%>
         String query = "lorem";<% 
-} else { %>
+} else { 
+%>
         String query = "1";<% 
-} %>
+} 
+%>
         Integer page = 0;
         Integer limit = 20;
         String orderRequest = null;
@@ -129,7 +132,8 @@ antiRepeat = [];
 for (var j in table.columns) { 
     var cx = table.columns[j]; 
     if (cx.referencedTable && antiRepeat.indexOf(cx.referencedTable.className) < 0) {
-        antiRepeat.push(cx.referencedTable.className);%>
+        antiRepeat.push(cx.referencedTable.className);
+%>
         assertFalse(result.getAll<%= cx.referencedTable.className %>().isEmpty());
         assertNotNull(result.getAll<%= cx.referencedTable.className %>().get(0));<%
     }
@@ -148,7 +152,59 @@ for (var j in table.NtoNcolumns) {
 }
 %>
     }
+<%
+for (var i in table.columns) { 
+    var c = table.columns[i];
 
+    if (c.column_key === "UNI") {
+%>
+    @Test(expected = RespException.class)
+    public void testPersistWithRepeated<%= c.propertyNameUpper %>() {
+        String token = loginS.loginToToken("user@gmail.com", SecurityUtils.sha1("abcabc"));
+        <%= table.className %> <%= table.classLowerCamel %> = new <%= table.className %>(); <%
+        for (var j in table.columns) { 
+            var cx = table.columns[j]; 
+            if (cx.is_nullable === "NO" && (cx.column_key != "PRI" || cx.referencedTable) && cx.column_name != c.column_name) { 
+                if (["double", "long"].indexOf(cx.javaType) > -1) {
+%>
+        <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(1);<% 
+                } else if (cx.javaType === "String") {
+                    if (cx.smartType === "email") {
+%>
+        <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("any@email.com");<% 
+                    } else {
+%>
+        <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>("X");<% 
+                    }
+                } else if (cx.javaType === "Date") {
+%>
+        <%= table.classLowerCamel %>.set<%= cx.propertyNameUpper %>(new Date());<% 
+                }
+            } 
+        }
+
+
+        if (["double", "long"].indexOf(c.javaType) > -1) {
+%>
+        <%= table.classLowerCamel %>.set<%= c.propertyNameUpper %>(1);<% 
+        } else if (c.javaType === "String") {
+            if (c.smartType === "email") {
+%>
+        <%= table.classLowerCamel %>.set<%= c.propertyNameUpper %>("lorem@email.com");<% 
+            } else {
+%>
+        <%= table.classLowerCamel %>.set<%= c.propertyNameUpper %>("lorem");<% 
+            }
+        }
+
+%>
+        
+        subject.persist(<%= table.classLowerCamel %>, token);
+    }
+<%
+    }
+}
+%>
     @Test
     public void testPersist() {
         String token = loginS.loginToToken("user@gmail.com", SecurityUtils.sha1("abcabc"));
@@ -179,7 +235,11 @@ for (var j in table.columns) {
         assertNotNull(result);
         assertTrue(result > 0);
     }
-<% for (var i in table.NtoNcolumns) { var col = table.NtoNcolumns[i]; %>
+<% 
+
+for (var i in table.NtoNcolumns) { 
+    var col = table.NtoNcolumns[i]; 
+%>
     @Test
     public void testPersistWith<%= col.NtoNtable.className %>() {
         String token = loginS.loginToToken("user@gmail.com", SecurityUtils.sha1("abcabc"));

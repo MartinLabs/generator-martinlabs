@@ -11,36 +11,50 @@ import java.util.List;
  * @author martinlabs CRUD generator
  */
 public class <%= table.className %> {
-<% for (var i in table.columns) { 
+<% 
+for (var i in table.columns) { 
     var c = table.columns[i]; 
     if (!c.referencedTable) {
-    %>
+%>
     private <%= c.javaType %> <%= c.propertyName %>;<% 
-    } else { %>
+    } else { 
+%>
     private <%= c.referencedTable.className %> <%= c.notIdPropertyName %>;<% 
-    } %><%= c.column_comment ? " //" + c.column_comment : "" %><% 
-} %>
+    } 
+%><%= c.column_comment ? " //" + c.column_comment : "" %><% 
+} 
+%>
 
-    <% for (var i in table.NtoNcolumns) { var cn = table.NtoNcolumns[i]; %>
-    private List<<%= cn.otherTable.className %>> <%= cn.NtoNtable.classLowerCamel %>;<% } %>
-
+<% 
+for (var i in table.NtoNcolumns) { 
+    var cn = table.NtoNcolumns[i]; 
+%>
+    private List<<%= cn.otherTable.className %>> <%= cn.NtoNtable.classLowerCamel %>;
+<% 
+} 
+%>
     public <%= table.className %>() {
     }
 
     public <%= table.className %>(<%= table.className %> other) {
-        <% for (var i in table.columns) { 
-            var c = table.columns[i]; 
-            if (!c.referencedTable) {
-        %>
+<% 
+for (var i in table.columns) { 
+    var c = table.columns[i]; 
+    if (!c.referencedTable) {
+%>
         this.<%= c.propertyName %> = other.<%= c.propertyName %>;<% 
-        } else { %>
+    } else { 
+%>
         this.<%= c.notIdPropertyName %> = other.<%= c.notIdPropertyName %>;<% 
-            } 
-        } 
+    } 
+} 
 
-        for (var i in table.NtoNcolumns) { var cn = table.NtoNcolumns[i]; %>
+for (var i in table.NtoNcolumns) { 
+    var cn = table.NtoNcolumns[i]; 
+%>
         this.<%= cn.NtoNtable.classLowerCamel %> = other.<%= cn.NtoNtable.classLowerCamel %>;<% 
-        } %>
+} 
+%>
     }
 
     public void validate() {<% 
@@ -55,12 +69,12 @@ for (var i in table.columns) {
 
     if (c.javaType === "String") {
         if (c.is_nullable === "NO") {
-        %>
+%>
         if (get<%= c.propertyNameUpper %>().length() > <%= Math.min(65500, c.character_maximum_length) %>) {
             throw new RespException(<%= c.ordinal_position %>, LanguageHolder.instance.lengthCannotBeMoreThan("<%= c.propertyNatural %>", <%= Math.min(65500, c.character_maximum_length) %>));
         }<%
         } else {
-        %>
+%>
         if (get<%= c.propertyNameUpper %>() != null && get<%= c.propertyNameUpper %>().length() > <%= Math.min(65500, c.character_maximum_length) %>) {
             throw new RespException(<%= c.ordinal_position %>, LanguageHolder.instance.lengthCannotBeMoreThan("<%= c.propertyNatural %>", <%= Math.min(65500, c.character_maximum_length) %>));
         }<%
@@ -68,12 +82,12 @@ for (var i in table.columns) {
 
         if (c.smartType === "email") {
             if (c.is_nullable === "NO") {
-            %>
+%>
         if (!Validator.isEmail(get<%= c.propertyNameUpper%>())) {
             throw new RespException(<%= c.ordinal_position %>, LanguageHolder.instance.isNotAValidEmail("<%= c.propertyNatural %>"));
         }<%
             } else {
-                %>
+%>
         if (get<%= c.propertyNameUpper %>() != null && !Validator.isEmail(get<%= c.propertyNameUpper%>())) {
             throw new RespException(<%= c.ordinal_position %>, LanguageHolder.instance.isNotAValidEmail("<%= c.propertyNatural %>"));
         }<%
@@ -87,13 +101,15 @@ for (var i in table.columns) {
             throw new RespException(<%= c.ordinal_position %>,  LanguageHolder.instance.cannotBeNull("<%= c.propertyNatural %>"));
         }<% 
     }
-} %>    
+} 
+%>    
     }
     
-<% for (var j in table.columns) { 
+<% 
+for (var j in table.columns) { 
     var cx = table.columns[j]; 
     if (!cx.referencedTable) {
-    %>
+%>
     public <%= cx.javaType %> get<%= cx.propertyNameUpper %>() {
         return <%= cx.propertyName %>;
     }
@@ -101,7 +117,9 @@ for (var i in table.columns) {
     public void set<%= cx.propertyNameUpper %>(<%= cx.javaType %> <%= cx.propertyName %>) {
         this.<%= cx.propertyName %> = <%= cx.propertyName %>;
     }
-    <% } else { %>
+<% 
+    } else {
+%>
     public <%= cx.referencedTable.className %> get<%= cx.notIdPropertyNameUpper %>() {
         return <%= cx.notIdPropertyName %>;
     }
@@ -110,15 +128,31 @@ for (var i in table.columns) {
         this.<%= cx.notIdPropertyName %> = <%= cx.notIdPropertyName %>;
     }
 
-    <% if (cx.is_nullable === "YES") { %>
+<% 
+        if (cx.is_nullable === "YES") { 
+%>
     public <%= cx.javaType %> get<%= cx.propertyNameUpper %>() {
         return <%= cx.notIdPropertyName %> == null || <%= cx.notIdPropertyName %>.get<%= cx.referencedTable.primaryColumns[0].propertyNameUpper %>() == 0 ? null : <%= cx.notIdPropertyName %>.get<%= cx.referencedTable.primaryColumns[0].propertyNameUpper %>();
     }
-    <% } else { %>
+
+    public void set<%= cx.propertyNameUpper %>(<%= cx.javaType %> <%= cx.propertyName %>) {
+        if (<%= cx.propertyName %> == null) {
+            <%= cx.notIdPropertyName %> = null;
+            return;
+        }
+
+        if (<%= cx.notIdPropertyName %> == null) {
+            <%= cx.notIdPropertyName %> = new <%= cx.referencedTable.className %>();
+        }
+        
+        <%= cx.notIdPropertyName %>.set<%= cx.referencedTable.primaryColumns[0].propertyNameUpper %>(<%= cx.propertyName %>);
+    }
+<% 
+        } else { 
+%>
     public <%= cx.javaType %> get<%= cx.propertyNameUpper %>() {
         return <%= cx.notIdPropertyName %> == null ? 0 : <%= cx.notIdPropertyName %>.get<%= cx.referencedTable.primaryColumns[0].propertyNameUpper %>();
     }
-    <% } %>
 
     public void set<%= cx.propertyNameUpper %>(<%= cx.javaType %> <%= cx.propertyName %>) {
         if (<%= cx.notIdPropertyName %> == null) {
@@ -127,11 +161,16 @@ for (var i in table.columns) {
         
         <%= cx.notIdPropertyName %>.set<%= cx.referencedTable.primaryColumns[0].propertyNameUpper %>(<%= cx.propertyName %>);
     }
-    <% } 
+<% 
+        } 
+    } 
 } 
 %>
     
-    <% for (var j in table.NtoNcolumns) { var cx = table.NtoNcolumns[j]; %>
+<% 
+for (var j in table.NtoNcolumns) { 
+    var cx = table.NtoNcolumns[j]; 
+%>
     public List<<%= cx.otherTable.className %>> get<%= cx.NtoNtable.className %>() {
         return <%= cx.NtoNtable.classLowerCamel %>;
     }
@@ -139,6 +178,8 @@ for (var i in table.columns) {
     public void set<%= cx.NtoNtable.className %>(List<<%= cx.otherTable.className %>> <%= cx.NtoNtable.classLowerCamel %>) {
         this.<%= cx.NtoNtable.classLowerCamel %> = <%= cx.NtoNtable.classLowerCamel %>;
     }
-    <% } %>
+<% 
+} 
+%>
     
 }

@@ -377,7 +377,8 @@ module.exports = yeoman.generators.Base.extend({
             artifactId: ["maven-war-plugin"],
             version: ["2.3"],
             configuration: [{
-                failOnMissingWebXml: ["false"]
+                failOnMissingWebXml: ["false"],
+                warSourceExcludes: [".sass-cache/**, node_modules/**"]
             }]
         }, {
             groupId: ["org.apache.maven.plugins"],
@@ -455,9 +456,15 @@ module.exports = yeoman.generators.Base.extend({
                 if (b.groupId && b.artifactId && bta.groupId[0] === b.groupId[0] && bta.artifactId[0] === b.artifactId[0]) {
                     exist = true;
 
-                    if (bta.configuration && bta.configuration.length && bta.configuration[0].source) {
-                        b.configuration[0].source = bta.configuration[0].source;
-                        b.configuration[0].target = bta.configuration[0].target;
+                    if (bta.configuration && bta.configuration.length) { 
+                        if (bta.configuration[0].source) {
+                            b.configuration[0].source = bta.configuration[0].source;
+                            b.configuration[0].target = bta.configuration[0].target;
+                        }
+
+                        if (bta.configuration[0].warSourceExcludes) {
+                            b.configuration[0].warSourceExcludes = bta.configuration[0].warSourceExcludes;
+                        }
                     }
                 }
             }
@@ -774,6 +781,7 @@ module.exports = yeoman.generators.Base.extend({
     },
 
     generateTableProps: function() {
+
         for (var i in this.props.tables) {
             var table = this.props.tables[i];
 
@@ -852,6 +860,7 @@ module.exports = yeoman.generators.Base.extend({
                     }
                 }
             }
+
         }
     },
 
@@ -1264,6 +1273,16 @@ module.exports = yeoman.generators.Base.extend({
 
         if (column.column_key === "PRI") {
             return index + 1;
+        }
+
+        if (column.column_key === "UNI") {
+            if (["float", "double", "real", "double precision", "numeric", "decimal"].indexOf(column.data_type) > -1) {
+                return index + 1;
+            } else if (column.smartType === "email") {
+                return "\"" + lorem.unique(index) + "@gmail.com\"";
+            } else if (["char", "varchar", "text"].indexOf(column.data_type) > -1) {
+                return "\"" + lorem.unique(index) + "\"";
+            }
         }
 
         if (column.referencedTable) {

@@ -1,28 +1,32 @@
 FACEIS DE ARRUMAR
 
+- Usar @NotNull e @Nullable
+
 BUGFIXES E MAIS URGENTES
-- erro no teste unitario se a coluna de login n for de e-mail
+- erro no teste unitario se a coluna de login n for de e-mail (tb só permite com login)
 
 SMART TYPE
 - se a coluna for "ativo" poder inativa-la e não exibir a linha inativa no listar
+- smartType especifico para colocar NOW() no insert ou no update
 - se a coluna for "password" deve fazer sha1 no js e no insert/update; se estiver em branco no update não alterar; nunca incluir no select, validar minimo de 6 chats, não mostrar na lista
 - se a coluna for "url" deve validar no persist; no listar, ao clicar deve abrir nova aba
-- smartType especifico para colocar NOW() no insert ou no update
 - ler comentario contendo "martinlabs-generator:ignore" e ignorar coluna
+- se o nome for "tempo"/"time" e for integer considerar q é um tempo e poder selecionar unidade (segundos, minutos, horas)
 
 OUTRAS FEATURES
-- se a coluna for unique, validar se já existe
-- guardar informações sobre colunas nos Models, assim podemos reutilizar e refatorar facilmente (exemplo no fim da pagina)
+- OUTRO BRANCH: guardar informações sobre colunas nos Models, assim podemos reutilizar e refatorar facilmente (exemplo no usecase)
+- graficos valor x hora
+- exportar csv via client
 - organizar o generator para que possamos configurar em um arquivo externo os templates que irá usar
 - perguntar se quer rodar o dados.sql
 - rodar mvn
-- graficos valor x hora
-- exportar csv via client
 - exportar csv total via servidor
 - gerar watch no grunt
 
 EXISTE IMPEDIMENTO OU PRECISA SER PENSADO MELHOR
-- generator Android/iOS (model e listar)
+- LanguageHolder não permite novas strings por projeto
+- login com oauth2
+- generator Android/iOS (pelo menos estrutura e process)
 - em todos os WS além de token tem que enviar versão do client para validar se é muito antiga e sistema operacional
 - gerar "esqueci a senha"
 - lista de itens conectados ao meu usuário
@@ -32,35 +36,589 @@ EXISTE IMPEDIMENTO OU PRECISA SER PENSADO MELHOR
 
 
 
-Guardar informações sobre colunas nos Models, assim podemos reutilizar e refatorar facilmente:
 
-public Carga getCarga(long id){
-    return selectOne("SELECT * "
-        + "FROM carga "
-        + "INNER JOIN carga_destinatario "
-        + "ON carga.idCargaPk = carga_destinatario.idCargaFk "
-        + "INNER JOIN destinatario AS d "
-        + "ON d.idDestinatarioPk = carga_destinatario.idDestinatarioFk "
-        + "WHERE carga.idCargaPk = ? ", 
-    rs -> {
-        Carga carga = Carga.buildAll(rs); //não precisa passar "carga" pq é o default
-        carga.setDestinatario(Destinatario.buildApresentacao(rs, "d")); //passando "d" como alias, o default seria "destinatario"
-        return carga;
-    }, id);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+>>>>> PRINCIPALDAO.JAVA COM COLUNAS NO MODEL
+
+package br.com.martinlabs.usecase.dao;
+
+import br.com.martinlabs.usecase.model.Principal;
+import br.com.martinlabs.commons.DaoWrapper;
+import com.google.common.base.Strings;
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.HashMap;
+
+/**
+ *
+ * @author martinlabs CRUD generator
+ */
+public class PrincipalDao extends DaoWrapper {
+    
+    public PrincipalDao(Connection con) {
+        super(con);
+    }
+    
+    public Principal get(long idPrincipalPk){
+        return selectOne("SELECT * "
+            + "FROM principal "
+            + "WHERE idPrincipalPk = ? ", 
+                Principal::buildAll,
+                idPrincipalPk);
+    }
+
+    public List<Principal> list(){
+        return selectList("SELECT * "
+            + "FROM principal ", 
+                Principal::buildAll);
+    }
+
+    public List<Principal> list(
+        String query,
+        Integer page,
+        Integer limit,
+        String orderRequest,
+        Boolean asc){
+
+        HashMap<String, String> orderRequestAndColumn = new HashMap<>();
+
+        orderRequestAndColumn.put("idGrupoDoPrincipalFk", "idGrupoDoPrincipalFk");
+        orderRequestAndColumn.put("idGrupoDoPrincipalFacultativoFk", "idGrupoDoPrincipalFacultativoFk");
+        orderRequestAndColumn.put("idPrincipalPk", "idPrincipalPk");
+        orderRequestAndColumn.put("textoObrigatorio", "textoObrigatorio");
+        orderRequestAndColumn.put("textoFacultativo", "textoFacultativo");
+        orderRequestAndColumn.put("decimalObrigatorio", "decimalObrigatorio");
+        orderRequestAndColumn.put("decimalFacultativo", "decimalFacultativo");
+        orderRequestAndColumn.put("inteiroObrigatorio", "inteiroObrigatorio");
+        orderRequestAndColumn.put("inteiroFacultativo", "inteiroFacultativo");
+        orderRequestAndColumn.put("booleanoObrigatorio", "booleanoObrigatorio");
+        orderRequestAndColumn.put("booleanoFacultativo", "booleanoFacultativo");
+        orderRequestAndColumn.put("dataObrigatoria", "dataObrigatoria");
+        orderRequestAndColumn.put("dataFacultativa", "dataFacultativa");
+        orderRequestAndColumn.put("datahoraObrigatoria", "datahoraObrigatoria");
+        orderRequestAndColumn.put("datahoraFacultativa", "datahoraFacultativa");
+        orderRequestAndColumn.put("ativo", "ativo");
+        orderRequestAndColumn.put("email", "email");
+        orderRequestAndColumn.put("senha", "senha");
+        orderRequestAndColumn.put("urlImagem", "urlImagem");
+        orderRequestAndColumn.put("url", "url");
+        String orderColumn = orderRequestAndColumn.get(orderRequest);
+
+        ArrayList<Object> params = new ArrayList<>();
+        String where = "";
+
+        if (!Strings.isNullOrEmpty(query)) {
+            where = "WHERE LOWER(CONCAT("
+            + "IFNULL(idGrupoDoPrincipalFk, ''), "
+            + "IFNULL(idGrupoDoPrincipalFacultativoFk, ''), "
+            + "IFNULL(idPrincipalPk, ''), "
+            + "IFNULL(textoObrigatorio, ''), "
+            + "IFNULL(textoFacultativo, ''), "
+            + "IFNULL(decimalObrigatorio, ''), "
+            + "IFNULL(decimalFacultativo, ''), "
+            + "IFNULL(inteiroObrigatorio, ''), "
+            + "IFNULL(inteiroFacultativo, ''), "
+            + "IFNULL(booleanoObrigatorio, ''), "
+            + "IFNULL(booleanoFacultativo, ''), "
+            + "IFNULL(dataObrigatoria, ''), "
+            + "IFNULL(dataFacultativa, ''), "
+            + "IFNULL(datahoraObrigatoria, ''), "
+            + "IFNULL(datahoraFacultativa, ''), "
+            + "IFNULL(ativo, ''), "
+            + "IFNULL(email, ''), "
+            + "IFNULL(senha, ''), "
+            + "IFNULL(urlImagem, ''), "
+            + "IFNULL(url, '') "
+            +")) LIKE LOWER(?) ";
+            params.add("%" + query + "%");
+        }
+
+        params.add(page * limit);
+        params.add(limit);
+
+        return selectList("SELECT * "
+            + "FROM principal "
+            + where
+            + (orderColumn != null ? "ORDER BY " + orderColumn + " " + (asc ? "ASC " : "DESC ") : "")
+            + "LIMIT ?, ? ", 
+                Principal::buildAll, params.toArray());
+    }
+    
+    public Integer count(){
+        return selectFirstInt("SELECT "
+            + "COUNT(idPrincipalPk) "
+            + "FROM principal ");
+    }
+    
+    public Integer count(String search) {
+
+        return selectFirstInt("SELECT "
+            + "COUNT(idPrincipalPk) "
+            + "FROM principal "
+            + "WHERE LOWER(CONCAT("
+            + "IFNULL(idGrupoDoPrincipalFk, ''), "
+            + "IFNULL(idGrupoDoPrincipalFacultativoFk, ''), "
+            + "IFNULL(idPrincipalPk, ''), "
+            + "IFNULL(textoObrigatorio, ''), "
+            + "IFNULL(textoFacultativo, ''), "
+            + "IFNULL(decimalObrigatorio, ''), "
+            + "IFNULL(decimalFacultativo, ''), "
+            + "IFNULL(inteiroObrigatorio, ''), "
+            + "IFNULL(inteiroFacultativo, ''), "
+            + "IFNULL(booleanoObrigatorio, ''), "
+            + "IFNULL(booleanoFacultativo, ''), "
+            + "IFNULL(dataObrigatoria, ''), "
+            + "IFNULL(dataFacultativa, ''), "
+            + "IFNULL(datahoraObrigatoria, ''), "
+            + "IFNULL(datahoraFacultativa, ''), "
+            + "IFNULL(ativo, ''), "
+            + "IFNULL(email, ''), "
+            + "IFNULL(senha, ''), "
+            + "IFNULL(urlImagem, ''), "
+            + "IFNULL(url, '') "
+            +")) LIKE LOWER(?) ", 
+            "%" + search + "%");
+    }
+    
+    public int update(Principal principal){
+        return updateWithMap("principal", 
+                principal.toUpdateMap(), 
+                "WHERE idPrincipalPk = ? ",
+                principal.getIdPrincipalPk()).affectedRows;
+    }
+    
+    public long insert(Principal principal){
+        return insertWithMap("principal", 
+                principal.toInsertMap()).key;
+    }
+
+
 }
 
-public void insertCarga(Carga carga){
-    return update("INSERT INTO carga ("
-        + colsInsert(Carga.COLUMNS_INSERT_ALL)
-        + ") "
-        + "VALUES "
-        + generateInsertCommas(1, Carga.COLUMNS_INSERT_ALL.length),
-        carga.getDataInsertAll());
-}
 
-public void updateCarga(Carga carga){
-    return update("UPDATE carga SET "
-        + colsUpdate(Carga.COLUMNS_UPDATE_ALL)
-        + "WHERE idCargaPk = ? ",
-        carga.getDataUpdateAllWith(carga.getIdCargaPk()));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+>>>>> PRINCIPAL.JAVA COM COLUNAS NO MODEL
+
+package br.com.martinlabs.usecase.model;
+
+import br.com.martinlabs.commons.LanguageHolder;
+import br.com.martinlabs.commons.ResultSetWrapper;
+import br.com.martinlabs.commons.Validator;
+import br.com.martinlabs.commons.exceptions.RespException;
+import java.sql.SQLException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * 
+ * @author martinlabs CRUD generator
+ */
+public class Principal {
+
+    private GrupoDoPrincipal grupoDoPrincipal;
+    private GrupoDoPrincipal grupoDoPrincipalFacultativo;
+    private long idPrincipalPk;
+    private String textoObrigatorio;
+    private String textoFacultativo;
+    private double decimalObrigatorio;
+    private Double decimalFacultativo;
+    private long inteiroObrigatorio;
+    private Long inteiroFacultativo;
+    private boolean booleanoObrigatorio;
+    private Boolean booleanoFacultativo;
+    private Date dataObrigatoria;
+    private Date dataFacultativa;
+    private Date datahoraObrigatoria;
+    private Date datahoraFacultativa;
+    private boolean ativo;
+    private String email;
+    private String senha;
+    private String urlImagem;
+    private String url;
+
+    private List<Tag> tagPrincipal;
+
+    public Principal() {
+    }
+
+    public Principal(Principal other) {
+
+        this.grupoDoPrincipal = other.grupoDoPrincipal;
+        this.grupoDoPrincipalFacultativo = other.grupoDoPrincipalFacultativo;
+        this.idPrincipalPk = other.idPrincipalPk;
+        this.textoObrigatorio = other.textoObrigatorio;
+        this.textoFacultativo = other.textoFacultativo;
+        this.decimalObrigatorio = other.decimalObrigatorio;
+        this.decimalFacultativo = other.decimalFacultativo;
+        this.inteiroObrigatorio = other.inteiroObrigatorio;
+        this.inteiroFacultativo = other.inteiroFacultativo;
+        this.booleanoObrigatorio = other.booleanoObrigatorio;
+        this.booleanoFacultativo = other.booleanoFacultativo;
+        this.dataObrigatoria = other.dataObrigatoria;
+        this.dataFacultativa = other.dataFacultativa;
+        this.datahoraObrigatoria = other.datahoraObrigatoria;
+        this.datahoraFacultativa = other.datahoraFacultativa;
+        this.ativo = other.ativo;
+        this.email = other.email;
+        this.senha = other.senha;
+        this.urlImagem = other.urlImagem;
+        this.url = other.url;
+        this.tagPrincipal = other.tagPrincipal;
+    }
+
+    public void validate() {
+        if (getIdGrupoDoPrincipalFk() == 0) {
+            throw new RespException(19,  LanguageHolder.instance.cannotBeNull("Id Grupo Do Principal Fk"));
+        }
+        if (getTextoObrigatorio() == null) {
+            throw new RespException(2,  LanguageHolder.instance.cannotBeNull("Texto Obrigatorio"));
+        }
+        if (getTextoObrigatorio().length() > 45) {
+            throw new RespException(2, LanguageHolder.instance.lengthCannotBeMoreThan("Texto Obrigatorio", 45));
+        }
+        if (getTextoFacultativo() != null && getTextoFacultativo().length() > 45) {
+            throw new RespException(3, LanguageHolder.instance.lengthCannotBeMoreThan("Texto Facultativo", 45));
+        }
+        if (getDataObrigatoria() == null) {
+            throw new RespException(10,  LanguageHolder.instance.cannotBeNull("Data Obrigatoria"));
+        }
+        if (getDatahoraObrigatoria() == null) {
+            throw new RespException(12,  LanguageHolder.instance.cannotBeNull("Datahora Obrigatoria"));
+        }
+        if (getEmail() != null && getEmail().length() > 200) {
+            throw new RespException(15, LanguageHolder.instance.lengthCannotBeMoreThan("Email", 200));
+        }
+        if (getEmail() != null && !Validator.isEmail(getEmail())) {
+            throw new RespException(15, LanguageHolder.instance.isNotAValidEmail("Email"));
+        }
+        if (getSenha() != null && getSenha().length() > 200) {
+            throw new RespException(16, LanguageHolder.instance.lengthCannotBeMoreThan("Senha", 200));
+        }
+        if (getUrlImagem() != null && getUrlImagem().length() > 200) {
+            throw new RespException(17, LanguageHolder.instance.lengthCannotBeMoreThan("Url Imagem", 200));
+        }
+        if (getUrl() != null && getUrl().length() > 200) {
+            throw new RespException(18, LanguageHolder.instance.lengthCannotBeMoreThan("Url", 200));
+        }    
+    }
+    
+    public Map<String, Object> toMap() {
+        return new HashMap<String, Object>() {
+            {
+                put("idPrincipalPk", getIdPrincipalPk());
+                put("idGrupoDoPrincipalFk", getIdGrupoDoPrincipalFk());
+                put("idGrupoDoPrincipalFacultativoFk", getIdGrupoDoPrincipalFacultativoFk());
+                put("textoObrigatorio", getTextoObrigatorio());
+                put("textoFacultativo", getTextoFacultativo());
+                put("decimalObrigatorio", getDecimalObrigatorio());
+                put("decimalFacultativo", getDecimalFacultativo());
+                put("inteiroObrigatorio", getInteiroObrigatorio());
+                put("inteiroFacultativo", getInteiroFacultativo());
+                put("booleanoObrigatorio", getBooleanoObrigatorio());
+                put("booleanoFacultativo", getBooleanoFacultativo());
+                put("dataObrigatoria", getDataObrigatoria());
+                put("dataFacultativa", getDataFacultativa());
+                put("datahoraObrigatoria", getDatahoraObrigatoria());
+                put("datahoraFacultativa", getDatahoraFacultativa());
+                put("ativo", getAtivo());
+                put("email", getEmail());
+                put("senha", getSenha());
+                put("urlImagem", getUrlImagem());
+                put("url", getUrl());
+            }
+        };
+    }
+    
+    public Map<String, Object> toInsertMap() {
+        Map<String, Object> map = toMap();
+        map.remove("idPrincipalPk");
+        return map;
+    }
+    
+    public Map<String, Object> toUpdateMap() {
+        return toInsertMap();
+    }
+    
+    public static Principal buildAll(ResultSetWrapper rs, String alias) throws SQLException {
+        Principal principal = new Principal();
+
+        principal.setIdGrupoDoPrincipalFk(rs.getLong(alias + ".idGrupoDoPrincipalFk"));
+        principal.setIdGrupoDoPrincipalFacultativoFk(rs.getLongOrNull(alias + ".idGrupoDoPrincipalFacultativoFk"));
+        principal.setIdPrincipalPk(rs.getLong(alias + ".idPrincipalPk"));
+        principal.setTextoObrigatorio(rs.getString(alias + ".textoObrigatorio"));
+        principal.setTextoFacultativo(rs.getString(alias + ".textoFacultativo"));
+        principal.setDecimalObrigatorio(rs.getDouble(alias + ".decimalObrigatorio"));
+        principal.setDecimalFacultativo(rs.getDoubleOrNull(alias + ".decimalFacultativo"));
+        principal.setInteiroObrigatorio(rs.getLong(alias + ".inteiroObrigatorio"));
+        principal.setInteiroFacultativo(rs.getLongOrNull(alias + ".inteiroFacultativo"));
+        principal.setBooleanoObrigatorio(rs.getBoolean(alias + ".booleanoObrigatorio"));
+        principal.setBooleanoFacultativo(rs.getBooleanOrNull(alias + ".booleanoFacultativo"));
+        principal.setDataObrigatoria(rs.getTimestamp(alias + ".dataObrigatoria"));
+        principal.setDataFacultativa(rs.getTimestamp(alias + ".dataFacultativa"));
+        principal.setDatahoraObrigatoria(rs.getTimestamp(alias + ".datahoraObrigatoria"));
+        principal.setDatahoraFacultativa(rs.getTimestamp(alias + ".datahoraFacultativa"));
+        principal.setAtivo(rs.getBoolean(alias + ".ativo"));
+        principal.setEmail(rs.getString(alias + ".email"));
+        principal.setSenha(rs.getString(alias + ".senha"));
+        principal.setUrlImagem(rs.getString(alias + ".urlImagem"));
+        principal.setUrl(rs.getString(alias + ".url"));
+        
+        return principal;
+    }
+    
+    public static Principal buildAll(ResultSetWrapper rs) throws SQLException {
+        return buildAll(rs, "principal");
+    }
+
+    public GrupoDoPrincipal getGrupoDoPrincipal() {
+        return grupoDoPrincipal;
+    }
+
+    public void setGrupoDoPrincipal(GrupoDoPrincipal grupoDoPrincipal) {
+        this.grupoDoPrincipal = grupoDoPrincipal;
+    }
+
+
+    public long getIdGrupoDoPrincipalFk() {
+        return grupoDoPrincipal == null ? 0 : grupoDoPrincipal.getIdGrupoDoPrincipalPk();
+    }
+
+    public void setIdGrupoDoPrincipalFk(long idGrupoDoPrincipalFk) {
+        if (grupoDoPrincipal == null) {
+            grupoDoPrincipal = new GrupoDoPrincipal();
+        }
+        
+        grupoDoPrincipal.setIdGrupoDoPrincipalPk(idGrupoDoPrincipalFk);
+    }
+
+    public GrupoDoPrincipal getGrupoDoPrincipalFacultativo() {
+        return grupoDoPrincipalFacultativo;
+    }
+
+    public void setGrupoDoPrincipalFacultativo(GrupoDoPrincipal grupoDoPrincipalFacultativo) {
+        this.grupoDoPrincipalFacultativo = grupoDoPrincipalFacultativo;
+    }
+
+
+    public Long getIdGrupoDoPrincipalFacultativoFk() {
+        return grupoDoPrincipalFacultativo == null || grupoDoPrincipalFacultativo.getIdGrupoDoPrincipalPk() == 0 ? null : grupoDoPrincipalFacultativo.getIdGrupoDoPrincipalPk();
+    }
+
+    public void setIdGrupoDoPrincipalFacultativoFk(Long idGrupoDoPrincipalFacultativoFk) {
+        if (idGrupoDoPrincipalFacultativoFk == null) {
+            grupoDoPrincipalFacultativo = null;
+            return;
+        }
+
+        if (grupoDoPrincipalFacultativo == null) {
+            grupoDoPrincipalFacultativo = new GrupoDoPrincipal();
+        }
+        
+        grupoDoPrincipalFacultativo.setIdGrupoDoPrincipalPk(idGrupoDoPrincipalFacultativoFk);
+    }
+
+    public long getIdPrincipalPk() {
+        return idPrincipalPk;
+    }
+
+    public void setIdPrincipalPk(long idPrincipalPk) {
+        this.idPrincipalPk = idPrincipalPk;
+    }
+
+    public String getTextoObrigatorio() {
+        return textoObrigatorio;
+    }
+
+    public void setTextoObrigatorio(String textoObrigatorio) {
+        this.textoObrigatorio = textoObrigatorio;
+    }
+
+    public String getTextoFacultativo() {
+        return textoFacultativo;
+    }
+
+    public void setTextoFacultativo(String textoFacultativo) {
+        this.textoFacultativo = textoFacultativo;
+    }
+
+    public double getDecimalObrigatorio() {
+        return decimalObrigatorio;
+    }
+
+    public void setDecimalObrigatorio(double decimalObrigatorio) {
+        this.decimalObrigatorio = decimalObrigatorio;
+    }
+
+    public Double getDecimalFacultativo() {
+        return decimalFacultativo;
+    }
+
+    public void setDecimalFacultativo(Double decimalFacultativo) {
+        this.decimalFacultativo = decimalFacultativo;
+    }
+
+    public long getInteiroObrigatorio() {
+        return inteiroObrigatorio;
+    }
+
+    public void setInteiroObrigatorio(long inteiroObrigatorio) {
+        this.inteiroObrigatorio = inteiroObrigatorio;
+    }
+
+    public Long getInteiroFacultativo() {
+        return inteiroFacultativo;
+    }
+
+    public void setInteiroFacultativo(Long inteiroFacultativo) {
+        this.inteiroFacultativo = inteiroFacultativo;
+    }
+
+    public boolean getBooleanoObrigatorio() {
+        return booleanoObrigatorio;
+    }
+
+    public void setBooleanoObrigatorio(boolean booleanoObrigatorio) {
+        this.booleanoObrigatorio = booleanoObrigatorio;
+    }
+
+    public Boolean getBooleanoFacultativo() {
+        return booleanoFacultativo;
+    }
+
+    public void setBooleanoFacultativo(Boolean booleanoFacultativo) {
+        this.booleanoFacultativo = booleanoFacultativo;
+    }
+
+    public Date getDataObrigatoria() {
+        return dataObrigatoria;
+    }
+
+    public void setDataObrigatoria(Date dataObrigatoria) {
+        this.dataObrigatoria = dataObrigatoria;
+    }
+
+    public Date getDataFacultativa() {
+        return dataFacultativa;
+    }
+
+    public void setDataFacultativa(Date dataFacultativa) {
+        this.dataFacultativa = dataFacultativa;
+    }
+
+    public Date getDatahoraObrigatoria() {
+        return datahoraObrigatoria;
+    }
+
+    public void setDatahoraObrigatoria(Date datahoraObrigatoria) {
+        this.datahoraObrigatoria = datahoraObrigatoria;
+    }
+
+    public Date getDatahoraFacultativa() {
+        return datahoraFacultativa;
+    }
+
+    public void setDatahoraFacultativa(Date datahoraFacultativa) {
+        this.datahoraFacultativa = datahoraFacultativa;
+    }
+
+    public boolean getAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getSenha() {
+        return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
+
+    public String getUrlImagem() {
+        return urlImagem;
+    }
+
+    public void setUrlImagem(String urlImagem) {
+        this.urlImagem = urlImagem;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    
+
+    public List<Tag> getTagPrincipal() {
+        return tagPrincipal;
+    }
+
+    public void setTagPrincipal(List<Tag> tagPrincipal) {
+        this.tagPrincipal = tagPrincipal;
+    }
+
+    
 }

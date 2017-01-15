@@ -82,4 +82,8 @@ lorem.url = function() {
 	return urls[Math.floor(Math.random() * urls.length)];
 };
 
+lorem.unique = function(index) {
+	return words[index];
+};
+
 module.exports = lorem;

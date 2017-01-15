@@ -199,7 +199,21 @@ if (props.loginsys) {
 } 
 %>
         <%= table.className %>Dao dao = new <%= table.className %>Dao(con);
+<%
+for (var i in table.columns) { 
+    var c = table.columns[i];
+    if (c.column_key === "UNI") {
+%>
+        if (dao.exist<%= c.propertyNameUpper %>(<%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>()<% 
+    for (var i in table.primaryColumns) { 
+        %>, <%= table.classLowerCamel %>.get<%= table.primaryColumns[i].propertyNameUpper %>()<% 
+    } %>)) {
+            throw new RespException(LanguageHolder.instance.alreadyExist("<%= c.propertyNatural %>"));
+        }
 <% 
+    }
+}
+
 if (table.primaryColumns.length < 2 && !table.primaryColumns[0].referencedTable) { 
 %>
         long id<%= table.className %>;
