@@ -16,6 +16,7 @@ public class <%= table.className %>Dao extends DaoWrapper {
     }
     
     public int insert(<% for (var i in table.columns) { var c = table.columns[i]; %>long <%= c.propertyName + (i < table.columns.length -1 ? ',' : '') %><% } %>){
+        //TODO: review generated method
         return update("INSERT INTO <%= table.name %> ( "<% 
         for (var i in table.columns) { var c = table.columns[i]; %>
             + "<%= c.column_name + (i < table.columns.length -1 ? ',' : '') %> "<% } %>
@@ -27,6 +28,7 @@ public class <%= table.className %>Dao extends DaoWrapper {
     }
 <% for (var i in table.columns) { var c = table.columns[i]; %>
     public int removeAllFrom<%= c.referencedTable.className %>(long <%= c.propertyName %>){
+        //TODO: review generated method
         return update("DELETE FROM <%= table.name %> "
                 + "WHERE <%= c.propertyName %> = ? ",
             <%= c.propertyName %>).affectedRows;
@@ -36,6 +38,7 @@ public class <%= table.className %>Dao extends DaoWrapper {
     var other = table.columns[1];
     %>
     public List<<%= c.referencedTable.className %>> list<%= c.referencedTable.className %>Of<%= other.referencedTable.className %>(long <%= other.propertyName %>){
+        //TODO: review generated method
         return selectList("SELECT "<%
             for (var i in c.referencedTable.columns) { var rc = c.referencedTable.columns[i]; %>
             + "<%= rc.column_name + (i < c.referencedTable.columns.length -1 ? ',' : '') %> "<% } %>
@@ -55,6 +58,7 @@ public class <%= table.className %>Dao extends DaoWrapper {
     other = table.columns[0];
     %>
     public List<<%= c.referencedTable.className %>> list<%= c.referencedTable.className %>Of<%= other.referencedTable.className %>(long <%= other.propertyName %>){
+        //TODO: review generated method
         return selectList("SELECT "<%
             for (var i in c.referencedTable.columns) { var rc = c.referencedTable.columns[i]; %>
             + "<%= rc.column_name + (i < c.referencedTable.columns.length -1 ? ',' : '') %> "<% } %>

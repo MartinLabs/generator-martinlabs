@@ -75,7 +75,7 @@ if (props.loginsys) {
         Integer limit,
         String orderRequest,
         Boolean asc) {
-        
+        //TODO: review generated method
         if (page == null) {
             throw new RespException(1,  LanguageHolder.instance.cannotBeNull("Page"));
         }
@@ -112,7 +112,8 @@ for (var k in table.primaryColumns) {
 if (props.loginsys) { 
     %>, String token<% 
 } 
-    %>) {<% 
+    %>) {
+        //TODO: review generated method<% 
 if (props.loginsys) { 
 %>
         loginS.allowAccess(token);
@@ -190,6 +191,7 @@ for (var j in table.NtoNcolumns) {
     }
 
     public Long persist(<%= table.className %> <%= table.classLowerCamel %><% if (props.loginsys) { %>, String token<% } %>) {
+        //TODO: review generated method
         <%= table.classLowerCamel %>.validate();
 <% 
 if (props.loginsys) { 

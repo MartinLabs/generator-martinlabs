@@ -29,7 +29,8 @@ export default {
                 password: sha1(this.password)
             }).then((resp) => {
                 if (resp.body.success) {
-                    simpleStorage.set("token<%= modulenameUpper %>", resp.body.data);
+                    simpleStorage.set("token<%= modulenameUpper %>", resp.body.data.token);
+                    simpleStorage.set("id<%= modulenameUpper %>", resp.body.data.id);
                     this.$router.push("/home");
                 } else {
                     AppBus.$emit("alert", "danger", resp.body.message, 3000);

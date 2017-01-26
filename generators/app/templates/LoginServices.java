@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import java.sql.Connection;
 import br.com.martinlabs.commons.LanguageHolder;
 import <%= props.package %>.ErrorCode;
+import <%= props.responsePackage %>.LoginResp;
 
 
 /**
@@ -23,29 +24,35 @@ public class LoginServices {
         this.con = con;
     }
     
-    public String login(String account, String password) {
-        if (!checkLogin(account, password)) {
-            throw new RespException(ErrorCode.INVALID_LOGIN, LanguageHolder.instance.invalidLogin());
-        }
-
+    public LoginResp login(String account, String password) {
         String token = loginToToken(account, password);
-        return token;
+        long id = getId(account, password);
+        
+        allowAccess(token);
+        
+        return new LoginResp(token, id);
     }
     
-    public void allowAccess(String token) {
-        if (!checkLogin(token)) {
+    protected LoginHolderWithId allowAccess(String token) {
+        LoginHolder login = tokenToLogin(token);
+        
+        if (login == null) {
             throw new RespException(ErrorCode.INVALID_LOGIN, LanguageHolder.instance.pleaseLogin());
         }
+        
+        long id = getId(login.account, login.password);
+        
+        if (id == 0) {
+            throw new RespException(ErrorCode.INVALID_LOGIN, LanguageHolder.instance.pleaseLogin());
+        }
+        
+        return new LoginHolderWithId(login, id);
     }
     
-    public boolean checkLogin(String account, String password) {
+    protected long getId(String account, String password) {
         LoginServiceDao dao = new LoginServiceDao(con);
-        return dao.existAccount(account, password);
-    }
-    
-    public boolean checkLogin(String token) {
-        LoginHolder login = tokenToLogin(token);
-        return login != null && checkLogin(login.account, login.password);
+        
+        return dao.getId(account, password);
     }
     
     protected String loginToToken(String account, String password) {
@@ -57,7 +64,7 @@ public class LoginServices {
         return token;
     }
 
-    private LoginHolder tokenToLogin(String token) {
+    protected LoginHolder tokenToLogin(String token) {
         
         if (token == null) {
             return null;
@@ -82,7 +89,7 @@ public class LoginServices {
         private String account;
         private String password;
 
-        public LoginHolder(String account, String password) {
+        protected LoginHolder(String account, String password) {
             this.account = account;
             this.password = password;
         }
@@ -95,5 +102,23 @@ public class LoginServices {
             return password;
         }
 
+    }
+    
+    public static class LoginHolderWithId {
+        private LoginHolder loginHolder;
+        private long id;
+
+        protected LoginHolderWithId(LoginHolder loginHolder, long id) {
+            this.loginHolder = loginHolder;
+            this.id = id;
+        }
+
+        public LoginHolder getLoginHolder() {
+            return loginHolder;
+        }
+
+        public long getId() {
+            return id;
+        }
     }
 }

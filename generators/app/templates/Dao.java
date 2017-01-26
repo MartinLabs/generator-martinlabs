@@ -23,6 +23,7 @@ for (var k in table.primaryColumns) {
     %><%= k > 0 ? ', ' : '' %>long <%= table.primaryColumns[k].propertyName %><%
 } 
 %>){
+        //TODO: review generated method
         return selectOne("SELECT "<% 
 for (var i in table.columns) { 
     var c = table.columns[i]; 
@@ -57,6 +58,7 @@ for (var k in table.primaryColumns) {
 if (table.isReferenced) { 
 %>
     public List<<%= table.className %>> list(){
+        //TODO: review generated method
         return selectList("SELECT "<% 
     for (var i in table.columns) { var c = table.columns[i]; 
 %>
@@ -86,6 +88,7 @@ if (table.isReferenced) {
         Integer limit,
         String orderRequest,
         Boolean asc){
+        //TODO: review generated method
 
         HashMap<String, String> orderRequestAndColumn = new HashMap<>();
 <% 
@@ -112,7 +115,6 @@ for (var i in table.columns) { var c = table.columns[i];
 
         params.add(page * limit);
         params.add(limit);
-
         return selectList("SELECT "<% 
 for (var i in table.columns) { 
     var c = table.columns[i]; 
@@ -139,13 +141,14 @@ for (var i in table.columns) {
     }
     
     public Integer count(){
+        //TODO: review generated method
         return selectFirstInt("SELECT "
             + "COUNT(<%= table.primaryColumns[0].column_name %>) "
             + "FROM <%= table.name %> ");
     }
     
     public Integer count(String search) {
-
+        //TODO: review generated method
         return selectFirstInt("SELECT "
             + "COUNT(<%= table.primaryColumns[0].column_name %>) "
             + "FROM <%= table.name %> "
@@ -161,6 +164,7 @@ for (var i in table.columns) {
     }
     
     public int update(<%= table.className %> <%= table.classLowerCamel %>){
+        //TODO: review generated method
         return update("UPDATE <%= table.name %> SET "<% 
 for (var i in table.columns) { 
     var c = table.columns[i]; 
@@ -193,6 +197,7 @@ for (var j = 1; j < table.primaryColumns.length; j++) {
     }
     
     public long insert(<%= table.className %> <%= table.classLowerCamel %>){
+        //TODO: review generated method
         return update("INSERT INTO <%= table.name %> ( "<% 
 for (var i in table.columns) { 
     var c = table.columns[i]; 
@@ -228,6 +233,7 @@ if (table.primaryColumns.length > 1 || table.primaryColumns[0].referencedTable) 
     for (var k in table.primaryColumns) {
         %><%= k > 0 ? ', ' : '' %>long <%= table.primaryColumns[k].propertyName %><%
     } %>) {
+        //TODO: review generated method
         return exist("SELECT <%= table.primaryColumns[0].column_name %> FROM <%= table.name %> "
             + "WHERE <%= table.primaryColumns[0].column_name %> = ? "<% 
         for (var j = 1; j < table.primaryColumns.length; j++) { %>
@@ -251,6 +257,7 @@ for (var i in table.columns) {
         for (var k in table.primaryColumns) {
             %>, long <%= table.primaryColumns[k].propertyName %><%
         } %>) {
+        //TODO: review generated method
         return exist("SELECT <%= c.column_name %> FROM <%= table.name %> "
             + "WHERE <%= c.column_name %> = ? "<% 
         for (var j = 0; j < table.primaryColumns.length; j++) { 

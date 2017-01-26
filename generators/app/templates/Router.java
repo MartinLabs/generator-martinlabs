@@ -20,7 +20,8 @@ import javax.ws.rs.ext.ExceptionMapper;<%
 if (loginsys) { 
 %>
 import <%= processPackage %>.LoginServices;
-import <%= processPackage %>.LoginServices.LoginHolder;<%
+import <%= processPackage %>.LoginServices.LoginHolder;
+import <%= responsePackage %>.LoginResp;<%
 } 
 
 for (var i in tables) {
@@ -46,8 +47,8 @@ public class Router implements ExceptionMapper<Throwable> {
 <% if (loginsys) { %>
     @POST
     @Path("/Login")
-    public OpResp<String> login(LoginHolder body) {
-
+    public OpResp<LoginResp> login(LoginHolder body) {
+        //TODO: review generated method
         return pipe.handle(con -> {
             return new LoginServices(con).login(body.getAccount(), body.getPassword());
         });
@@ -80,7 +81,7 @@ if (table.primaryColumns.length == 1) {
 } 
 %>
             @QueryParam("token") String token) {
-
+        //TODO: review generated method
         return pipe.handle(con -> {
             return new <%= table.className %>Process(con).get(<% 
 if (table.primaryColumns.length == 1) {
@@ -103,7 +104,7 @@ if (table.primaryColumns.length == 1) {
             @QueryParam("limit") Integer limit,
             @QueryParam("orderBy") String orderRequest,
             @QueryParam("ascending") Boolean asc) {
-
+        //TODO: review generated method
         return pipe.handle(con -> {
             return new <%= table.className %>Process(con).list(token, query, page, limit, orderRequest, asc != null && asc);
         });
@@ -112,7 +113,7 @@ if (table.primaryColumns.length == 1) {
     @POST
     @Path("/<%= table.className %>")
     public OpResp<Long> persist<%= table.className %>(RequestBodyWithToken<<%= table.className %>> body) {
-
+        //TODO: review generated method
         return pipe.handle(con -> {
             return new <%= table.className %>Process(con).persist(body.getContent(), body.getToken());
         });

@@ -13,12 +13,12 @@ public class LoginServiceDao extends DaoWrapper{
         super(con);
     }
     
-    public boolean existAccount(String account, String password) {
-        return exist(""
+    public long getId(String account, String password) {
+        return nullToZero(selectFirstLong(""
                 + "SELECT <%= table.primaryColumns[0].column_name %> "
                 + "FROM <%= table.name %> "
                 + "WHERE <%= table.accountColumn.column_name %> = ? "
                 + "AND <%= table.passwordColumn.column_name %> = sha1(?) ", 
-                account, password);
+                account, password));
     }
 }

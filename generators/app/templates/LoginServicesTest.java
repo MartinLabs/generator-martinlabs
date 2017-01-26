@@ -3,10 +3,10 @@ package <%= processPackage %>;
 import br.com.martinlabs.commons.DaoUnitTestWrapper;
 import br.com.martinlabs.commons.SecurityUtils;
 import br.com.martinlabs.commons.exceptions.RespException;
+import <%= responsePackage %>.LoginResp;
 import java.sql.Connection;
 import java.sql.SQLException;
 import javax.naming.NamingException;
-import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -27,15 +27,20 @@ public class LoginServicesTest extends DaoUnitTestWrapper {
     }
 
     @Test(expected = RespException.class)
+    public void testLoginNull() {
+        subject.login(null, null);
+    }
+
+    @Test(expected = RespException.class)
     public void testLoginFail() {
-        String result = subject.login(null, null);
+        subject.login("user@gmail.com", SecurityUtils.sha1("wrongpassword"));
     }
 
     @Test
-    public void testLogin() {
-        String result = subject.login("user@gmail.com", SecurityUtils.sha1("abcabc"));
-        assertEquals(token, 
-                result);
+    public void testLoginAdmin() {
+        LoginResp result = subject.login("user@gmail.com", SecurityUtils.sha1("abcabc"));
+        assertEquals(token,
+                result.getToken());
     }
 
     @Test(expected = RespException.class)
@@ -47,66 +52,54 @@ public class LoginServicesTest extends DaoUnitTestWrapper {
     public void testAllowAccess() {
         subject.allowAccess(token);
     }
-    
+
     @Test
-    public void testCheckLoginFail() {
-        boolean result = subject.checkLogin(null, null);
-        assertFalse(result);
-    }
-    
-    @Test
-    public void testCheckLogin() {
-        boolean result = subject.checkLogin("user@gmail.com", SecurityUtils.sha1("abcabc"));
-        assertTrue(result);
+    public void testGetIdFail() {
+        long result = subject.getId(null, null);
+        assertEquals(result, 0);
     }
 
     @Test
-    public void testCheckLoginWithTokenFail() {
-        boolean result = subject.checkLogin("Hey");
-        assertFalse(result);
+    public void testGetId() {
+        long result = subject.getId("user@gmail.com", SecurityUtils.sha1("abcabc"));
+        assertNotEquals(result, 0);
     }
 
     @Test
-    public void testCheckLoginWithTokenNull() {
-        boolean result = subject.checkLogin(null);
-        assertFalse(result);
+    public void testTokenToLoginNull() {
+        LoginServices.LoginHolder result = subject.tokenToLogin(null);
+        assertNull(result);
     }
 
     @Test
-    public void testCheckLoginWithTokenBadEncrypt() {
-        boolean result = subject.checkLogin("false1gVip%2F%2BZO6aFvq6tpp4oXeTQmLGT8IoF3OeBG9jg68bDsymZADOdbg%2Br9pwg3fdDitNU1lbc4uRD7uiDiKYKSLQ%2BxBFzfRygZFPF4E6RnlDmTZ6fqOkq6v4acjS");
-        assertFalse(result);
-    }
-
-    @Test
-    public void testCheckLoginWithTokenNotACoolJson() {
+    public void testTokenToLoginWithTokenNotACoolJson() {
         String tokenOtherObject = SecurityUtils.encrypt("Hey", LoginServices.CRIPTOGRAPHY_HASH);
-        
+
         tokenOtherObject = SecurityUtils.encode(tokenOtherObject, "UTF-8");
-        
-        boolean result = subject.checkLogin(tokenOtherObject);
-        assertFalse(result);
+
+        LoginServices.LoginHolder result = subject.tokenToLogin(tokenOtherObject);
+        assertNull(result);
     }
 
-
-    @Test
-    public void testCheckLoginWithToken() {
-        boolean result = subject.checkLogin(token);
-        assertTrue(result);
-    }
-    
     @Test
     public void testLoginToToken() {
         String result = subject.loginToToken("user@gmail.com", SecurityUtils.sha1("abcabc"));
-        assertEquals(token, 
+        assertEquals(token,
                 result);
     }
-    
+
     @Test
     public void testLoginHolder() {
         LoginServices.LoginHolder lh = new LoginServices.LoginHolder("a", "1");
         assertEquals("a", lh.getAccount());
         assertEquals("1", lh.getPassword());
     }
-    
+
+    @Test
+    public void testLoginHolderWithId() {
+        LoginServices.LoginHolderWithId lh = new LoginServices.LoginHolderWithId(new LoginServices.LoginHolder("a", "1"), 2);
+        assertNotNull(lh.getLoginHolder());
+        assertEquals(2, lh.getId());
+    }
+
 }

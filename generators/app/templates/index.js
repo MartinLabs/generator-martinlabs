@@ -5,6 +5,7 @@ import App from './controller/App.vue';
 import AppRouter from './service/AppRouter';
 import AppTranslator from './service/AppTranslator';
 import AppResource from './service/AppResource';
+import AppFilters from './service/AppFilters';
 
 Vue.use(VueMask);
 Vue.use(VueMoment);

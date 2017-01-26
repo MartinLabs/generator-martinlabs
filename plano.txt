@@ -1,30 +1,33 @@
 FACEIS DE ARRUMAR
 
-- Usar @NotNull e @Nullable
+BUG URGENTE
 
-BUGFIXES E MAIS URGENTES
+BUG TRIVIAL
 - erro no teste unitario se a coluna de login n for de e-mail (tb só permite com login)
 
 SMART TYPE
 - se a coluna for "ativo" poder inativa-la e não exibir a linha inativa no listar
 - smartType especifico para colocar NOW() no insert ou no update
-- se a coluna for "password" deve fazer sha1 no js e no insert/update; se estiver em branco no update não alterar; nunca incluir no select, validar minimo de 6 chats, não mostrar na lista
+- se a coluna for "password" deve fazer sha1 no js e no insert/update; se estiver em branco no update não alterar; nunca incluir no select, validar minimo de 6 chars, não mostrar na lista
 - se a coluna for "url" deve validar no persist; no listar, ao clicar deve abrir nova aba
 - ler comentario contendo "martinlabs-generator:ignore" e ignorar coluna
 - se o nome for "tempo"/"time" e for integer considerar q é um tempo e poder selecionar unidade (segundos, minutos, horas)
 
-OUTRAS FEATURES
+ORGANIZAÇÃO
 - OUTRO BRANCH: guardar informações sobre colunas nos Models, assim podemos reutilizar e refatorar facilmente (exemplo no usecase)
+- colocar input groups do vue em outro component para que possamos trocar o estilo de todos facilmente
+
+OUTRAS FEATURES
+- Usar @NotNull e @Nullable
 - graficos valor x hora
 - exportar csv via client
 - organizar o generator para que possamos configurar em um arquivo externo os templates que irá usar
 - perguntar se quer rodar o dados.sql
 - rodar mvn
-- exportar csv total via servidor
-- gerar watch no grunt
 
 EXISTE IMPEDIMENTO OU PRECISA SER PENSADO MELHOR
-- LanguageHolder não permite novas strings por projeto
+- exportar csv total via servidor
+- gerar watch no grunt
 - login com oauth2
 - generator Android/iOS (pelo menos estrutura e process)
 - em todos os WS além de token tem que enviar versão do client para validar se é muito antiga e sistema operacional
