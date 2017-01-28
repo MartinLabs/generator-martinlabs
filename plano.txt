@@ -6,7 +6,6 @@ BUG TRIVIAL
 - erro no teste unitario se a coluna de login n for de e-mail (tb só permite com login)
 
 SMART TYPE
-- se a coluna for "ativo" poder inativa-la e não exibir a linha inativa no listar
 - smartType especifico para colocar NOW() no insert ou no update
 - se a coluna for "password" deve fazer sha1 no js e no insert/update; se estiver em branco no update não alterar; nunca incluir no select, validar minimo de 6 chars, não mostrar na lista
 - se a coluna for "url" deve validar no persist; no listar, ao clicar deve abrir nova aba
@@ -28,7 +27,6 @@ OUTRAS FEATURES
 EXISTE IMPEDIMENTO OU PRECISA SER PENSADO MELHOR
 - exportar csv total via servidor
 - gerar watch no grunt
-- login com oauth2
 - generator Android/iOS (pelo menos estrutura e process)
 - em todos os WS além de token tem que enviar versão do client para validar se é muito antiga e sistema operacional
 - gerar "esqueci a senha"

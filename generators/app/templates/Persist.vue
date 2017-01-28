@@ -160,7 +160,6 @@
 
 <script>
 import Default from './Default.vue';
-var simpleStorage = require('simpleStorage.js');
 import moment from 'moment';
 import AppResource from '../service/AppResource';
 import AppBus from '../service/AppBus';
@@ -232,8 +231,7 @@ for (var i in table.NtoNcolumns) {
                     this.<%= table.classLowerCamel %>.<%= col.NtoNtable.classLowerCamel %>.push({ <%= col.otherTable.primaryColumns[0].propertyName %>: item });
                 }
             }
-        }
-<% 
+        }<% 
 
 } 
 
@@ -276,10 +274,10 @@ for (var i in table.columns) { var col = table.columns[i];
 %>
     },
     mounted() {
-        AppResource.<%= table.classLowerCamel %>.get({
-<% 
+        AppResource.<%= table.classLowerCamel %>.get({<% 
 if (table.primaryColumns.length == 1) {
-    %>id: this.$route.params.id || 0<%
+%>
+            id: this.$route.params.id || 0<%
 } else {
     for (var k in table.primaryColumns) {
         %><%= k > 0 ? ',' : '' %>
@@ -287,10 +285,6 @@ if (table.primaryColumns.length == 1) {
     } 
 }
 
-if (props.loginsys) { 
-%>,
-            token: simpleStorage.get("token<%= props.modulenameUpper %>") || null<% 
-} 
 %>
         }).then((resp) => {
             if (resp.body.success) {
@@ -326,10 +320,7 @@ for (var i in table.NtoNcolumns) {
         persist(e) {
             e.preventDefault();
 
-            AppResource.<%= table.classLowerCamel %>.save({
-                content: this.<%= table.classLowerCamel %><% if (props.loginsys) { %>,
-                token: simpleStorage.get("token<%= props.modulenameUpper %>") || null<% } %>
-            }).then((resp) => {
+            AppResource.<%= table.classLowerCamel %>.save(this.<%= table.classLowerCamel %>).then((resp) => {
                 if (resp.body.success) {
                     this.$router.push("/list<%= table.className %>");
                 } else {

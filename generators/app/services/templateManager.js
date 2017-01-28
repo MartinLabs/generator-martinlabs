@@ -216,6 +216,18 @@ module.exports = {
     otherFiles: function(main) {
 
         main.fs.copy(
+            main.templatePath('logging.properties'),
+            main.destinationPath("src/main/resources/logging.properties"));
+
+        main.fs.copy(
+            main.templatePath('version.properties'),
+            main.destinationPath("src/main/resources/version.properties"));
+
+        main.fs.copy(
+            main.templatePath('.babelrc'),
+            main.destinationPath("src/main/webapp/.babelrc"));
+
+        main.fs.copy(
             main.templatePath('.babelrc'),
             main.destinationPath("src/main/webapp/.babelrc"));
 

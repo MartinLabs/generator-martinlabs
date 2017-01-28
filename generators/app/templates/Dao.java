@@ -65,7 +65,11 @@ if (table.isReferenced) {
             + "<%= c.column_name + (i < table.columns.length -1 ? ',' : '') %> "<% 
     } 
 %>
-            + "FROM <%= table.name %> ", 
+            + "FROM <%= table.name %> "<%
+    if (table.deactivableColumn) { %>
+            + "WHERE <%= table.deactivableColumn.column_name %> = 1 "<%
+    }
+%>, 
         rs -> {
             <%= table.className %> <%= table.classLowerCamel %> = new <%= table.className %>();
 <% 
@@ -100,10 +104,10 @@ for (var i in table.columns) { var c = table.columns[i];
         String orderColumn = orderRequestAndColumn.get(orderRequest);
 
         ArrayList<Object> params = new ArrayList<>();
-        String where = "";
+        String where = <% if (table.deactivableColumn) { %>"WHERE <%= table.deactivableColumn.column_name %> = 1 "<% } else { %>""<% } %>;
 
         if (!Strings.isNullOrEmpty(query)) {
-            where = "WHERE LOWER(CONCAT("<% 
+            where += "<%= table.deactivableColumn ? 'AND' : 'WHERE' %> LOWER(CONCAT("<% 
 for (var i in table.columns) { var c = table.columns[i]; 
 %>
             + "IFNULL(<%= c.column_name %>, '')<%= (i < table.columns.length -1 ? ',' : '') %> "<% 
@@ -144,7 +148,11 @@ for (var i in table.columns) {
         //TODO: review generated method
         return selectFirstInt("SELECT "
             + "COUNT(<%= table.primaryColumns[0].column_name %>) "
-            + "FROM <%= table.name %> ");
+            + "FROM <%= table.name %> "<%
+if (table.deactivableColumn) { %>
+            + "WHERE <%= table.deactivableColumn.column_name %> = 1 "<%
+}
+%>);
     }
     
     public Integer count(String search) {
@@ -270,11 +278,35 @@ for (var i in table.columns) {
 %>, 
             <%= table.primaryColumns[k].propertyName %><%
         } 
-%>
-%>);
+        %>);
     }
 <%
     }
+}
+
+if (table.deactivableColumn) { 
+%>
+    public int softDelete(<% 
+    for (var k in table.primaryColumns) {
+        %><%= k > 0 ? ', ' : '' %>long <%= table.primaryColumns[k].propertyName %><%
+    } %>) {
+        //TODO: review generated method
+        return update("UPDATE <%= table.name %> SET "
+            + "<%= table.deactivableColumn.column_name %> = 0 "
+            + "WHERE <%= table.primaryColumns[0].column_name %> = ? "<% 
+    for (var j = 1; j < table.primaryColumns.length; j++) { 
+%>
+            + "AND <%= table.primaryColumns[j].column_name %> = ? "<%
+    } 
+            
+    for (var k in table.primaryColumns) {
+        %>,
+            <%= table.primaryColumns[k].propertyName %><% 
+    } 
+        %>).affectedRows;
+        
+    }
+<%
 }
 %>
 

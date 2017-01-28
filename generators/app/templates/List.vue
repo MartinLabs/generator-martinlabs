@@ -24,39 +24,62 @@
                         <table class="table table-striped table-bordered table-hover">
                             <thead>
                                 <tr>
-                                	<% 
-                                	for (var i in table.columns) { 
-                                		var c = table.columns[i]; 
-                                	%>
-                                    <th><adap-orderby :store="adapStore" name="<%= c.column_name %>">{{ $t("classes.<%= table.className %>.columns.<%= !c.referencedTable ? c.propertyName : c.notIdPropertyName %>") }}</adap-orderby></th><% } %>
+                                    <th></th>
+<% 
+for (var i in table.columns) { 
+	var c = table.columns[i]; 
+    if (c.smartType != "active") {
+%>
+                                    <th><adap-orderby :store="adapStore" name="<%= c.column_name %>">{{ $t("classes.<%= table.className %>.columns.<%= !c.referencedTable ? c.propertyName : c.notIdPropertyName %>") }}</adap-orderby></th><% 
+    }
+} 
+%>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="item in list" @click="openPersist(item)">
-                                	<% 
-						        	for (var i in table.columns) { 
-						                var c = table.columns[i]; 
-						                if (!c.referencedTable) {
-						                    if (c.data_type === "date") { %>
+                                <tr v-for="item in list">
+                                    <td>
+                                        <div class="btn-group-vertical" role="group">
+                                            <a @click="openPersist(item)" class="btn btn-default"><i class="glyphicon glyphicon-pencil"></i></a><%
+if (table.deactivableColumn) {
+%>
+                                            <a @click="openRemoveDialog(item)" class="btn btn-default"><i class="glyphicon glyphicon-remove"></i></a><%
+}
+%>
+                                        </div>
+                                    </td>
+<% 
+for (var i in table.columns) { 
+    var c = table.columns[i];
+    if (c.smartType != "active") {
+        if (!c.referencedTable) {
+            if (c.data_type === "date") { 
+%>
                                     <td>{{ item.<%= c.propertyName %> | moment($t("dateFormat.date")) }}</td><% 
-                                            } else if (["time", "datetime", "timestamp"].indexOf(c.data_type) > -1) { %>
+            } else if (["time", "datetime", "timestamp"].indexOf(c.data_type) > -1) { 
+%>
                                     <td>{{ item.<%= c.propertyName %> | moment($t("dateFormat.datetime")) }}</td><% 
-						                    } else if (c.javaType === "Boolean" || c.javaType === "boolean") { %>
+            } else if (c.javaType === "Boolean" || c.javaType === "boolean") { 
+%>
                                     <td>{{ item.<%= c.propertyName %> == null ? null : item.<%= c.propertyName %> ? $t("boolean.true") : $t("boolean.false") }}</td><% 
-						                    } else if (c.javaType === "String") { 
-                                                if (c.smartType === "imageUrl") { %>
+            } else if (c.javaType === "String") { 
+                if (c.smartType === "imageUrl") { 
+%>
                                     <td><img :src="item.<%= c.propertyName %>" class="img-rounded" style="height: 100px"/></td><%
-                                                } else { %>
+                } else { %>
                                     <td>{{ item.<%= c.propertyName %> | truncate("140") }}</td><%
-                                                } 
-                                            } else { %>
+                } 
+            } else { 
+%>
                                     <td>{{ item.<%= c.propertyName %> }}</td><%
-						                    }
-						                } else { %>
+            }
+        } else { 
+%>
                                     <td>{{ item.<%= c.notIdPropertyName %> != null && item.<%= c.notIdPropertyName %>.<%= c.referencedTable.primaryColumns[0].propertyName %> != null ? item.<%= c.notIdPropertyName %>.<%= c.referencedTable.primaryColumns[0].propertyName %> : null }}</td><%
-						                }
-						            }
-						            %>
+        }
+    }
+}
+%>
                                 </tr>
                             </tbody>
                         </table>
@@ -70,14 +93,44 @@
                 </div>
             </div>
         </section>
+<% if (table.deactivableColumn) { %>        
+        <div class="modal" role="dialog" v-if="<%= table.classLowerCamel %>ToRemove != null" style="display: block">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" @click="<%= table.classLowerCamel %>ToRemove = null"><span>&times;</span></button>
+                        <h4 class="modal-title">
+                            {{ $t("app.confirmRemove") }}
+                        </h4>
+                    </div>
+                    <div slot="modal-body" class="modal-body">
+                        
+                        {{ 
+                            ""
+<% 
+for (var j in table.columns) { 
+    var r = table.columns[j]; 
+%>
+                            + (<%= table.classLowerCamel %>ToRemove.<%= r.propertyName %> === undefined ? "" : <%= table.classLowerCamel %>ToRemove.<%= r.propertyName %> + "; ")<% 
+} 
+%>
+                        }}
+                        
+                    </div>
+                    <div slot="modal-footer" class="modal-footer">
+                        <button type="button" class="btn btn-default" @click="<%= table.classLowerCamel %>ToRemove = null">{{ $t("app.cancel") }}</button>
+                        <button type="button" class="btn btn-danger" @click="removePrincipal()">{{ $t("app.remove") }}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+<% } %>
     </default>
 
 </template>
 
 <script>
 import Default from './Default.vue';
-import simpleStorage from 'simpleStorage.js';
-import _ from 'lodash';
 import moment from "moment";
 import AppResource from '../service/AppResource';
 import AppBus from '../service/AppBus';
@@ -91,7 +144,11 @@ export default {
     components: { Default, AdapOrderby, AdapPagination, AdapSearchfield },
     data() {
         return {
-            list: [],
+            list: [], <%
+if (table.deactivableColumn) { %>
+            <%= table.classLowerCamel %>ToRemove: null,<%
+}
+%>
             adapStore: new AdapStore("<%= table.primaryColumns[0].propertyName %>", (params) => this.populateList(params))
         };
     }, 
@@ -100,9 +157,7 @@ export default {
     },
     methods: {
         populateList(params) {
-            AppResource.<%= table.classLowerCamel %>.query(_.assign({<% if (props.loginsys) { %> 
-                token: simpleStorage.get("token<%= props.modulenameUpper %>") || null<% } %>
-            }, params)).then((resp) => {
+            AppResource.<%= table.classLowerCamel %>.query(params).then((resp) => {
                 if (resp.body.success) {
                     this.list = resp.body.data.list;
                     this.adapStore.setCount(resp.body.data.count);
@@ -122,13 +177,35 @@ for (var k in table.primaryColumns) {
     }
 }
                 %>`);
-        }
+        }<%
+if (table.deactivableColumn) { %>,
+        openRemoveDialog(item) {
+            this.<%= table.classLowerCamel %>ToRemove = item;
+        },
+        removePrincipal() {
+            AppResource.<%= table.classLowerCamel %>.delete({<% 
+if (table.primaryColumns.length == 1) {
+%>
+            id: this.<%= table.classLowerCamel %>ToRemove.<%= table.primaryColumns[0].propertyName %><%
+} else {
+    for (var k in table.primaryColumns) {
+        %><%= k > 0 ? ',' : '' %>
+            <%= table.primaryColumns[k].propertyName %>: this.<%= table.classLowerCamel %>ToRemove.<%= table.primaryColumns[k].propertyName %><%
+    } 
+}
+
+%>
+            }).then((resp) => {
+                if (resp.body.success) {
+                    this.list.splice(this.list.indexOf(this.<%= table.classLowerCamel %>ToRemove), 1);
+                    this.<%= table.classLowerCamel %>ToRemove = null;
+                } else {
+                    AppBus.$emit("alert", "danger", resp.body.message, 3000);
+                }
+            });
+        }<%
+}
+%>
     }
 }
 </script>
-
-<style lang="sass" scoped>
-    tbody tr {
-        cursor: pointer;
-    }
-</style>

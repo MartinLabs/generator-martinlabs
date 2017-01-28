@@ -7,7 +7,10 @@ export default {
         "add": "Adicionar",
         "export": "Exportar",
         "select": "Selecione",
-        "persistedSuccessfully": "Salvo com Sucesso!"
+        "persistedSuccessfully": "Salvo com Sucesso!",
+        "confirmRemove": "Tem certeza que deseja remover este item?",
+        "remove": "Remover",
+        "cancel": "Cancelar"
     },
     
     "dataTable": {

@@ -1,16 +1,24 @@
 import Vue from 'vue';
 import VueResource from 'vue-resource';
 import AppRouter from './AppRouter';
+import simpleStorage from 'simpleStorage.js';
 
 Vue.use(VueResource);
 
 Vue.http.interceptors.push((request, next) => {
     //all requests pass by here
-    next((resp) => {<% if (loginsys) { %> 
+<% if (loginsys) { %> 
+    var token = simpleStorage.get("token<%= modulenameUpper %>") || null;
+    if (token) {
+        request.headers.set('Authorization', 'Bearer ' + token);
+    }
+
+    next((resp) => {
         if (resp.body.code === 33) {
             AppRouter.push("/login");
-        }<% } %>
+        }
     });
+<% } %>
 });
 
 export default new (function () {<% 

@@ -262,5 +262,29 @@ for (var i in table.NtoNcolumns) { var col = table.NtoNcolumns[i];
 %>
         return id<%= table.className %>;
     }
-
+<% if (table.deactivableColumn) { %>
+    public void remove(<% 
+    for (var k in table.primaryColumns) {
+        %><%= k > 0 ? ', ' : '' %>long <%= table.primaryColumns[k].propertyName %><%
+    } 
+    if (props.loginsys) { 
+        %>, String token<% 
+    } 
+    %>) {
+        //TODO: review generated method<% 
+    if (props.loginsys) { 
+%>
+        loginS.allowAccess(token);
+<% 
+    }
+%>
+        <%= table.className %>Dao <%= table.classLowerCamel %>Dao = new <%= table.className %>Dao(con);
+            
+        <%= table.classLowerCamel %>Dao.softDelete(<% 
+    for (var k in table.primaryColumns) {
+        %><%= k > 0 ? ', ' : '' %><%= table.primaryColumns[k].propertyName %><%
+    } 
+                %>);
+    }
+<% } %>
 }

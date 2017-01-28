@@ -75,6 +75,10 @@ module.exports = {
                 col.notIdPropertyNameUpper = this.capitalizeFirstLetter(col.notIdPropertyName);
                 col.smartType = this.generateSmartType(main, col);
 
+                if (col.smartType === "active") {
+                    table.deactivableColumn = col;
+                }
+
                 //putting column information on logintable
                 if (isLoginTable) {
                     if (col.column_name === main.props.loginaccountcolumn) {

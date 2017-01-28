@@ -428,5 +428,19 @@ if (!table.primaryColumns[0].referencedTable) {
     }
 <% 
 } 
+if (table.deactivableColumn) {
+%>
+    @Test
+    public void testRemove() {
+        String token = loginS.loginToToken("user@gmail.com", SecurityUtils.sha1("abcabc"));
+        
+        subject.remove(<% 
+    for (var k in table.primaryColumns) {
+        %>1, <%
+    }
+            %> token);
+    }
+<% 
+}
 %>
 }

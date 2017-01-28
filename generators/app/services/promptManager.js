@@ -130,7 +130,7 @@ module.exports = {
                     type: 'input',
                     name: 'activeCNP',
                     message: 'Active: a boolean that indicates if the row can be used, mimics a delete if it is false. Enter a Regex to Match, case insensitive',
-                    default: main.props.columnNamePatterns.active || "\\w*(active|ativo)\\w*"
+                    default: main.props.columnNamePatterns.active || "(active|ativo)"
                 }];
 
                 main.prompt(prompts, function (props) {
