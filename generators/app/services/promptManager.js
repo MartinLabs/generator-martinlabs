@@ -41,29 +41,6 @@ module.exports = {
             message: 'Do you want to Install the NPM Dependencies?',
             default: main.props.runNpm === true
         },{
-            type: 'confirm',
-            name: 'loginsys',
-            message: 'Do you want to include a Login System?',
-            default: main.props.loginsys === true
-        }];
-
-        main.prompt(prompts, function (props) {
-            main.props.modulename = props.modulename.replace(/[^a-z0-9]/gi,'').toLowerCase();
-            main.props.user = props.user;
-            main.props.password = props.password;
-            main.props.database = props.database;
-            main.props.tables = props.tables;
-            main.props.runNpm = props.runNpm
-            main.props.loginsys = props.loginsys;
-
-            done();
-        });
-	},
-
-	forLogin: function(main) {
-		var done = main.async();
-
-        var prompts = [{
             type: 'input',
             name: 'logintablename',
             message: 'Input the Login Table Name',
@@ -81,6 +58,12 @@ module.exports = {
         }];
 
         main.prompt(prompts, function (props) {
+            main.props.modulename = props.modulename.replace(/[^a-z0-9]/gi,'').toLowerCase();
+            main.props.user = props.user;
+            main.props.password = props.password;
+            main.props.database = props.database;
+            main.props.tables = props.tables;
+            main.props.runNpm = props.runNpm;
             main.props.logintablename = props.logintablename;
             main.props.loginaccountcolumn = props.loginaccountcolumn;
             main.props.loginpasswordcolumn = props.loginpasswordcolumn;

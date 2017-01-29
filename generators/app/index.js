@@ -21,12 +21,6 @@ module.exports = yeoman.generators.Base.extend({
         promptManager.initial(this);
     },
 
-    promptForLogin: function() {
-        if (this.props.loginsys) {
-            promptManager.forLogin(this);
-        }
-    },
-
     promptColumnNamePatters: function () {
         promptManager.columnNamePatters(this);
     },

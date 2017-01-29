@@ -82,33 +82,30 @@ module.exports = {
             }
         }        
 
-        if (main.props.loginsys) {
+        var paramsLogin = {
+            props: main.props,
+            table: main.logintable
+        };
 
-            var paramsLogin = {
-                props: main.props,
-                table: main.logintable
-            };
+        main.fs.copyTpl(
+            main.templatePath('LoginServiceDao.java'),
+            main.destinationPath(main.props.daoFolder+"/LoginServiceDao.java"),
+            paramsLogin);
 
-            main.fs.copyTpl(
-                main.templatePath('LoginServiceDao.java'),
-                main.destinationPath(main.props.daoFolder+"/LoginServiceDao.java"),
-                paramsLogin);
+        main.fs.copyTpl(
+            main.templatePath('LoginServices.java'),
+            main.destinationPath(main.props.processFolder+"/LoginServices.java"),
+            paramsLogin);
 
-            main.fs.copyTpl(
-                main.templatePath('LoginServices.java'),
-                main.destinationPath(main.props.processFolder+"/LoginServices.java"),
-                paramsLogin);
+        main.fs.copyTpl(
+            main.templatePath('LoginServicesTest.java'),
+            main.destinationPath(main.props.processTestFolder+"/LoginServicesTest.java"),
+            main.props);
 
-            main.fs.copyTpl(
-                main.templatePath('LoginServicesTest.java'),
-                main.destinationPath(main.props.processTestFolder+"/LoginServicesTest.java"),
-                main.props);
-
-            main.fs.copyTpl(
-                main.templatePath('LoginResp.java'),
-                main.destinationPath(main.props.responseFolder+"/LoginResp.java"),
-                main.props);
-        }
+        main.fs.copyTpl(
+            main.templatePath('LoginResp.java'),
+            main.destinationPath(main.props.responseFolder+"/LoginResp.java"),
+            main.props);
     },
 
     jsClasses: function(main) {

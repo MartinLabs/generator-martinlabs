@@ -17,14 +17,10 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.ext.ExceptionMapper;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.servlet.http.HttpServletRequest;<% 
-
-if (loginsys) { 
-%>
+import javax.servlet.http.HttpServletRequest;
 import <%= processPackage %>.LoginServices;
 import <%= processPackage %>.LoginServices.LoginHolder;
 import <%= responsePackage %>.LoginResp;<%
-} 
 
 for (var i in tables) {
 	var table = tables[i];
@@ -46,7 +42,7 @@ import <%= modelPackage %>.<%= table.className %>;<%
 public class Router implements ExceptionMapper<Throwable> {
 
     private OperationPipe pipe = new OperationPipe("<%= datasource %>");
-<% if (loginsys) { %>
+
     @POST
     @Path("/Login")
     public OpResp<LoginResp> login(LoginHolder body) {
@@ -55,8 +51,7 @@ public class Router implements ExceptionMapper<Throwable> {
             return new LoginServices(con).login(body.getAccount(), body.getPassword());
         });
     }
-<% } 
-
+<%
 for (var i in tables) {
 	var table = tables[i];
 	if (!table.isNtoNtable && table.inCrud) {

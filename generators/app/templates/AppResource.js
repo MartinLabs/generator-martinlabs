@@ -7,7 +7,6 @@ Vue.use(VueResource);
 
 Vue.http.interceptors.push((request, next) => {
     //all requests pass by here
-<% if (loginsys) { %> 
     var token = simpleStorage.get("token<%= modulenameUpper %>") || null;
     if (token) {
         request.headers.set('Authorization', 'Bearer ' + token);
@@ -18,13 +17,11 @@ Vue.http.interceptors.push((request, next) => {
             AppRouter.push("/login");
         }
     });
-<% } %>
 });
 
-export default new (function () {<% 
-    if (loginsys) { %> 
+export default new (function () {
     this.login = Vue.resource("../ws/<%= modulenameUpper %>/Login");<% 
-    } 
+    
     for (var i in tables) {
         var table = tables[i];
         if (table.inCrud && !table.isNtoNtable) {

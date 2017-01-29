@@ -46,29 +46,16 @@ import java.sql.Connection;
  */
 public class <%= table.className %>Process {
 
-    private Connection con;<% 
-if (props.loginsys) { 
-%>
+    private Connection con;
     private LoginServices loginS;
-<% 
-} 
-%>
+
     public <%= table.className %>Process(Connection con) {
-        this.con = con;<% 
-if (props.loginsys) { 
-%>
+        this.con = con;
         loginS = new LoginServices(con);
-<% 
-} 
-%>
     }
 
-    public PagedResp<<%= table.className %>> list(<% 
-if (props.loginsys) { 
-%>
-        String token, <% 
-} 
-%>
+    public PagedResp<<%= table.className %>> list(
+        String token, 
         String query,
         Integer page,
         Integer limit,
@@ -82,13 +69,9 @@ if (props.loginsys) {
         if (limit == null) {
             throw new RespException(2,  LanguageHolder.instance.cannotBeNull("Limit"));
         }      
-<% 
-if (props.loginsys) { 
-%>
+
         loginS.allowAccess(token);
-<% 
-} 
-%>
+
         <%= table.className %>Dao dao = new <%= table.className %>Dao(con);
 
         List<<%= table.className %>> list<%= table.className %> = dao.list(query, page, limit, orderRequest, asc);
@@ -108,17 +91,10 @@ if (props.loginsys) {
 for (var k in table.primaryColumns) {
     %><%= k > 0 ? ', ' : '' %>long <%= table.primaryColumns[k].propertyName %><%
 } 
-if (props.loginsys) { 
-    %>, String token<% 
-} 
-    %>) {
-        //TODO: review generated method<% 
-if (props.loginsys) { 
-%>
+    %>, String token) {
+        //TODO: review generated method
         loginS.allowAccess(token);
 <% 
-}
- 
 antiRepeat = [];
 antiRepeat.push(table.className);
 %>
@@ -189,15 +165,10 @@ for (var j in table.NtoNcolumns) {
         return resp;
     }
 
-    public Long persist(<%= table.className %> <%= table.classLowerCamel %><% if (props.loginsys) { %>, String token<% } %>) {
+    public Long persist(<%= table.className %> <%= table.classLowerCamel %>, String token) {
         //TODO: review generated method
-<% 
-if (props.loginsys) { 
-%>
         loginS.allowAccess(token);
-<% 
-} 
-%>
+
         <%= table.className %>Dao dao = new <%= table.className %>Dao(con);
 <%
 for (var i in table.columns) { 
@@ -266,20 +237,13 @@ for (var i in table.NtoNcolumns) { var col = table.NtoNcolumns[i];
     }
 <% if (table.deactivableColumn) { %>
     public void remove(<% 
-    for (var k in table.primaryColumns) {
-        %><%= k > 0 ? ', ' : '' %>long <%= table.primaryColumns[k].propertyName %><%
+    for (var k in table.primaryColumns) { %>
+        long <%= table.primaryColumns[k].propertyName %>,<%
     } 
-    if (props.loginsys) { 
-        %>, String token<% 
-    } 
-    %>) {
-        //TODO: review generated method<% 
-    if (props.loginsys) { 
 %>
+        String token) {
+        //TODO: review generated method
         loginS.allowAccess(token);
-<% 
-    }
-%>
         <%= table.className %>Dao <%= table.classLowerCamel %>Dao = new <%= table.className %>Dao(con);
             
         <%= table.classLowerCamel %>Dao.softDelete(<% 
