@@ -24,13 +24,17 @@ for (var k in table.primaryColumns) {
 } 
 %>){
         //TODO: review generated method
-        return selectOne("SELECT "<% 
+        return selectOne("SELECT<%             
+var colocarVirgula = false;
 for (var i in table.columns) { 
     var c = table.columns[i]; 
-%>
-            + "<%= c.column_name + (i < table.columns.length -1 ? ',' : '') %> "<% 
+    if (c.smartType != "password") {
+%><%= colocarVirgula ? ',' : '' %> "
+            + "<%= c.column_name %><% 
+        colocarVirgula = true;
+    }
 } 
-%>
+%> "
             + "FROM <%= table.name %> "
             + "WHERE <%= table.primaryColumns[0].column_name %> = ? "<% 
 for (var j = 1; j < table.primaryColumns.length; j++) { 
@@ -43,8 +47,10 @@ for (var j = 1; j < table.primaryColumns.length; j++) {
 <% 
 for (var i in table.columns) { 
     var c = table.columns[i]; 
+    if (c.smartType != "password") {
 %>
             <%= table.classLowerCamel %>.set<%= c.propertyNameUpper %>(rs.<%= c.resultSetGetter %>("<%= c.column_name %>"));<% 
+    }
 } 
 %>
             return <%= table.classLowerCamel %>;
@@ -59,12 +65,17 @@ if (table.isReferenced) {
 %>
     public List<<%= table.className %>> list(){
         //TODO: review generated method
-        return selectList("SELECT "<% 
-    for (var i in table.columns) { var c = table.columns[i]; 
-%>
-            + "<%= c.column_name + (i < table.columns.length -1 ? ',' : '') %> "<% 
+        return selectList("SELECT<% 
+    var colocarVirgula = false;
+    for (var i in table.columns) { 
+        var c = table.columns[i]; 
+        if (c.smartType != "password") {
+%><%= colocarVirgula ? ',' : '' %> "
+            + "<%= c.column_name %><% 
+            colocarVirgula = true;
+        }
     } 
-%>
+%> "
             + "FROM <%= table.name %> "<%
     if (table.deactivableColumn) { %>
             + "WHERE <%= table.deactivableColumn.column_name %> = 1 "<%
@@ -75,8 +86,10 @@ if (table.isReferenced) {
 <% 
     for (var i in table.columns) { 
         var c = table.columns[i]; 
+        if (c.smartType != "password") {
 %>
             <%= table.classLowerCamel %>.set<%= c.propertyNameUpper %>(rs.<%= c.resultSetGetter %>("<%= c.column_name %>"));<% 
+        }
     } 
 %>
             
@@ -96,9 +109,12 @@ if (table.isReferenced) {
 
         HashMap<String, String> orderRequestAndColumn = new HashMap<>();
 <% 
-for (var i in table.columns) { var c = table.columns[i]; 
+for (var i in table.columns) { 
+    var c = table.columns[i]; 
+    if (c.smartType != "password") {
 %>
         orderRequestAndColumn.put("<%= c.column_name %>", "<%= c.column_name %>");<% 
+    }
 } 
 %>
         String orderColumn = orderRequestAndColumn.get(orderRequest);
@@ -107,25 +123,34 @@ for (var i in table.columns) { var c = table.columns[i];
         String where = <% if (table.deactivableColumn) { %>"WHERE <%= table.deactivableColumn.column_name %> = 1 "<% } else { %>""<% } %>;
 
         if (!Strings.isNullOrEmpty(query)) {
-            where += "<%= table.deactivableColumn ? 'AND' : 'WHERE' %> LOWER(CONCAT("<% 
-for (var i in table.columns) { var c = table.columns[i]; 
-%>
-            + "IFNULL(<%= c.column_name %>, '')<%= (i < table.columns.length -1 ? ',' : '') %> "<% 
+            where += "<%= table.deactivableColumn ? 'AND' : 'WHERE' %> LOWER(CONCAT(<% 
+var colocarVirgula = false;
+for (var i in table.columns) { 
+    var c = table.columns[i]; 
+    if (c.smartType != "password") {
+%><%= colocarVirgula ? ',' : '' %> "
+            + "IFNULL(<%= c.column_name %>, '')<% 
+        colocarVirgula = true;
+    }
 } 
-%>
+%> "
             +")) LIKE LOWER(?) ";
             params.add("%" + query + "%");
         }
 
         params.add(page * limit);
         params.add(limit);
-        return selectList("SELECT "<% 
+        return selectList("SELECT<% 
+var colocarVirgula = false;
 for (var i in table.columns) { 
     var c = table.columns[i]; 
-%>
-            + "<%= c.column_name + (i < table.columns.length -1 ? ',' : '') %> "<% 
+    if (c.smartType != "password") {
+%><%= colocarVirgula ? ',' : '' %> "
+            + "<%= c.column_name %><% 
+        colocarVirgula = true;
+    }
 } 
-%>
+%> "
             + "FROM <%= table.name %> "
             + where
             + (orderColumn != null ? "ORDER BY " + orderColumn + " " + (asc ? "ASC " : "DESC ") : "")
@@ -135,8 +160,10 @@ for (var i in table.columns) {
 <% 
 for (var i in table.columns) { 
     var c = table.columns[i]; 
+    if (c.smartType != "password") {
 %>
             <%= table.classLowerCamel %>.set<%= c.propertyNameUpper %>(rs.<%= c.resultSetGetter %>("<%= c.column_name %>"));<% 
+    }
 } 
 %>
             
@@ -160,13 +187,17 @@ if (table.deactivableColumn) { %>
         return selectFirstInt("SELECT "
             + "COUNT(<%= table.primaryColumns[0].column_name %>) "
             + "FROM <%= table.name %> "
-            + "WHERE LOWER(CONCAT("<% 
+            + "WHERE LOWER(CONCAT(<% 
+var colocarVirgula = false;
 for (var i in table.columns) { 
     var c = table.columns[i]; 
-%>
-            + "IFNULL(<%= c.column_name %>, '')<%= (i < table.columns.length -1 ? ',' : '') %> "<% 
+    if (c.smartType != "password") {
+%><%= colocarVirgula ? ',' : '' %> "
+            + "IFNULL(<%= c.column_name %>, '')<% 
+        colocarVirgula = true;
+    }
 } 
-%>
+%> "
             +")) LIKE LOWER(?) ", 
             "%" + search + "%");
     }
@@ -176,9 +207,14 @@ for (var i in table.columns) {
         return update("UPDATE <%= table.name %> SET "<% 
 for (var i in table.columns) { 
     var c = table.columns[i]; 
-    if (c.extra !== "auto_increment" && c.column_key != "PRI") { 
+    if (c.extra !== "auto_increment" && c.column_key != "PRI") {
+        if (c.smartType === "password") {
+%>
+            + "<%= c.column_name %> = IF(? IS NOT NULL, SHA1(?), <%= c.column_name %>)<%= i < table.columns.length -1 ? ',' : '' %> "<%
+        } else {
 %>
             + "<%= c.column_name %> = ?<%= i < table.columns.length -1 ? ',' : '' %> "<% 
+        }
     }
 } 
 %>
@@ -192,7 +228,7 @@ for (var i in table.columns) {
     var c = table.columns[i]; 
     if (c.extra !== "auto_increment" && c.column_key != "PRI") { 
 %>
-            <%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>(),<% 
+            <%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>(), <% if (c.smartType === "password") { %><%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>(),<% } %><% 
     }
 } 
 %>
@@ -220,7 +256,7 @@ for (var i in table.columns) {
 for (var i in table.columns) { 
     var c = table.columns[i]; 
     if (c.extra !== 'auto_increment') { 
-        %>?<%= i < table.columns.length -1 ? ',' : '' %><% 
+        %><%= c.smartType ===  'password' ? 'SHA1(?)' : '?' %><%= i < table.columns.length -1 ? ',' : '' %><% 
     }
 } 
 %>"

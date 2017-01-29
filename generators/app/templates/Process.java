@@ -38,7 +38,6 @@ import com.google.common.base.Strings;
 import java.util.List;
 import br.com.martinlabs.commons.LanguageHolder;
 import br.com.martinlabs.commons.PagedResp;
-import br.com.martinlabs.commons.Validator;
 import java.sql.Connection;
 
 /**
@@ -192,7 +191,6 @@ for (var j in table.NtoNcolumns) {
 
     public Long persist(<%= table.className %> <%= table.classLowerCamel %><% if (props.loginsys) { %>, String token<% } %>) {
         //TODO: review generated method
-        <%= table.classLowerCamel %>.validate();
 <% 
 if (props.loginsys) { 
 %>
@@ -220,10 +218,12 @@ if (table.primaryColumns.length < 2 && !table.primaryColumns[0].referencedTable)
 %>
         long id<%= table.className %>;
         if (<%= table.classLowerCamel %>.get<%= table.primaryColumns[0].propertyNameUpper %>() > 0) {
+            <%= table.classLowerCamel %>.validate(true);
             id<%= table.className %> = <%= table.classLowerCamel %>.get<%= table.primaryColumns[0].propertyNameUpper %>();
             
             dao.update(<%= table.classLowerCamel %>);
         } else {
+            <%= table.classLowerCamel %>.validate(false);
             id<%= table.className %> = dao.insert(<%= table.classLowerCamel %>);
             <%= table.classLowerCamel %>.set<%= table.primaryColumns[0].propertyNameUpper %>(id<%= table.className %>);
         }
@@ -236,8 +236,10 @@ for (var i in table.primaryColumns) {
             %><%= i > 0 ? ', ' : '' %><%= table.classLowerCamel %>.get<%= table.primaryColumns[i].propertyNameUpper %>()<% 
             } %>);
         if (exist) {
+            <%= table.classLowerCamel %>.validate(true);
             dao.update(<%= table.classLowerCamel %>);
         } else {
+            <%= table.classLowerCamel %>.validate(false);
             dao.insert(<%= table.classLowerCamel %>);
         }
 <% 

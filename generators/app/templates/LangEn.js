@@ -10,7 +10,9 @@ export default {
         "persistedSuccessfully": "Persisted Successfully!",
         "confirmRemove": "Are you sure you want to remove this item?",
         "remove": "Remove",
-        "cancel": "Cancel"
+        "cancel": "Cancel",
+        "passwordMustHaveAtleast6Chars": "The password must have atleast 6 characters",
+        "onlyIfWantChangePassword": "Fill this field only if you want to change the password"
     },
     
     "dataTable": {

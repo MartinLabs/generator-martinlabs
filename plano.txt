@@ -7,7 +7,6 @@ BUG TRIVIAL
 
 SMART TYPE
 - smartType especifico para colocar NOW() no insert ou no update
-- se a coluna for "password" deve fazer sha1 no js e no insert/update; se estiver em branco no update não alterar; nunca incluir no select, validar minimo de 6 chars, não mostrar na lista
 - se a coluna for "url" deve validar no persist; no listar, ao clicar deve abrir nova aba
 - ler comentario contendo "martinlabs-generator:ignore" e ignorar coluna
 - se o nome for "tempo"/"time" e for integer considerar q é um tempo e poder selecionar unidade (segundos, minutos, horas)

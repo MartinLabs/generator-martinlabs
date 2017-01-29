@@ -43,7 +43,7 @@ for (var i in table.columns) {
         } 
 %>
         
-        <%= table.classLowerCamel %>.validate();
+        <%= table.classLowerCamel %>.validate(false);
     } 
 <%
 
@@ -79,7 +79,7 @@ for (var i in table.columns) {
         } 
 %>
         
-        <%= table.classLowerCamel %>.validate();
+        <%= table.classLowerCamel %>.validate(false);
     } <%
         if (c.smartType === "email") { %>
     @Test(expected = RespException.class)
@@ -110,7 +110,7 @@ for (var i in table.columns) {
         } 
 %>
         
-        <%= table.classLowerCamel %>.validate();
+        <%= table.classLowerCamel %>.validate(false);
     } <%
         }
     }
@@ -156,7 +156,7 @@ for (var i in table.columns) {
         } 
 %>
         
-        <%= table.classLowerCamel %>.validate();
+        <%= table.classLowerCamel %>.validate(false);
     }
 
     @Test

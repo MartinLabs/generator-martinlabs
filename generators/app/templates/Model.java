@@ -57,18 +57,28 @@ for (var i in table.NtoNcolumns) {
 %>
     }
 
-    public void validate() {<% 
+    public void validate(boolean updating) {<% 
 for (var i in table.columns) { 
     var c = table.columns[i]; 
     if (c.is_nullable === "NO" && (c.javaType === "String" || c.javaType === "Date")) { 
+        if (c.smartType == "password") {
+%>
+        if (!updating) {
+            if (get<%= c.propertyNameUpper %>() == null) {
+                throw new RespException(<%= c.ordinal_position %>,  LanguageHolder.instance.cannotBeNull("<%= c.propertyNatural %>"));
+            }
+        }<% 
+        } else {
 %>
         if (get<%= c.propertyNameUpper %>() == null) {
             throw new RespException(<%= c.ordinal_position %>,  LanguageHolder.instance.cannotBeNull("<%= c.propertyNatural %>"));
         }<% 
+        }
     }
 
     if (c.javaType === "String") {
-        if (c.is_nullable === "NO") {
+
+        if (c.is_nullable === "NO" && c.smartType != "password") {
 %>
         if (get<%= c.propertyNameUpper %>().length() > <%= Math.min(65500, c.character_maximum_length) %>) {
             throw new RespException(<%= c.ordinal_position %>, LanguageHolder.instance.lengthCannotBeMoreThan("<%= c.propertyNatural %>", <%= Math.min(65500, c.character_maximum_length) %>));

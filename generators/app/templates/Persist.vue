@@ -32,9 +32,13 @@
                                 <option v-for="item in all<%= col.referencedTable.className %>" :value="item.<%= col.referencedTable.primaryColumns[0].propertyName %>">
                                 {{ 
                                     ""
-                                <% for (var j in col.referencedTable.columns) { var r = col.referencedTable.columns[j]; %>
+                            <% for (var j in col.referencedTable.columns) { 
+                                var r = col.referencedTable.columns[j]; 
+                                if (r.smartType != "active" && r.smartType != "password") {
+                            %>
                                     + (item.<%= r.propertyName %> === undefined ? "" : item.<%= r.propertyName %> + "; ")<% 
-                                } %>
+                                }
+                            } %>
                                 }}
                                 </option>
                             </select>
@@ -48,8 +52,12 @@
                                 {{ $t("classes.<%= table.className %>.columns.<%= col.propertyName %>") }}</label>
                             <input id="input-<%= col.propertyName %>" 
                                 type="<%= col.smartType === 'email' ? 'email' : col.smartType === 'password' ? 'password' : 'text' %>" 
-                                v-model="<%= table.classLowerCamel %>.<%= col.propertyName %>"
-                                class="form-control" <%= col.is_nullable !== "YES" ? "required" : "" %>>
+                                v-model="<%= table.classLowerCamel %>.<%= col.propertyName %><%= col.smartType === 'password' ? 'NotEncrypted' : '' %>"
+                                class="form-control" <%= col.is_nullable !== "YES" && col.smartType != "password" ? "required" : "" %><% 
+                            if (col.smartType === 'password') { %>
+                                :placeholder="<%= table.classLowerCamel %>.<%= table.primaryColumns[0].propertyName %> ? $t('app.onlyIfWantChangePassword') : ''"<%
+                            }
+                                %>>
                         </div>
                     <% 
                         } else {
@@ -163,6 +171,7 @@ import Default from './Default.vue';
 import moment from 'moment';
 import AppResource from '../service/AppResource';
 import AppBus from '../service/AppBus';
+import sha1 from 'js-sha1';
 var AppTranslator = require('../service/AppTranslator').default;
 
 export default {
@@ -319,9 +328,26 @@ for (var i in table.NtoNcolumns) {
     methods: {
         persist(e) {
             e.preventDefault();
-
+<% 
+for (var i in table.columns) {
+    var c = table.columns[i];
+    if (c.smartType === "password") {
+%>            
+            if (this.<%= table.classLowerCamel %>.<%= c.propertyName %>NotEncrypted && this.<%= table.classLowerCamel %>.<%= c.propertyName %>NotEncrypted.length) {
+                if (this.<%= table.classLowerCamel %>.<%= c.propertyName %>NotEncrypted.length < 6) {
+                    AppBus.$emit("alert", "danger", AppTranslator.data.app.passwordMustHaveAtleast6Chars, 3000);
+                    return;
+                }
+                
+                this.<%= table.classLowerCamel %>.<%= c.propertyName %> = sha1(this.<%= table.classLowerCamel %>.<%= c.propertyName %>NotEncrypted);
+            }
+<%
+    }
+} 
+%>
             AppResource.<%= table.classLowerCamel %>.save(this.<%= table.classLowerCamel %>).then((resp) => {
                 if (resp.body.success) {
+                    AppBus.$emit("alert", "success", AppTranslator.data.app.persistedSuccessfully, 3000);
                     this.$router.push("/list<%= table.className %>");
                 } else {
                     AppBus.$emit("alert", "danger", resp.body.message, 3000);

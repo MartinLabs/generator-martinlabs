@@ -28,7 +28,7 @@
 <% 
 for (var i in table.columns) { 
 	var c = table.columns[i]; 
-    if (c.smartType != "active") {
+    if (c.smartType != "active" && c.smartType != "password") {
 %>
                                     <th><adap-orderby :store="adapStore" name="<%= c.column_name %>">{{ $t("classes.<%= table.className %>.columns.<%= !c.referencedTable ? c.propertyName : c.notIdPropertyName %>") }}</adap-orderby></th><% 
     }
@@ -51,7 +51,7 @@ if (table.deactivableColumn) {
 <% 
 for (var i in table.columns) { 
     var c = table.columns[i];
-    if (c.smartType != "active") {
+    if (c.smartType != "active" && c.smartType != "password") {
         if (!c.referencedTable) {
             if (c.data_type === "date") { 
 %>
@@ -110,8 +110,10 @@ for (var i in table.columns) {
 <% 
 for (var j in table.columns) { 
     var r = table.columns[j]; 
+    if (r.smartType != "active" && r.smartType != "password") {
 %>
                             + (<%= table.classLowerCamel %>ToRemove.<%= r.propertyName %> === undefined ? "" : <%= table.classLowerCamel %>ToRemove.<%= r.propertyName %> + "; ")<% 
+    }
 } 
 %>
                         }}
