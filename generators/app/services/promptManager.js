@@ -123,6 +123,16 @@ module.exports = {
                     default: main.props.columnNamePatterns.imageUrl || "\\w*url\\w*(image|photo|foto)\\w*|\\w*(image|photo|foto)\\w*url\\w*"
                 },{
                     type: 'input',
+                    name: 'createTime',
+                    message: 'Create Time: a datetime that represents the time that the entry was created',
+                    default: main.props.columnNamePatterns.createTime || "\\w*(creat|cria)\\w*(date|data|time|hora)\\w*|\\w*(date|data|time|hora)\\w*(creat|cria)\\w*"
+                },{
+                    type: 'input',
+                    name: 'updateTime',
+                    message: 'Update Time: a datetime that represents the time that the entry was updated',
+                    default: main.props.columnNamePatterns.updateTime || "\\w*(updat|alter)\\w*(date|data|time|hora)\\w*|\\w*(date|data|time|hora)\\w*(updat|alter)\\w*"
+                },{
+                    type: 'input',
                     name: 'urlCNP',
                     message: 'URL: a string that represents an URL, will be tested after Image URL. Enter a Regex to Match, case insensitive',
                     default: main.props.columnNamePatterns.url || "\\w*url\\w*"
@@ -139,6 +149,8 @@ module.exports = {
                     main.props.columnNamePatterns.imageUrl = props.imageUrlCNP;
                     main.props.columnNamePatterns.url = props.urlCNP;
                     main.props.columnNamePatterns.active = props.activeCNP;
+                    main.props.columnNamePatterns.createTime = props.createTime;
+                    main.props.columnNamePatterns.updateTime = props.updateTime;
 
                     done();
                 });

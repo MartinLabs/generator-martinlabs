@@ -28,7 +28,7 @@ for (var k in table.primaryColumns) {
 var colocarVirgula = false;
 for (var i in table.columns) { 
     var c = table.columns[i]; 
-    if (c.smartType != "password") {
+    if (c.smartType != 'password') {
 %><%= colocarVirgula ? ',' : '' %> "
             + "<%= c.column_name %><% 
         colocarVirgula = true;
@@ -69,7 +69,7 @@ if (table.isReferenced) {
     var colocarVirgula = false;
     for (var i in table.columns) { 
         var c = table.columns[i]; 
-        if (c.smartType != "password") {
+        if (c.smartType != 'password') {
 %><%= colocarVirgula ? ',' : '' %> "
             + "<%= c.column_name %><% 
             colocarVirgula = true;
@@ -127,7 +127,7 @@ for (var i in table.columns) {
 var colocarVirgula = false;
 for (var i in table.columns) { 
     var c = table.columns[i]; 
-    if (c.smartType != "password") {
+    if (c.smartType != 'password') {
 %><%= colocarVirgula ? ',' : '' %> "
             + "IFNULL(<%= c.column_name %>, '')<% 
         colocarVirgula = true;
@@ -144,7 +144,7 @@ for (var i in table.columns) {
 var colocarVirgula = false;
 for (var i in table.columns) { 
     var c = table.columns[i]; 
-    if (c.smartType != "password") {
+    if (c.smartType != 'password') {
 %><%= colocarVirgula ? ',' : '' %> "
             + "<%= c.column_name %><% 
         colocarVirgula = true;
@@ -191,7 +191,7 @@ if (table.deactivableColumn) { %>
 var colocarVirgula = false;
 for (var i in table.columns) { 
     var c = table.columns[i]; 
-    if (c.smartType != "password") {
+    if (c.smartType != 'password') {
 %><%= colocarVirgula ? ',' : '' %> "
             + "IFNULL(<%= c.column_name %>, '')<% 
         colocarVirgula = true;
@@ -204,20 +204,25 @@ for (var i in table.columns) {
     
     public int update(<%= table.className %> <%= table.classLowerCamel %>){
         //TODO: review generated method
-        return update("UPDATE <%= table.name %> SET "<% 
+        return update("UPDATE <%= table.name %> SET<% 
+var colocarVirgula = false;
 for (var i in table.columns) { 
     var c = table.columns[i]; 
-    if (c.extra !== "auto_increment" && c.column_key != "PRI") {
-        if (c.smartType === "password") {
-%>
-            + "<%= c.column_name %> = IF(? IS NOT NULL, SHA1(?), <%= c.column_name %>)<%= i < table.columns.length -1 ? ',' : '' %> "<%
+    if (c.extra !== 'auto_increment' && c.column_key != 'PRI' && c.smartType != 'createTime') {
+        if (c.smartType === 'password') {
+%><%= colocarVirgula ? ',' : '' %> "
+            + "<%= c.column_name %> = IF(? IS NOT NULL, SHA1(?), <%= c.column_name %>)<%
+        } else if (c.smartType == 'updateTime') {
+%><%= colocarVirgula ? ',' : '' %> "
+            + "<%= c.column_name %> = NOW()<%
         } else {
-%>
-            + "<%= c.column_name %> = ?<%= i < table.columns.length -1 ? ',' : '' %> "<% 
+%><%= colocarVirgula ? ',' : '' %> "
+            + "<%= c.column_name %> = ?<% 
         }
+        colocarVirgula = true;
     }
 } 
-%>
+%> "
             + "WHERE <%= table.primaryColumns[0].column_name %> = ? "<% 
 for (var j = 1; j < table.primaryColumns.length; j++) { 
 %>
@@ -226,7 +231,7 @@ for (var j = 1; j < table.primaryColumns.length; j++) {
         %>,<% 
 for (var i in table.columns) { 
     var c = table.columns[i]; 
-    if (c.extra !== "auto_increment" && c.column_key != "PRI") { 
+    if (c.extra !== "auto_increment" && c.column_key != "PRI" && c.smartType != "createTime" && c.smartType != "updateTime") { 
 %>
             <%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>(), <% if (c.smartType === "password") { %><%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>(),<% } %><% 
     }
@@ -242,30 +247,43 @@ for (var j = 1; j < table.primaryColumns.length; j++) {
     
     public long insert(<%= table.className %> <%= table.classLowerCamel %>){
         //TODO: review generated method
-        return update("INSERT INTO <%= table.name %> ( "<% 
+        return update("INSERT INTO <%= table.name %> (<% 
+var colocarVirgula = false;
 for (var i in table.columns) { 
     var c = table.columns[i]; 
-    if (c.extra !== "auto_increment") { 
-%>
-            + "<%= c.column_name + (i < table.columns.length -1 ? ',' : '') %> "<% 
+    if (c.extra !== 'auto_increment' && c.smartType != 'updateTime') { 
+%><%= colocarVirgula ? ',' : '' %> "
+            + "<%= c.column_name %><% 
+        colocarVirgula = true;
     }
 } 
-%>
+%> "
             + ") VALUES ( "
             + "<% 
+var colocarVirgula = false;
 for (var i in table.columns) { 
     var c = table.columns[i]; 
-    if (c.extra !== 'auto_increment') { 
-        %><%= c.smartType ===  'password' ? 'SHA1(?)' : '?' %><%= i < table.columns.length -1 ? ',' : '' %><% 
+    if (c.extra !== 'auto_increment' && c.smartType != 'updateTime') { 
+        %><%= colocarVirgula ? ',' : '' %><%
+        if (c.smartType ===  'password') {
+            %>SHA1(?)<% 
+        } else if (c.smartType == 'createTime') {
+            %>NOW()<% 
+        } else {
+            %>?<% 
+        }
+        colocarVirgula = true;
     }
 } 
 %>"
             + ") ",<% 
+var colocarVirgula = false;
 for (var i in table.columns) { 
     var c = table.columns[i]; 
-    if (c.extra !== "auto_increment") { 
-%>
-            <%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>()<%= i < table.columns.length -1 ? ',' : '' %><% 
+    if (c.extra !== "auto_increment" && c.smartType != "createTime" && c.smartType != "updateTime") { 
+%><%= colocarVirgula ? ',' : '' %>
+            <%= table.classLowerCamel %>.get<%= c.propertyNameUpper %>()<% 
+        colocarVirgula = true;
     }
 } 
         %>).key;

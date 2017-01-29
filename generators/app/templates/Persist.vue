@@ -15,7 +15,7 @@
 
             <% for (var i in table.columns) { var col = table.columns[i];
 
-                if (col.extra !== "auto_increment") {
+                if (col.extra !== "auto_increment" && col.smartType != "createTime" && col.smartType != "updateTime") {
 
                     if (col.referencedTable) { %>
                         <div class="form-group"<% 
@@ -362,7 +362,8 @@ for (var i in table.columns) {
             }
         },
         transformToDate(visual) {
-            return moment(visual, AppTranslator.data.dateFormat.date).format();
+            var date = moment(visual, AppTranslator.data.dateFormat.date);
+            return date.isValid() ? date.format() : null;
         },
         renderDatetime(date) {
             if (date) {
@@ -372,7 +373,8 @@ for (var i in table.columns) {
             }
         },
         transformToDatetime(visual) {
-            return moment(visual, AppTranslator.data.dateFormat.datetime).format();
+            var date = moment(visual, AppTranslator.data.dateFormat.datetime);
+            return date.isValid() ? date.format() : null;
         }
     }
 }

@@ -253,7 +253,7 @@ module.exports = {
     },
 
     generateSmartType: function(main, column) {
-
+        
         if (column.data_type === "tinyint" && this.regexTestExactInsensitive(main.props.columnNamePatterns.active, column.column_name)) {
             return "active";
         }
@@ -272,6 +272,14 @@ module.exports = {
 
         else if (column.javaType === "String" && this.regexTestExactInsensitive(main.props.columnNamePatterns.url, column.column_name)) {
             return "url";
+        }
+
+        else if (column.javaType === "Date" && this.regexTestExactInsensitive(main.props.columnNamePatterns.createTime, column.column_name)) {
+            return "createTime";
+        }
+
+        else if (column.javaType === "Date" && this.regexTestExactInsensitive(main.props.columnNamePatterns.updateTime, column.column_name)) {
+            return "updateTime";
         }
 
         return null;

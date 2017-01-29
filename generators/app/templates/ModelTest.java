@@ -16,7 +16,7 @@ public class <%= table.className %>Test {
 
 for (var i in table.columns) { 
     var c = table.columns[i]; 
-    if (c.is_nullable === "NO" && (c.column_key != "PRI" || (c.column_key == "PRI" && c.referencedTable)) && (c.javaType === "String" || c.javaType === "Date" || c.referencedTable)) { 
+    if (c.is_nullable === "NO" && (c.column_key != "PRI" || (c.column_key == "PRI" && c.referencedTable)) && (c.javaType === "String" || c.javaType === "Date" || c.referencedTable) && c.smartType != "createTime" && c.smartType != "updateTime") { 
 %>
     @Test(expected = RespException.class)
     public void testValidateNo<%= c.propertyNameUpper %>() {

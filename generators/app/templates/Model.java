@@ -60,7 +60,7 @@ for (var i in table.NtoNcolumns) {
     public void validate(boolean updating) {<% 
 for (var i in table.columns) { 
     var c = table.columns[i]; 
-    if (c.is_nullable === "NO" && (c.javaType === "String" || c.javaType === "Date")) { 
+    if (c.is_nullable === "NO" && (c.javaType === "String" || c.javaType === "Date") && c.smartType != "createTime" && c.smartType != "updateTime") { 
         if (c.smartType == "password") {
 %>
         if (!updating) {
