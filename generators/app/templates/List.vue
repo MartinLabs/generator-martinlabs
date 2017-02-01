@@ -6,6 +6,8 @@
             <router-link to="/persist<%= table.className %>" class="pull-right btn btn-success">
                 <span class="glyphicon glyphicon-plus"></span> {{ $t("app.add") }}
             </router-link>
+            <a class="btn btn-default pull-right" @click="downloadCsv()">{{ $t("app.downloadCsv") }}</a>
+
             <h1>
                 {{ $t("classes.<%= table.className %>.title") }}
             </h1>
@@ -15,10 +17,14 @@
             <div class="box">
                 <div class="box-body">
 
-                    <div class="table-responsive">
+                    <p v-if='!list || !list.length' class="text-center">
+                        {{ $t("app.noDataToShow") }}
+                    </p>
+
+                    <div v-if='list && list.length' class="table-responsive">
 
                         <div class="form-group form-inline">
-                            <adap-searchfield :store="adapStore" placeholder="Buscar"/>
+                            <adap-searchfield :store="adapStore" :placeholder="$t('app.search')"/>
                         </div>
 
                         <table class="table table-striped table-bordered table-hover">
@@ -86,9 +92,30 @@ for (var i in table.columns) {
 
                         <adap-pagination :store="adapStore"></adap-pagination>
 
-                    </div>
+                        <hr/>
+                        
+                        <div class="row">
+<%
+for (var i in table.columns) { 
+    var c = table.columns[i];
+    if (c.javaType === "Date") {
+        for (var j in table.columns) {
+            var c2 = table.columns[j];
+            if (["Double", "double", "Long", "long"].indexOf(c2.javaType) > -1 && !c2.referencedTable && c2.column_key != "PRI") { 
+%>
+                            <div class="col-sm-6">
+                                <h3>{{ $t("classes.<%= table.className %>.columns.<%= c2.propertyName %>") }} x {{ $t("classes.<%= table.className %>.columns.<%= c.propertyName %>") }}</h3>
+                                <line-chart :list="list" colXName="<%= c.propertyName %>" colYName="<%= c2.propertyName %>" :height="150"/>
+                            </div>
+<%
+            }
+        }
+    }
+}
+%>
+                        </div>
 
-                    
+                    </div>
 
                 </div>
             </div>
@@ -132,18 +159,24 @@ for (var j in table.columns) {
 </template>
 
 <script>
-import Default from './Default.vue';
 import moment from "moment";
+import downloadCsv from '../util/downloadCsv.js';
+
 import AppResource from '../service/AppResource';
 import AppBus from '../service/AppBus';
-import AdapOrderby from '../adap-table/orderby.vue';
-import AdapPagination from '../adap-table/pagination.vue';
-import AdapSearchfield from '../adap-table/searchfield.vue';
-import AdapStore from '../adap-table/Store.js';
+import AppTranslator  from '../service/AppTranslator';
+
+import Default from './fragment/Default.vue';
+import AdapOrderby from './fragment/adap-table/orderby.vue';
+import AdapPagination from './fragment/adap-table/pagination.vue';
+import AdapSearchfield from './fragment/adap-table/searchfield.vue';
+import AdapStore from './fragment/adap-table/Store.js';
+import LineChart from './fragment/LineChart.vue';
+
 
 export default {
     name: "List<%= table.className %>",
-    components: { Default, AdapOrderby, AdapPagination, AdapSearchfield },
+    components: { Default, AdapOrderby, AdapPagination, AdapSearchfield, LineChart },
     data() {
         return {
             list: [], <%
@@ -179,6 +212,12 @@ for (var k in table.primaryColumns) {
     }
 }
                 %>`);
+        },
+        downloadCsv() {
+            downloadCsv("<%= table.classLowerCamel %>.csv",
+                this.list,
+                AppTranslator.data.classes.<%= table.className %>.columns);
+
         }<%
 if (table.deactivableColumn) { %>,
         openRemoveDialog(item) {

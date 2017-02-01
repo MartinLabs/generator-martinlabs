@@ -60,15 +60,20 @@ for (var i in table.NtoNcolumns) {
     public void validate(boolean updating) {<% 
 for (var i in table.columns) { 
     var c = table.columns[i]; 
-    if (c.is_nullable === "NO" && (c.javaType === "String" || c.javaType === "Date") && c.smartType != "createTime" && c.smartType != "updateTime") { 
+    if (c.is_nullable === "NO") { 
         if (c.smartType == "password") {
 %>
         if (!updating) {
-            if (get<%= c.propertyNameUpper %>() == null) {
+            if (get<%= c.propertyNameUpper %>() == null || get<%= c.propertyNameUpper %>().isEmpty()) {
                 throw new RespException(<%= c.ordinal_position %>,  LanguageHolder.instance.cannotBeNull("<%= c.propertyNatural %>"));
             }
         }<% 
-        } else {
+        } else if (c.javaType === "String") {
+%>
+        if (get<%= c.propertyNameUpper %>() == null || get<%= c.propertyNameUpper %>().isEmpty()) {
+            throw new RespException(<%= c.ordinal_position %>,  LanguageHolder.instance.cannotBeNull("<%= c.propertyNatural %>"));
+        }<% 
+        } else if (c.javaType === "Date" && c.smartType != "createTime" && c.smartType != "updateTime") {
 %>
         if (get<%= c.propertyNameUpper %>() == null) {
             throw new RespException(<%= c.ordinal_position %>,  LanguageHolder.instance.cannotBeNull("<%= c.propertyNatural %>"));

@@ -12,20 +12,10 @@ export default {
         "remove": "Remover",
         "cancel": "Cancelar",
         "passwordMustHaveAtleast6Chars": "A senha deve conter pelo menos 6 caracteres",
-        "onlyIfWantChangePassword": "Preencha este campo somente se quiser alterar a senha"
-    },
-    
-    "dataTable": {
-        "count": "Mostrando de {from} à {to} de {count} resultados|{count} resultados|Um resultado",
-        "filter": "Filtrar Resultados:",
-        "filterPlaceholder": "Buscar",
-        "limit": "Resultados:",
-        "noResults": "Nenhum Resultado",
-        "page": "Página:",
-        "filterBy": "Filtrar por {column}",
-        "loading": "Carregando...",
-        "defaultOption": "Selecione {column}"
-
+        "onlyIfWantChangePassword": "Preencha este campo somente se quiser alterar a senha",
+        "noDataToShow": "Nenhum dado para apresentar",
+        "downloadCsv": "Baixar CSV",
+        "search": "Buscar"
     },
     
     "dateFormat": {

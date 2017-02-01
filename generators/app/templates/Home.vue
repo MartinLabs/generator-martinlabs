@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import Default from './Default.vue';
+import Default from './fragment/Default.vue';
 
 export default {
     name: "Home",

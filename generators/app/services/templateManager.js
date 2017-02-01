@@ -122,6 +122,10 @@ module.exports = {
             main.destinationPath("src/main/webapp/src/" + main.props.modulename + "/js/service/AppTranslator.js"));
 
         main.fs.copy(
+            main.templatePath('AppFilter.js'),
+            main.destinationPath("src/main/webapp/src/" + main.props.modulename + "/js/service/AppFilter.js"));
+
+        main.fs.copy(
             main.templatePath('App.vue'),
             main.destinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/App.vue"));
 
@@ -131,19 +135,28 @@ module.exports = {
 
         main.fs.copy(
             main.templatePath('pagination.vue'),
-            main.destinationPath("src/main/webapp/src/" + main.props.modulename + "/js/adap-table/pagination.vue"));
+            main.destinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/adap-table/pagination.vue"));
 
         main.fs.copy(
             main.templatePath('orderby.vue'),
-            main.destinationPath("src/main/webapp/src/" + main.props.modulename + "/js/adap-table/orderby.vue"));
+            main.destinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/adap-table/orderby.vue"));
 
         main.fs.copy(
             main.templatePath('searchfield.vue'),
-            main.destinationPath("src/main/webapp/src/" + main.props.modulename + "/js/adap-table/searchfield.vue"));
+            main.destinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/adap-table/searchfield.vue"));
 
         main.fs.copy(
             main.templatePath('Store.js'),
-            main.destinationPath("src/main/webapp/src/" + main.props.modulename + "/js/adap-table/Store.js"));
+            main.destinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/adap-table/Store.js"));
+
+        main.fs.copy(
+            main.templatePath('LineChart.vue'),
+            main.destinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/LineChart.vue"));
+
+        main.fs.copyTpl(
+            main.templatePath('Default.vue'),
+            main.destinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/Default.vue"),
+            main.props);
 
         main.fs.copyTpl(
             main.templatePath('AppResource.js'),
@@ -155,10 +168,9 @@ module.exports = {
             main.destinationPath("src/main/webapp/src/" + main.props.modulename + "/js/service/AppRouter.js"),
             main.props);
 
-        main.fs.copyTpl(
-            main.templatePath('Default.vue'),
-            main.destinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/Default.vue"),
-            main.props);
+        main.fs.copy(
+            main.templatePath('downloadCsv.js'),
+            main.destinationPath("src/main/webapp/src/" + main.props.modulename + "/js/util/downloadCsv.js"));
 
         main.fs.copy(
             main.templatePath('Gruntfile.js'),

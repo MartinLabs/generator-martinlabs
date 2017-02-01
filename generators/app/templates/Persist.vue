@@ -167,12 +167,14 @@
 </template>
 
 <script>
-import Default from './Default.vue';
 import moment from 'moment';
+import sha1 from 'js-sha1';
+
 import AppResource from '../service/AppResource';
 import AppBus from '../service/AppBus';
-import sha1 from 'js-sha1';
-var AppTranslator = require('../service/AppTranslator').default;
+import AppTranslator from '../service/AppTranslator';
+
+import Default from './fragment/Default.vue';
 
 export default {
     name: "Persist<%= table.className %>",

@@ -12,7 +12,10 @@ export default {
         "remove": "Remove",
         "cancel": "Cancel",
         "passwordMustHaveAtleast6Chars": "The password must have atleast 6 characters",
-        "onlyIfWantChangePassword": "Fill this field only if you want to change the password"
+        "onlyIfWantChangePassword": "Fill this field only if you want to change the password",
+        "noDataToShow": "No data to show",
+        "downloadCsv": "Download CSV",
+        "search": "Search"
     },
     
     "dataTable": {

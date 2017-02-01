@@ -1,13 +1,11 @@
 BUG TRIVIAL
 - erro no teste unitario se a coluna de login n for de e-mail
-- remover a opção de não ter login, pois já não deve estar funcionando o generator sem login
+- parar de usar vue-strap
 
 FEATURES
 - OUTRO BRANCH: guardar informações sobre colunas nos Models, assim podemos reutilizar e refatorar facilmente (exemplo abaixo)
 - colocar input groups do vue em outro component para que possamos trocar o estilo de todos facilmente
 - Usar @NotNull e @Nullable
-- graficos valor x hora
-- exportar csv via client
 - organizar o generator para que possamos configurar em um arquivo externo os templates que irá usar
 - perguntar se quer rodar o dados.sql
 - rodar mvn
