@@ -14,6 +14,8 @@ Vue.http.interceptors.push((request, next) => {
 
     next((resp) => {
         if (resp.body.code === 33) {
+            simpleStorage.deleteKey("token<%= modulenameUpper %>");
+            simpleStorage.set("beforeLoginIntention", location.href);
             AppRouter.push("/login");
         }
     });

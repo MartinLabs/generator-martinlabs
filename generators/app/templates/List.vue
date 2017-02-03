@@ -3,10 +3,13 @@
     <default>
         
         <section class="content-header">
-            <router-link to="/persist<%= table.className %>" class="pull-right btn btn-success">
-                <span class="glyphicon glyphicon-plus"></span> {{ $t("app.add") }}
-            </router-link>
-            <a class="btn btn-default pull-right" @click="downloadCsv()">{{ $t("app.downloadCsv") }}</a>
+
+            <div class="pull-right">
+                <a class="btn btn-default" @click="downloadCsv()">{{ $t("app.downloadCsv") }}</a>
+                <router-link to="/persist<%= table.className %>" class="btn btn-success">
+                    <span class="glyphicon glyphicon-plus"></span> {{ $t("app.add") }}
+                </router-link>
+            </div>
 
             <h1>
                 {{ $t("classes.<%= table.className %>.title") }}
@@ -17,17 +20,18 @@
             <div class="box">
                 <div class="box-body">
 
-                    <p v-if='!list || !list.length' class="text-center">
-                        {{ $t("app.noDataToShow") }}
-                    </p>
-
-                    <div v-if='list && list.length' class="table-responsive">
+                    <div class="table-responsive">
 
                         <div class="form-group form-inline">
                             <adap-searchfield :store="adapStore" :placeholder="$t('app.search')"/>
                         </div>
 
-                        <table class="table table-striped table-bordered table-hover">
+                        <p v-if='!list || !list.length' class="text-center">
+                            {{ $t("app.noDataToShow") }}
+                        </p>
+
+                        <table v-if='list && list.length'  class="table table-striped table-bordered table-hover">
+
                             <thead>
                                 <tr>
                                     <th></th>
@@ -49,7 +53,7 @@ for (var i in table.columns) {
                                             <a @click="openPersist(item)" class="btn btn-default"><i class="glyphicon glyphicon-pencil"></i></a><%
 if (table.deactivableColumn) {
 %>
-                                            <a @click="openRemoveDialog(item)" class="btn btn-default"><i class="glyphicon glyphicon-remove"></i></a><%
+                                            <a @click="openRemoveModal(item)" class="btn btn-default"><i class="glyphicon glyphicon-remove"></i></a><%
 }
 %>
                                         </div>
@@ -94,7 +98,7 @@ for (var i in table.columns) {
 
                         <hr/>
                         
-                        <div class="row">
+                        <div v-if='list && list.length' class="row">
 <%
 for (var i in table.columns) { 
     var c = table.columns[i];
@@ -121,38 +125,34 @@ for (var i in table.columns) {
             </div>
         </section>
 <% if (table.deactivableColumn) { %>        
-        <div class="modal" role="dialog" v-if="<%= table.classLowerCamel %>ToRemove != null" style="display: block">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" @click="<%= table.classLowerCamel %>ToRemove = null"><span>&times;</span></button>
-                        <h4 class="modal-title">
-                            {{ $t("app.confirmRemove") }}
-                        </h4>
-                    </div>
-                    <div slot="modal-body" class="modal-body">
-                        
-                        {{ 
-                            ""
+        <modal v-if="<%= table.classLowerCamel %>ToRemove != null">
+            <div class="modal-header">
+                <button type="button" class="close" @click="<%= table.classLowerCamel %>ToRemove = null"><span>&times;</span></button>
+                <h4 class="modal-title">
+                    {{ $t("app.confirmRemove") }}
+                </h4>
+            </div>
+            <div class="modal-body">
+                
+                {{ 
+                    ""
 <% 
 for (var j in table.columns) { 
-    var r = table.columns[j]; 
-    if (r.smartType != "active" && r.smartType != "password") {
+var r = table.columns[j]; 
+if (r.smartType != "active" && r.smartType != "password") {
 %>
-                            + (<%= table.classLowerCamel %>ToRemove.<%= r.propertyName %> === undefined ? "" : <%= table.classLowerCamel %>ToRemove.<%= r.propertyName %> + "; ")<% 
-    }
+                    + (<%= table.classLowerCamel %>ToRemove.<%= r.propertyName %> === undefined ? "" : <%= table.classLowerCamel %>ToRemove.<%= r.propertyName %> + "; ")<% 
+}
 } 
 %>
-                        }}
-                        
-                    </div>
-                    <div slot="modal-footer" class="modal-footer">
-                        <button type="button" class="btn btn-default" @click="<%= table.classLowerCamel %>ToRemove = null">{{ $t("app.cancel") }}</button>
-                        <button type="button" class="btn btn-danger" @click="removePrincipal()">{{ $t("app.remove") }}</button>
-                    </div>
-                </div>
+                }}
+                
             </div>
-        </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" @click="<%= table.classLowerCamel %>ToRemove = null">{{ $t("app.cancel") }}</button>
+                <button type="button" class="btn btn-danger" @click="removePrincipal()">{{ $t("app.remove") }}</button>
+            </div>
+        </modal>
 <% } %>
     </default>
 
@@ -172,11 +172,12 @@ import AdapPagination from './fragment/adap-table/pagination.vue';
 import AdapSearchfield from './fragment/adap-table/searchfield.vue';
 import AdapStore from './fragment/adap-table/Store.js';
 import LineChart from './fragment/LineChart.vue';
+import Modal from './fragment/Modal.vue';
 
 
 export default {
     name: "List<%= table.className %>",
-    components: { Default, AdapOrderby, AdapPagination, AdapSearchfield, LineChart },
+    components: { Default, AdapOrderby, AdapPagination, AdapSearchfield, LineChart, Modal },
     data() {
         return {
             list: [], <%
@@ -220,7 +221,7 @@ for (var k in table.primaryColumns) {
 
         }<%
 if (table.deactivableColumn) { %>,
-        openRemoveDialog(item) {
+        openRemoveModal(item) {
             this.<%= table.classLowerCamel %>ToRemove = item;
         },
         removePrincipal() {

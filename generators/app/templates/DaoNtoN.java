@@ -61,17 +61,7 @@ var other = table.columns[1];
 %>
     public List<<%= c.referencedTable.className %>> list<%= c.referencedTable.className %>Of<%= other.referencedTable.className %>(long <%= other.propertyName %>){
         //TODO: review generated method
-        return selectList("SELECT<%
-var colocarVirgula = false;
-for (var i in c.referencedTable.columns) { 
-    var rc = c.referencedTable.columns[i]; 
-    if (rc.smartType != "password") {
-%><%= colocarVirgula ? ',' : '' %> "
-            + "<%= c.referencedTable.name %>.<%= rc.column_name %><% 
-        colocarVirgula = true;
-    }
-} 
-%> "
+        return selectList("SELECT * "
             + "FROM <%= c.referencedTable.name %> "
             + "INNER JOIN <%= table.name %> ON <%= c.referencedTable.name %>.<%= c.referencedTable.primaryColumns[0].column_name %> = <%= table.name %>.<%= c.column_name %> "
             + "WHERE <%= table.name %>.<%= other.column_name %> = ? "<%
@@ -80,20 +70,8 @@ if (c.referencedTable.deactivableColumn) {
             + "AND <%= c.referencedTable.name %>.<%= c.referencedTable.deactivableColumn.column_name %> = 1 "<%
 }
 %>, 
-        rs -> {
-            <%= c.referencedTable.className %> <%= c.referencedTable.classLowerCamel %> = new <%= c.referencedTable.className %>();
-<% 
-for (var i in c.referencedTable.columns) { 
-    var ci = c.referencedTable.columns[i]; 
-    if (ci.smartType != "password") {
-%>
-            <%= c.referencedTable.classLowerCamel %>.set<%= ci.propertyNameUpper %>(rs.<%= ci.resultSetGetter %>("<%= ci.column_name %>"));<% 
-    }
-} 
-%>
-            
-            return <%= c.referencedTable.classLowerCamel %>;
-        }, <%= other.propertyName %>);
+            rs -> <%= c.referencedTable.className %>.buildAll(rs), 
+            <%= other.propertyName %>);
     } 
 <% 
 c = table.columns[1];
@@ -101,17 +79,7 @@ other = table.columns[0];
 %>
     public List<<%= c.referencedTable.className %>> list<%= c.referencedTable.className %>Of<%= other.referencedTable.className %>(long <%= other.propertyName %>){
         //TODO: review generated method
-        return selectList("SELECT<%
-var colocarVirgula = false;
-for (var i in c.referencedTable.columns) { 
-    var rc = c.referencedTable.columns[i]; 
-    if (rc.smartType != "password") {
-%><%= colocarVirgula ? ',' : '' %> "
-            + "<%= c.referencedTable.name %>.<%= rc.column_name %><% 
-        colocarVirgula = true;
-    }
-} 
-%> "
+        return selectList("SELECT * "
             + "FROM <%= c.referencedTable.name %> "
             + "INNER JOIN <%= table.name %> ON <%= c.referencedTable.name %>.<%= c.referencedTable.primaryColumns[0].column_name %> = <%= table.name %>.<%= c.column_name %> "
             + "WHERE <%= table.name %>.<%= other.column_name %> = ? "<%
@@ -120,20 +88,8 @@ if (c.referencedTable.deactivableColumn) {
             + "AND <%= c.referencedTable.name %>.<%= c.referencedTable.deactivableColumn.column_name %> = 1 "<%
 }
 %>, 
-        rs -> {
-            <%= c.referencedTable.className %> <%= c.referencedTable.classLowerCamel %> = new <%= c.referencedTable.className %>();
-<% 
-for (var i in c.referencedTable.columns) { 
-    var ci = c.referencedTable.columns[i]; 
-    if (ci.smartType != "password") {
-%>
-            <%= c.referencedTable.classLowerCamel %>.set<%= ci.propertyNameUpper %>(rs.<%= ci.resultSetGetter %>("<%= ci.column_name %>"));<% 
-    }
-} 
-%>
-            
-            return <%= c.referencedTable.classLowerCamel %>;
-        }, <%= other.propertyName %>);
+            rs -> <%= c.referencedTable.className %>.buildAll(rs), 
+            <%= other.propertyName %>);
     }
 
 }

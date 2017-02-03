@@ -1,8 +1,10 @@
 package <%= props.modelPackage %>;
 
 import br.com.martinlabs.commons.LanguageHolder;
+import br.com.martinlabs.commons.ResultSetWrapper;
 import br.com.martinlabs.commons.Validator;
 import br.com.martinlabs.commons.exceptions.RespException;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
@@ -118,6 +120,24 @@ for (var i in table.columns) {
     }
 } 
 %>    
+    }
+
+    public static <%= table.className %> buildAll(ResultSetWrapper rs, String alias) throws SQLException {
+        <%= table.className %> <%= table.classLowerCamel %> = new <%= table.className %>();
+<% 
+for (var i in table.columns) { 
+    var c = table.columns[i]; 
+    if (c.smartType != "password") {
+%>
+        <%= table.classLowerCamel %>.set<%= c.propertyNameUpper %>(rs.<%= c.resultSetGetter %>(alias, "<%= c.column_name %>"));<% 
+    }
+} 
+%>
+        return <%= table.classLowerCamel %>;
+    }
+    
+    public static <%= table.className %> buildAll(ResultSetWrapper rs) throws SQLException {
+        return buildAll(rs, "<%= table.name %>");
     }
     
 <% 

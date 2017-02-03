@@ -20,6 +20,11 @@ import AppBus from '../service/AppBus';
 
 export default {
     name: "Login", 
+    mounted() {
+        if (simpleStorage.get("token<%= modulenameUpper %>")) {
+            this.$router.push("/home");
+        }
+    },
     methods: {
         login(e) {
             e.preventDefault();
@@ -31,7 +36,15 @@ export default {
                 if (resp.body.success) {
                     simpleStorage.set("token<%= modulenameUpper %>", resp.body.data.token);
                     simpleStorage.set("id<%= modulenameUpper %>", resp.body.data.id);
-                    this.$router.push("/home");
+                                        
+                    var beforeLoginIntention = simpleStorage.get("beforeLoginIntention") || null;
+                    if (beforeLoginIntention) {
+                        simpleStorage.deleteKey("beforeLoginIntention");
+                        location.href = beforeLoginIntention;
+                    } else {
+                        this.$router.push("/home");
+                    }
+
                 } else {
                     AppBus.$emit("alert", "danger", resp.body.message, 3000);
                 }

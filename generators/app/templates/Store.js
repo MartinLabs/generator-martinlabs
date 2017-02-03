@@ -30,7 +30,7 @@ class AdapStore {
     setCount(count) {
         this.count = count;
         if (this.pageSize) {
-            this.pageCount = Math.floor(this.count / this.pageSize);
+            this.pageCount = Math.floor((this.count-1) / this.pageSize);
         }
     }
     
@@ -43,7 +43,7 @@ class AdapStore {
         this.pageSize = pageSize;
         if (this.pageSize) {
             this.currentPage = 0;
-            this.pageCount = Math.floor(this.count / this.pageSize);
+            this.pageCount = Math.floor((this.count-1) / this.pageSize);
             this.search();
         }
     }
@@ -84,18 +84,18 @@ class AdapStore {
     }
     
     debounce(func, wait, immediate) {
-	var timeout;
-	return function() {
-		var context = this, args = arguments;
-		var later = function() {
-			timeout = null;
-			if (!immediate) func.apply(context, args);
-		};
-		var callNow = immediate && !timeout;
-		clearTimeout(timeout);
-		timeout = setTimeout(later, wait);
-		if (callNow) func.apply(context, args);
-	};
+    var timeout;
+    return function() {
+        var context = this, args = arguments;
+        var later = function() {
+            timeout = null;
+            if (!immediate) func.apply(context, args);
+        };
+        var callNow = immediate && !timeout;
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+        if (callNow) func.apply(context, args);
+    };
     }
     
 }

@@ -38,8 +38,7 @@ module.exports = {
                     "vue-i18n",
                     "vue-moment",
                     "vue-resource",
-                    "vue-router",
-                    "vue-strap"
+                    "vue-router"
                 ], 
                 { save: true },
                 function() {

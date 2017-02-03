@@ -24,39 +24,18 @@ for (var k in table.primaryColumns) {
 } 
 %>){
         //TODO: review generated method
-        return selectOne("SELECT<%             
-var colocarVirgula = false;
-for (var i in table.columns) { 
-    var c = table.columns[i]; 
-    if (c.smartType != 'password') {
-%><%= colocarVirgula ? ',' : '' %> "
-            + "<%= c.column_name %><% 
-        colocarVirgula = true;
-    }
-} 
-%> "
+        return selectOne("SELECT * "
             + "FROM <%= table.name %> "
             + "WHERE <%= table.primaryColumns[0].column_name %> = ? "<% 
 for (var j = 1; j < table.primaryColumns.length; j++) { 
 %>
             + "AND <%= table.primaryColumns[j].column_name %> = ? "<%
 }
-%>, 
-        rs -> {
-            <%= table.className %> <%= table.classLowerCamel %> = new <%= table.className %>();
-<% 
-for (var i in table.columns) { 
-    var c = table.columns[i]; 
-    if (c.smartType != "password") {
-%>
-            <%= table.classLowerCamel %>.set<%= c.propertyNameUpper %>(rs.<%= c.resultSetGetter %>("<%= c.column_name %>"));<% 
-    }
-} 
-%>
-            return <%= table.classLowerCamel %>;
-        }<% 
+%>,
+            rs -> <%= table.className %>.buildAll(rs)<% 
 for (var k in table.primaryColumns) {
-        %>, <%= table.primaryColumns[k].propertyName %><%
+        %>, 
+            <%= table.primaryColumns[k].propertyName %><%
 } 
         %>);
     }
@@ -65,36 +44,13 @@ if (table.isReferenced) {
 %>
     public List<<%= table.className %>> list(){
         //TODO: review generated method
-        return selectList("SELECT<% 
-    var colocarVirgula = false;
-    for (var i in table.columns) { 
-        var c = table.columns[i]; 
-        if (c.smartType != 'password') {
-%><%= colocarVirgula ? ',' : '' %> "
-            + "<%= c.column_name %><% 
-            colocarVirgula = true;
-        }
-    } 
-%> "
+        return selectList("SELECT * "
             + "FROM <%= table.name %> "<%
     if (table.deactivableColumn) { %>
             + "WHERE <%= table.deactivableColumn.column_name %> = 1 "<%
     }
-%>, 
-        rs -> {
-            <%= table.className %> <%= table.classLowerCamel %> = new <%= table.className %>();
-<% 
-    for (var i in table.columns) { 
-        var c = table.columns[i]; 
-        if (c.smartType != "password") {
-%>
-            <%= table.classLowerCamel %>.set<%= c.propertyNameUpper %>(rs.<%= c.resultSetGetter %>("<%= c.column_name %>"));<% 
-        }
-    } 
-%>
-            
-            return <%= table.classLowerCamel %>;
-        });
+%>,
+            rs -> <%= table.className %>.buildAll(rs));
     }
 <% 
 } 
@@ -140,35 +96,13 @@ for (var i in table.columns) {
 
         params.add(page * limit);
         params.add(limit);
-        return selectList("SELECT<% 
-var colocarVirgula = false;
-for (var i in table.columns) { 
-    var c = table.columns[i]; 
-    if (c.smartType != 'password') {
-%><%= colocarVirgula ? ',' : '' %> "
-            + "<%= c.column_name %><% 
-        colocarVirgula = true;
-    }
-} 
-%> "
+        return selectList("SELECT * "
             + "FROM <%= table.name %> "
             + where
             + (orderColumn != null ? "ORDER BY " + orderColumn + " " + (asc ? "ASC " : "DESC ") : "")
-            + "LIMIT ?, ? ", 
-        rs -> {
-            <%= table.className %> <%= table.classLowerCamel %> = new <%= table.className %>();
-<% 
-for (var i in table.columns) { 
-    var c = table.columns[i]; 
-    if (c.smartType != "password") {
-%>
-            <%= table.classLowerCamel %>.set<%= c.propertyNameUpper %>(rs.<%= c.resultSetGetter %>("<%= c.column_name %>"));<% 
-    }
-} 
-%>
-            
-            return <%= table.classLowerCamel %>;
-        }, params.toArray());
+            + "LIMIT ?, ? ",
+            rs -> <%= table.className %>.buildAll(rs), 
+            params.toArray());
     }
     
     public Integer count(){
