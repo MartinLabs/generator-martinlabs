@@ -109,6 +109,30 @@ for (var i in table.columns) {
             throw new RespException(<%= c.ordinal_position %>, LanguageHolder.instance.isNotAValidEmail("<%= c.propertyNatural %>"));
         }<%
             }
+        } else if (c.smartType === "cpf") {
+            if (c.is_nullable === "NO") {
+%>
+        if (!Validator.isCPF(get<%= c.propertyNameUpper%>())) {
+            throw new RespException(<%= c.ordinal_position %>, LanguageHolder.instance.isNotAValidCPF("<%= c.propertyNatural %>"));
+        }<%
+            } else {
+%>
+        if (get<%= c.propertyNameUpper %>() != null && !Validator.isCPF(get<%= c.propertyNameUpper%>())) {
+            throw new RespException(<%= c.ordinal_position %>, LanguageHolder.instance.isNotAValidCPF("<%= c.propertyNatural %>"));
+        }<%
+            }
+        } else if (c.smartType === "cnpj") {
+            if (c.is_nullable === "NO") {
+%>
+        if (!Validator.isCNPJ(get<%= c.propertyNameUpper%>())) {
+            throw new RespException(<%= c.ordinal_position %>, LanguageHolder.instance.isNotAValidCNPJ("<%= c.propertyNatural %>"));
+        }<%
+            } else {
+%>
+        if (get<%= c.propertyNameUpper %>() != null && !Validator.isCNPJ(get<%= c.propertyNameUpper%>())) {
+            throw new RespException(<%= c.ordinal_position %>, LanguageHolder.instance.isNotAValidCNPJ("<%= c.propertyNatural %>"));
+        }<%
+            }
         }
     }
 

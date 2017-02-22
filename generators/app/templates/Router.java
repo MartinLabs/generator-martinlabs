@@ -121,7 +121,7 @@ if (table.primaryColumns.length == 1) {
         if (table.deactivableColumn) {
 %>
     @DELETE
-    @Path("/Principal/{id}")
+    @Path("/<%= table.className %>/{id}")
     public OpResp remove<%= table.className %>(<% 
             if (table.primaryColumns.length == 1) {
 %>
@@ -136,7 +136,7 @@ if (table.primaryColumns.length == 1) {
             @Context HttpServletRequest req) {
         //TODO: review generated method
         return pipe.handle(req, (con, token) -> {
-            new PrincipalProcess(con).remove(id, token);
+            new <%= table.className %>Process(con).remove(id, token);
             return null;
         });
     }

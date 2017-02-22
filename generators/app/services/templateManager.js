@@ -163,6 +163,11 @@ module.exports = {
             main.props);
 
         main.fs.copyTpl(
+            main.templatePath('Login.vue'),
+            main.destinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/Login.vue"),
+            main.props);
+
+        main.fs.copyTpl(
             main.templatePath('AppResource.js'),
             main.destinationPath("src/main/webapp/src/" + main.props.modulename + "/js/service/AppResource.js"),
             main.props);
@@ -199,13 +204,6 @@ module.exports = {
                     main.destinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/Persist"+table.className+".vue"),
                     params);
             }
-        }
-
-        if (main.props.loginsys) {
-            main.fs.copyTpl(
-                main.templatePath('Login.vue'),
-                main.destinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/Login.vue"),
-                main.props);
         }
     },
 

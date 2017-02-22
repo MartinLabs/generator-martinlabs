@@ -77,6 +77,8 @@ module.exports = {
 
                 if (col.smartType === "active") {
                     table.deactivableColumn = col;
+                } else if (col.smartType === "name" || col.smartType === "title") {
+                    table.nameColumn = col;
                 }
 
                 //putting column information on logintable
@@ -222,6 +224,58 @@ module.exports = {
             return "\"" + lorem.url() + "\"";
         }
 
+        if (column.smartType === "name") {
+            return "\"" + lorem.fullname() + "\"";
+        }
+
+        if (column.smartType === "title") {
+            return "\"" + lorem.title() + "\"";
+        }
+
+        if (column.smartType === "cpf") {
+            return "\"" + lorem.cpf() + "\"";
+        }
+
+        if (column.smartType === "cnpj") {
+            return "\"" + lorem.cnpj() + "\"";
+        }
+
+        if (column.smartType === "rg") {
+            return "\"" + lorem.rg() + "\"";
+        }
+
+        if (column.smartType === "phone") {
+            return "\"" + lorem.phone() + "\"";
+        }
+
+        if (column.smartType === "street") {
+            return "\"" + lorem.street() + "\"";
+        }
+
+        if (column.smartType === "zipcode") {
+            return "\"" + lorem.zipcode() + "\"";
+        }
+
+        if (column.smartType === "cep") {
+            return "\"" + lorem.cep() + "\"";
+        }
+
+        if (column.smartType === "city") {
+            return "\"" + lorem(1) + "\"";
+        }
+
+        if (column.smartType === "uf") {
+            return "\"" + lorem.uf() + "\"";
+        }
+
+        if (column.smartType === "latitude") {
+            return "\"" + lorem.latitude() + "\"";
+        }
+
+        if (column.smartType === "longitude") {
+            return "\"" + lorem.longitude() + "\"";
+        }
+
         if (["char", "varchar", "text"].indexOf(column.data_type) > -1) {
             return "\"" + lorem(Math.min(2000, column.character_maximum_length), index === 0) + "\"";
         }
@@ -253,33 +307,108 @@ module.exports = {
     },
 
     generateSmartType: function(main, column) {
+
+        var columnNamePatterns = {
+            email: "\\w*email\\w*",
+            password: "\\w*(password|senha)\\w*",
+            imageUrl: "\\w*url\\w*(image|photo|foto)\\w*|\\w*(image|photo|foto)\\w*url\\w*",
+            createTime: "\\w*(creat|cria)\\w*(date|data|time|hora)\\w*|\\w*(date|data|time|hora)\\w*(creat|cria)\\w*",
+            updateTime: "\\w*(updat|alter)\\w*(date|data|time|hora)\\w*|\\w*(date|data|time|hora)\\w*(updat|alter)\\w*",
+            url: "\\w*url\\w*",
+            active: "(active|ativo)",
+            name: "(name|nome)",
+            title: "(title|titulo)",
+            cpf: "cpf",
+            cnpj: "cnpj",
+            rg: "rg",
+            phone: "(telefone|\\w*phone\\w*|celular)",
+            street: "(street|rua|logradouro)",
+            zipcode: "zipcode",
+            cep: "cep",
+            city: "(city|cidade)",
+            uf: "uf",
+            latitude: "latitude",
+            longitude: "longitude"
+        };
         
-        if (column.data_type === "tinyint" && this.regexTestExactInsensitive(main.props.columnNamePatterns.active, column.column_name)) {
+        if (column.data_type === "tinyint" && this.regexTestExactInsensitive(columnNamePatterns.active, column.column_name)) {
             return "active";
         }
 
-        else if (column.javaType === "String" && this.regexTestExactInsensitive(main.props.columnNamePatterns.email, column.column_name)) {
+        else if (column.javaType === "String" && this.regexTestExactInsensitive(columnNamePatterns.email, column.column_name)) {
             return "email";
         }
 
-        else if (column.javaType === "String" && this.regexTestExactInsensitive(main.props.columnNamePatterns.password, column.column_name)) {
+        else if (column.javaType === "String" && this.regexTestExactInsensitive(columnNamePatterns.password, column.column_name)) {
             return "password";
         }
 
-        else if (column.javaType === "String" && this.regexTestExactInsensitive(main.props.columnNamePatterns.imageUrl, column.column_name)) {
+        else if (column.javaType === "String" && this.regexTestExactInsensitive(columnNamePatterns.imageUrl, column.column_name)) {
             return "imageUrl";
         }
 
-        else if (column.javaType === "String" && this.regexTestExactInsensitive(main.props.columnNamePatterns.url, column.column_name)) {
+        else if (column.javaType === "String" && this.regexTestExactInsensitive(columnNamePatterns.url, column.column_name)) {
             return "url";
         }
 
-        else if (column.javaType === "Date" && this.regexTestExactInsensitive(main.props.columnNamePatterns.createTime, column.column_name)) {
+        else if (column.javaType === "Date" && this.regexTestExactInsensitive(columnNamePatterns.createTime, column.column_name)) {
             return "createTime";
         }
 
-        else if (column.javaType === "Date" && this.regexTestExactInsensitive(main.props.columnNamePatterns.updateTime, column.column_name)) {
+        else if (column.javaType === "Date" && this.regexTestExactInsensitive(columnNamePatterns.updateTime, column.column_name)) {
             return "updateTime";
+        }
+
+        else if (column.javaType === "String" && this.regexTestExactInsensitive(columnNamePatterns.name, column.column_name)) {
+            return "name";
+        }
+
+        else if (column.javaType === "String" && this.regexTestExactInsensitive(columnNamePatterns.title, column.column_name)) {
+            return "title";
+        }
+
+        else if (column.javaType === "String" && this.regexTestExactInsensitive(columnNamePatterns.cpf, column.column_name)) {
+            return "cpf";
+        }
+
+        else if (column.javaType === "String" && this.regexTestExactInsensitive(columnNamePatterns.cnpj, column.column_name)) {
+            return "cnpj";
+        }
+
+        else if (column.javaType === "String" && this.regexTestExactInsensitive(columnNamePatterns.rg, column.column_name)) {
+            return "rg";
+        }
+
+        else if (column.javaType === "String" && this.regexTestExactInsensitive(columnNamePatterns.phone, column.column_name)) {
+            return "phone";
+        }
+
+        else if (column.javaType === "String" && this.regexTestExactInsensitive(columnNamePatterns.street, column.column_name)) {
+            return "street";
+        }
+
+        else if (column.javaType === "String" && this.regexTestExactInsensitive(columnNamePatterns.zipcode, column.column_name)) {
+            return "zipcode";
+        }
+
+        else if (column.javaType === "String" && this.regexTestExactInsensitive(columnNamePatterns.cep, column.column_name)) {
+            return "cep";
+        }
+
+        else if (column.javaType === "String" && this.regexTestExactInsensitive(columnNamePatterns.city, column.column_name)) {
+            return "city";
+        }
+
+        else if (column.javaType === "String" && this.regexTestExactInsensitive(columnNamePatterns.uf, column.column_name)) {
+            return "uf";
+        }
+
+        else if (["Double", "double"].indexOf(column.javaType) > -1 && this.regexTestExactInsensitive(columnNamePatterns.latitude, column.column_name)) {
+            return "latitude";
+        }
+
+        else if (["Double", "double"].indexOf(column.javaType) > -1 && this.regexTestExactInsensitive(columnNamePatterns.longitude, column.column_name)) {
+            return "longitude";
         }
 
         return null;

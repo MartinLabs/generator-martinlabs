@@ -21,10 +21,6 @@ module.exports = yeoman.generators.Base.extend({
         promptManager.initial(this);
     },
 
-    promptColumnNamePatters: function () {
-        promptManager.columnNamePatters(this);
-    },
-
     saveConfig: function() {
         this.config.set("props", this.props);
         this.config.save();

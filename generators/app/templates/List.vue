@@ -65,10 +65,10 @@ for (var i in table.columns) {
         if (!c.referencedTable) {
             if (c.data_type === "date") { 
 %>
-                                    <td>{{ item.<%= c.propertyName %> | moment($t("dateFormat.date")) }}</td><% 
+                                    <td><span v-if="item.<%= c.propertyName %>">{{ item.<%= c.propertyName %> | moment($t("dateFormat.date")) }}</span></td><% 
             } else if (["time", "datetime", "timestamp"].indexOf(c.data_type) > -1) { 
 %>
-                                    <td>{{ item.<%= c.propertyName %> | moment($t("dateFormat.datetime")) }}</td><% 
+                                    <td><span v-if="item.<%= c.propertyName %>">{{ item.<%= c.propertyName %> | moment($t("dateFormat.datetime")) }}</span></td><% 
             } else if (c.javaType === "Boolean" || c.javaType === "boolean") { 
 %>
                                     <td>{{ item.<%= c.propertyName %> == null ? null : item.<%= c.propertyName %> ? $t("boolean.true") : $t("boolean.false") }}</td><% 
@@ -132,25 +132,29 @@ for (var i in table.columns) {
                     {{ $t("app.confirmRemove") }}
                 </h4>
             </div>
-            <div class="modal-body">
-                
+            <div class="modal-body"><%
+    if (table.nameColumn) { %>
+        {{ <%= table.classLowerCamel %>ToRemove.<%= table.nameColumn.propertyName %> }}<%
+    } else { 
+%>              
                 {{ 
                     ""
 <% 
-for (var j in table.columns) { 
-var r = table.columns[j]; 
-if (r.smartType != "active" && r.smartType != "password") {
+        for (var j in table.columns) { 
+            var r = table.columns[j]; 
+            if (r.smartType != "active" && r.smartType != "password") {
 %>
                     + (<%= table.classLowerCamel %>ToRemove.<%= r.propertyName %> === undefined ? "" : <%= table.classLowerCamel %>ToRemove.<%= r.propertyName %> + "; ")<% 
-}
-} 
+            }
+        } 
 %>
-                }}
-                
+                }}<% 
+    }
+%>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" @click="<%= table.classLowerCamel %>ToRemove = null">{{ $t("app.cancel") }}</button>
-                <button type="button" class="btn btn-danger" @click="removePrincipal()">{{ $t("app.remove") }}</button>
+                <button type="button" class="btn btn-danger" @click="removeItem()">{{ $t("app.remove") }}</button>
             </div>
         </modal>
 <% } %>
@@ -224,7 +228,7 @@ if (table.deactivableColumn) { %>,
         openRemoveModal(item) {
             this.<%= table.classLowerCamel %>ToRemove = item;
         },
-        removePrincipal() {
+        removeItem() {
             AppResource.<%= table.classLowerCamel %>.delete({<% 
 if (table.primaryColumns.length == 1) {
 %>

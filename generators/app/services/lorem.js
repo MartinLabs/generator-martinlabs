@@ -50,6 +50,89 @@ var urls = [
 	"http://g1.globo.com/"
 ];
 
+var firstNames = [
+	"Gil",
+	"Ricardo",
+	"Tiago",
+	"Felipe",
+	"Bruno",
+	"Dr.",
+	"Sr.",
+	"Mr.",
+	"Sra.",
+	"Bobby",
+	"Dunha",
+	"Johnny",
+	"Jack",
+	"Jessica",
+	"Fiona",
+	"Claire",
+	"Amy",
+	"Dora",
+	"Monica",
+	"Rachel"
+];
+
+var lastNames = [
+	"Bueno",
+	"Prado",
+	"Kobayashi",
+	"Campos",
+	"Gibran",
+	"Gonçalves",
+	"Lopes",
+	"Meira",
+	"Akio",
+	"Cunha",
+	"Fishermann",
+	"Bravo",
+	"Sherman",
+	"Jones",
+	"Underwood",
+	"Winehouse",
+	"Marquez",
+	"Smith",
+	"Anderson",
+	"Monteiro"
+];
+
+var placeType = [
+	"Rua",
+	"Street",
+	"Av",
+	"Ave"
+];
+
+var ufs = [
+	"AC",
+	"AL",
+	"AP",
+	"AM",
+	"BA",
+	"CE",
+	"DF",
+	"ES",
+	"GO",
+	"MA",
+	"MT",
+	"MS",
+	"MG",
+	"PR",
+	"PB",
+	"PA",
+	"PE",
+	"PI",
+	"RJ",
+	"RN",
+	"RS",
+	"RO",
+	"RR",
+	"SC",
+	"SE",
+	"SP",
+	"TO"
+];
+
 var lorem = function(maxsize, startWithLorem) {
 	if (maxsize === 1) {
 		return words[Math.floor(Math.random() * words.length)];
@@ -84,6 +167,120 @@ lorem.url = function() {
 
 lorem.unique = function(index) {
 	return words[index];
+};
+
+lorem.fullname = function() {
+	return firstNames[Math.floor(Math.random() * firstNames.length)] + " " + lastNames[Math.floor(Math.random() * lastNames.length)];
+};
+
+lorem.title = function() {
+	return words[Math.floor(Math.random() * words.length)] + " " + words[Math.floor(Math.random() * words.length)];
+};
+
+lorem.street = function() {
+	return placeType[Math.floor(Math.random() * placeType.length)] + " " + words[Math.floor(Math.random() * words.length)] + " " + words[Math.floor(Math.random() * words.length)];
+};
+
+lorem.zipcode = function() {
+	return "" + randomInt() + randomInt() + randomInt() + randomInt() + randomInt();
+};
+
+lorem.cep = function() {
+	return "" + randomInt() + randomInt() + randomInt() + randomInt() + randomInt() + "-" + randomInt() + randomInt() + randomInt();
+};
+
+lorem.uf = function() {
+	return ufs[Math.floor(Math.random() * ufs.length)];
+};
+
+lorem.latitude = function() {
+	return (Math.random() * 180) -90;
+};
+
+lorem.longitude = function() {
+	return (Math.random() * 360) -180;
+};
+
+var randomInt = function() {
+    return Math.round(Math.random()*9);
+};
+
+var mod = function(dividendo,divisor) {
+    return Math.round(dividendo - (Math.floor(dividendo/divisor)*divisor));
+};
+
+lorem.cpf = function() {
+    var n1 = randomInt();
+    var n2 = randomInt();
+    var n3 = randomInt();
+    var n4 = randomInt();
+    var n5 = randomInt();
+    var n6 = randomInt();
+    var n7 = randomInt();
+    var n8 = randomInt();
+    var n9 = randomInt();
+    var d1 = n9 * 2 + n8 * 3 + n7 * 4 + n6 * 5 + n5 * 6 + n4 * 7 + n3 * 8 + n2 * 9 + n1 * 10;
+    d1 = 11 - (mod(d1,11));
+
+    if (d1>=10) {
+        d1 = 0;
+    }
+
+    var d2 = d1 * 2 + n9 * 3 + n8 * 4 + n7 * 5 + n6 * 6 + n5 * 7 + n4 * 8 + n3 * 9 + n2 * 10 + n1 * 11;
+    d2 = 11 - (mod(d2,11));
+
+    if (d2>=10) {
+        d2 = 0;
+    }
+
+    return '' + n1 + n2 + n3 + '.' + n4 + n5 + n6 + '.' + n7 + n8 + n9 + '-' + d1 + d2;
+};
+
+lorem.cnpj = function() {
+    var n1  = randomInt();
+    var n2  = randomInt();
+    var n3  = randomInt();
+    var n4  = randomInt();
+    var n5  = randomInt();
+    var n6  = randomInt();
+    var n7  = randomInt();
+    var n8  = randomInt();
+    var n9  = 0;
+    var n10 = 0;
+    var n11 = 0;
+    var n12 = 1;
+    var d1 = n12 * 2 + n11 * 3 + n10 * 4 + n9 * 5 + n8 * 6 + n7 * 7 + n6 * 8 + n5 * 9 + n4 * 2 + n3 * 3 + n2 * 4 + n1 * 5;
+    d1 = 11 - (mod(d1,11));
+
+    if (d1>=10) {
+        d1 = 0;
+    }
+
+    var d2 = d1 * 2 + n12 * 3 + n11 * 4 + n10 * 5 + n9 * 6 + n8 * 7 + n7 * 8 + n6 * 9 + n5 * 2 + n4 * 3 + n3 * 4 + n2 * 5 + n1 * 6;
+    d2 = 11 - (mod(d2,11));
+    if (d2>=10) { 
+        d2 = 0;
+    }
+
+    return '' + n1 + n2 + '.' + n3 + n4 + n5 + '.' + n6 + n7 + n8 + '/' + n9 + n10 + n11 + n12 + '-' + d1 + d2;
+};
+
+lorem.rg = function() {
+    var n1 = randomInt();
+    var n2 = randomInt();
+    var n3 = randomInt();
+    var n4 = randomInt();
+    var n5 = randomInt();
+    var n6 = randomInt();
+    var n7 = randomInt();
+    var n8 = randomInt();
+    var n9 = randomInt();
+
+    return n1 + n2 + "." + n3 + n4 + n5 + "." + n6 + n7 + n8 + "-" + n9;
+};
+
+lorem.phone = function() {
+	return "(" + randomInt() + randomInt() + ") " + randomInt() + randomInt() + randomInt() + randomInt() + randomInt() + "-" + randomInt() + randomInt() + randomInt() + randomInt();
 };
 
 module.exports = lorem;

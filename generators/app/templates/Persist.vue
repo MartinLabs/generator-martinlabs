@@ -13,54 +13,73 @@
 
                     <form @submit="persist" role="form">
 
-            <% for (var i in table.columns) { var col = table.columns[i];
+<% 
+for (var i in table.columns) { 
+var col = table.columns[i];
 
-                if (col.extra !== "auto_increment" && col.smartType != "createTime" && col.smartType != "updateTime") {
+    if (col.extra !== "auto_increment" && col.smartType != "createTime" && col.smartType != "updateTime") {
 
-                    if (col.referencedTable) { %>
+        if (col.referencedTable) { 
+%>
                         <div class="form-group"<% 
-                        if (col.column_key == "PRI") { 
+            if (col.column_key == "PRI") { 
                         %> v-if="!<%= table.classLowerCamel %>.<%= col.notIdPropertyName %>.<%= col.referencedTable.primaryColumns[0].propertyName %>"<% 
-                        } %>>
+            } 
+                        %> required>
                             <label for="input-<%= col.propertyName %>" 
-                                class="control-label required"> 
+                                class="control-label"> 
                                 {{ $t("classes.<%= table.className %>.columns.<%= col.notIdPropertyName %>") }}</label>
                             <select id="input-<%= col.propertyName %>"
                                 v-model="<%= table.classLowerCamel %>.<%= col.notIdPropertyName %>.<%= col.referencedTable.primaryColumns[0].propertyName %>" 
                                 class="form-control" required>
                                 <option value="">{{ $t("app.select") }}</option>
-                                <option v-for="item in all<%= col.referencedTable.className %>" :value="item.<%= col.referencedTable.primaryColumns[0].propertyName %>">
+                                <option v-for="item in all<%= col.referencedTable.className %>" :value="item.<%= col.referencedTable.primaryColumns[0].propertyName %>"><%
+            if (col.referencedTable.nameColumn) { %>
+                {{ item.<%= col.referencedTable.nameColumn.propertyName %> }}<%
+            } else { 
+%>
                                 {{ 
                                     ""
-                            <% for (var j in col.referencedTable.columns) { 
-                                var r = col.referencedTable.columns[j]; 
-                                if (r.smartType != "active" && r.smartType != "password") {
-                            %>
+<% 
+                for (var j in col.referencedTable.columns) { 
+                    var r = col.referencedTable.columns[j]; 
+                    if (r.smartType != "active" && r.smartType != "password") {
+%>
                                     + (item.<%= r.propertyName %> === undefined ? "" : item.<%= r.propertyName %> + "; ")<% 
-                                }
-                            } %>
-                                }}
+                    }
+                } 
+                            %>
+                                }}<%
+            }
+%>
                                 </option>
                             </select>
                         </div>
-                    <% } else if (col.javaType === "String") { 
-                        if (col.character_maximum_length <= 255 || col.smartType) {
-                    %>
+<% 
+        } else if (col.javaType === "String") { 
+            if (col.character_maximum_length <= 255 || col.smartType) {
+%>
                         <div class="form-group <%= col.is_nullable !== 'YES' ? 'required' : '' %>">
                             <label for="input-<%= col.propertyName %>" 
                                 class="control-label"> 
                                 {{ $t("classes.<%= table.className %>.columns.<%= col.propertyName %>") }}</label>
                             <input id="input-<%= col.propertyName %>" 
                                 type="<%= col.smartType === 'email' ? 'email' : col.smartType === 'password' ? 'password' : 'text' %>" 
+                                maxlength="<%= col.character_maximum_length %>"<%
+                if (["cpf", "cnpj", "rg", "cep", "phone"].indexOf(col.smartType) > -1) { %>
+                                    v-mask="$t('format.<%= col.smartType %>')"<%
+                } 
+%>
                                 v-model="<%= table.classLowerCamel %>.<%= col.propertyName %><%= col.smartType === 'password' ? 'NotEncrypted' : '' %>"
                                 class="form-control" <%= col.is_nullable !== "YES" && col.smartType != "password" ? "required" : "" %><% 
-                            if (col.smartType === 'password') { %>
+                if (col.smartType === 'password') { 
+%>
                                 :placeholder="<%= table.classLowerCamel %>.<%= table.primaryColumns[0].propertyName %> ? $t('app.onlyIfWantChangePassword') : ''"<%
-                            }
+                }
                                 %>>
                         </div>
                     <% 
-                        } else {
+            } else {
                     %>
                         <div class="form-group <%= col.is_nullable !== 'YES' ? 'required' : '' %>">
                             <label for="input-<%= col.propertyName %>" 
@@ -71,8 +90,9 @@
                                 class="form-control" rows="3" <%= col.is_nullable !== "YES" ? "required" : "" %>></textarea>
                         </div>
                     <%
-                        }
-                    } else if (["Double", "double"].indexOf(col.javaType) > -1) { %>
+            }
+        } else if (["Double", "double"].indexOf(col.javaType) > -1) { 
+        %>
                         <div class="form-group <%= col.is_nullable !== 'YES' ? 'required' : '' %>">
                             <label for="input-<%= col.propertyName %>" 
                                 class="control-label">
@@ -83,7 +103,9 @@
                                 :placeholder="$t('persist.number')" 
                                 class="form-control" <%= col.is_nullable !== "YES" ? "required" : "" %>>
                         </div>
-                    <% } else if (["Long", "long"].indexOf(col.javaType) > -1) { %>
+                    <% 
+        } else if (["Long", "long"].indexOf(col.javaType) > -1) { 
+                    %>
                         <div class="form-group <%= col.is_nullable !== 'YES' ? 'required' : '' %>">
                             <label for="input-<%= col.propertyName %>" 
                                 class="control-label">
@@ -94,7 +116,9 @@
                                 :placeholder="$t('persist.number')" 
                                 class="form-control" <%= col.is_nullable !== "YES" ? "required" : "" %>>
                         </div>
-                    <% } else if (col.data_type === "date") { %>
+<% 
+        } else if (col.data_type === "date") {
+%>
                         <div class="form-group <%= col.is_nullable !== 'YES' ? 'required' : '' %>">
                             <label for="input-<%= col.propertyName %>" 
                                 class="control-label">
@@ -107,7 +131,9 @@
                                 :placeholder="$t('dateFormat.date')" 
                                 class="form-control" <%= col.is_nullable !== "YES" ? "required" : "" %>/>
                         </div>
-                    <% } else if (["time", "datetime", "timestamp"].indexOf(col.data_type) > -1) { %>
+<% 
+        } else if (["time", "datetime", "timestamp"].indexOf(col.data_type) > -1) {
+%>
                         <div class="form-group <%= col.is_nullable !== 'YES' ? 'required' : '' %>">
                             <label class="control-label">
                                 {{ $t("classes.<%= table.className %>.columns.<%= col.propertyName %>") }}</label>
@@ -119,7 +145,9 @@
                                 :placeholder="$t('dateFormat.datetime')" 
                                 class="form-control" <%= col.is_nullable !== "YES" ? "required" : "" %>/>
                         </div>
-                    <% } else { %>
+<% 
+        } else {
+%>
                         <div class="form-group">
                             <div class="checkbox">
                                 <label>
@@ -130,30 +158,42 @@
                             </div>
                         </div>
             <% 
-                    }
-                } 
-            } 
+        }
+    } 
+} 
 
-            for (var i in table.NtoNcolumns) { 
-                var col = table.NtoNcolumns[i];
-            %>
+for (var i in table.NtoNcolumns) { 
+    var col = table.NtoNcolumns[i];
+%>
                         <div class="form-group">
                             <label>{{ $t("classes.<%= col.NtoNtable.className %>.title") }}</label>
                             <div>
                                 <div v-for="item in all<%= col.otherTable.className %>" class='checkbox'>
                                     <label>
-                                        <input type='checkbox' :value='item.<%= col.otherTable.primaryColumns[0].propertyName %>' v-model="<%= col.NtoNtable.classLowerCamel %>Ids">
+                                        <input type='checkbox' :value='item.<%= col.otherTable.primaryColumns[0].propertyName %>' v-model="<%= col.NtoNtable.classLowerCamel %>Ids"><%
+    if (col.otherTable.nameColumn) { %>
+        {{ item.<%= col.otherTable.nameColumn.propertyName %> }}<%
+    } else { 
+%>
                                         {{
                                         ""
-                                        <% for (var j in col.otherTable.columns) { var r = col.otherTable.columns[j]; %>
+<% 
+        for (var j in col.otherTable.columns) { 
+            var r = col.otherTable.columns[j]; 
+%>
                                             + (item.<%= r.propertyName %> === undefined ? "" : item.<%= r.propertyName %> + "; ")<% 
-                                        } %>
-                                        }}
+        } 
+%>
+                                        }}<%
+    } 
+%>
                                     </label>
                                 </div>
                             </div>
                         </div>
-            <% } %>
+<% 
+} 
+%>
 
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary">{{ $t("persist.submit") }}</button>
