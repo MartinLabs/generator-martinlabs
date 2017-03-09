@@ -5,19 +5,19 @@ module.exports = {
 	readFromFile: function(main) {
         var done = main.async();
 
-		jsonfile.readFile("src/main/webapp/package.json", function(err, obj) {
+		jsonfile.readFile(main.customDestinationPath("src/main/webapp/package.json"), function(err, obj) {
 		    main.props.npmPackage = obj;
 
-		    jsonfile.readFile("src/main/webapp/browserify.json", function(err, obj) {
+		    jsonfile.readFile(main.customDestinationPath("src/main/webapp/browserify.json"), function(err, obj) {
 		        main.props.browserify = obj;
 
-		        jsonfile.readFile("src/main/webapp/sass.json", function(err, obj) {
+		        jsonfile.readFile(main.customDestinationPath("src/main/webapp/sass.json"), function(err, obj) {
 		            main.props.sass = obj;
 
-		            jsonfile.readFile("src/main/webapp/uglify.json", function(err, obj) {
+		            jsonfile.readFile(main.customDestinationPath("src/main/webapp/uglify.json"), function(err, obj) {
 		                main.props.uglify = obj;
 
-		                jsonfile.readFile("src/main/webapp/cssmin.json", function(err, obj) {
+		                jsonfile.readFile(main.customDestinationPath("src/main/webapp/cssmin.json"), function(err, obj) {
 		                    main.props.cssmin = obj;
 		                    done();
 		                });
@@ -136,24 +136,24 @@ module.exports = {
         jsonfile.spaces = 4;
 
         try {
-            fs.mkdirSync(main.destinationRoot() + "/src");
+            fs.mkdirSync(main.customDestinationPath("src"));
         } catch (e) {}
         try {
-            fs.mkdirSync(main.destinationRoot() + "/src/main");
+            fs.mkdirSync(main.customDestinationPath("src/main"));
         } catch (e) {}
         try {
-            fs.mkdirSync(main.destinationRoot() + "/src/main/webapp");
+            fs.mkdirSync(main.customDestinationPath("src/main/webapp"));
         } catch (e) {}
 
-        jsonfile.writeFile("src/main/webapp/package.json", main.props.npmPackage, function(err) {
+        jsonfile.writeFile(main.customDestinationPath("src/main/webapp/package.json"), main.props.npmPackage, function(err) {
 
-            jsonfile.writeFile("src/main/webapp/browserify.json", main.props.browserify, function(err) {
+            jsonfile.writeFile(main.customDestinationPath("src/main/webapp/browserify.json"), main.props.browserify, function(err) {
 
-                jsonfile.writeFile("src/main/webapp/sass.json", main.props.sass, function(err) {
+                jsonfile.writeFile(main.customDestinationPath("src/main/webapp/sass.json"), main.props.sass, function(err) {
 
-                    jsonfile.writeFile("src/main/webapp/uglify.json", main.props.uglify, function(err) {
+                    jsonfile.writeFile(main.customDestinationPath("src/main/webapp/uglify.json"), main.props.uglify, function(err) {
 
-                        jsonfile.writeFile("src/main/webapp/cssmin.json", main.props.cssmin, function(err) {
+                        jsonfile.writeFile(main.customDestinationPath("src/main/webapp/cssmin.json"), main.props.cssmin, function(err) {
                             done();
                         });
                     });

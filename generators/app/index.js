@@ -14,6 +14,8 @@ var tplManager = require("./services/templateManager");
 module.exports = yeoman.generators.Base.extend({
 
     readConfig: function() {
+        this.customDestinationPath = this.destinationPath;
+
         this.props = this.config.get("props") || {};
     },
 

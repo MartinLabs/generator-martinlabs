@@ -3,21 +3,38 @@ var xml2js = require('xml2js');
 
 module.exports = {
 
-	readFromFile: function(main) {
-		var done = main.async();
+	readFromFile: function(main, fillPackageAndProjectName) {
+        var done = main.async();
 
-        fs.readFile(main.destinationRoot() + '/pom.xml', function(err, data) {
-            xml2js.parseString(data, function (err, result) {
-                if (result) {
-                    main.props.pom = result;
-                    main.props.package = result.project.groupId[0];
-                    main.props.projectName = result.project.artifactId[0];
+        this.readFromFileAndCallback(main.customDestinationPath('pom.xml'), function(resp) {
+            if (resp) {
+                resp.pom = resp.pom;
+
+                if (fillPackageAndProjectName !== false) {
+                    resp.package = resp.package;
+                    resp.projectName = resp.projectName;
                 }
+            }
 
-                done();
-            });
+            done();
         });
 	},
+
+    readFromFileAndCallback: function(fullpathtofile, cb) {
+        fs.readFile(fullpathtofile, function(err, data) {
+            xml2js.parseString(data, function (err, result) {
+                var resp = {};
+
+                if (result) {
+                    resp.pom = result;
+                    resp.package = result.project.groupId[0];
+                    resp.projectName = result.project.artifactId[0];
+                }
+
+                cb(resp);
+            });
+        });
+    },
 
 	fillMissingContent: function(main) {
 		if (!main.props.pom) {
@@ -214,7 +231,7 @@ module.exports = {
 
 	writeToFile: function(main) {
 		var pomAsXml = new xml2js.Builder().buildObject(main.props.pom);
-        fs.writeFileSync(main.destinationRoot() + "/pom.xml", pomAsXml, "utf8");
+        fs.writeFileSync(main.customDestinationPath("pom.xml"), pomAsXml, "utf8");
 	}
 
 };

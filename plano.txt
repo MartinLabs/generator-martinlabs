@@ -1,8 +1,11 @@
 PRIORIDADE
+- ao informar url colocar http:// se não tiver ://
+- não salva package.json pq tá tentando instalar npm antes disso
 - mysql bigint -> long; mysql int -> int;   -   é realmente necessário? vai dar mto trabalho (ids long)
 - mostrar total de entradas no list
 - autocomplete de endereço
 - model em obj-c
+- remover construtor que clona, ngm vai usar e ficar atualizando é inviavel, pode trazer problemas
 
 BUG TRIVIAL
 - incluir no BD do usecase um campo de texto com mais de 255 chars para virar um textarea
@@ -46,7 +49,7 @@ tipos de input para criar components
         required ou não (boolean)
         label (string)
         v-model (obj)
-        type (text)
+        type (string) (fazer coisas diferentes dependendo)
         step (int)
         placeholder (string)
 

@@ -59,25 +59,18 @@ var col = table.columns[i];
         } else if (col.javaType === "String") { 
             if (col.character_maximum_length <= 255 || col.smartType) {
 %>
-                        <div class="form-group <%= col.is_nullable !== 'YES' ? 'required' : '' %>">
-                            <label for="input-<%= col.propertyName %>" 
-                                class="control-label"> 
-                                {{ $t("classes.<%= table.className %>.columns.<%= col.propertyName %>") }}</label>
-                            <input id="input-<%= col.propertyName %>" 
-                                type="<%= col.smartType === 'email' ? 'email' : col.smartType === 'password' ? 'password' : 'text' %>" 
-                                maxlength="<%= col.character_maximum_length %>"<%
-                if (["cpf", "cnpj", "rg", "cep", "phone"].indexOf(col.smartType) > -1) { %>
-                                    v-mask="$t('format.<%= col.smartType %>')"<%
-                } 
+                        <input-group
+                            type="<%= ['email', 'password', 'cpf', 'cnpj', 'rg', 'phone', 'cep'].indexOf(col.smartType) > -1 ? col.smartType : 'text' %>" 
+                            maxlength="<%= col.character_maximum_length %>"
+                            v-model="<%= table.classLowerCamel %>.<%= col.propertyName %><%= col.smartType === 'password' ? 'NotEncrypted' : '' %>"
+                            <%= col.is_nullable !== "YES" && col.smartType != "password" ? "required" : "" %><% 
+            if (col.smartType === 'password') { 
 %>
-                                v-model="<%= table.classLowerCamel %>.<%= col.propertyName %><%= col.smartType === 'password' ? 'NotEncrypted' : '' %>"
-                                class="form-control" <%= col.is_nullable !== "YES" && col.smartType != "password" ? "required" : "" %><% 
-                if (col.smartType === 'password') { 
-%>
-                                :placeholder="<%= table.classLowerCamel %>.<%= table.primaryColumns[0].propertyName %> ? $t('app.onlyIfWantChangePassword') : ''"<%
-                }
-                                %>>
-                        </div>
+                            :placeholder="<%= table.classLowerCamel %>.<%= table.primaryColumns[0].propertyName %> ? $t('app.onlyIfWantChangePassword') : ''"<%
+            }
+                            %>>
+                            {{ $t("classes.<%= table.className %>.columns.<%= col.propertyName %>") }}
+                        </input-group>
                     <% 
             } else {
                     %>
@@ -93,58 +86,45 @@ var col = table.columns[i];
             }
         } else if (["Double", "double"].indexOf(col.javaType) > -1) { 
         %>
-                        <div class="form-group <%= col.is_nullable !== 'YES' ? 'required' : '' %>">
-                            <label for="input-<%= col.propertyName %>" 
-                                class="control-label">
-                                {{ $t("classes.<%= table.className %>.columns.<%= col.propertyName %>") }}</label>
-                            <input id="input-<%= col.propertyName %>" 
-                                type="number" step="any"
-                                v-model="<%= table.classLowerCamel %>.<%= col.propertyName %>"
-                                :placeholder="$t('persist.number')" 
-                                class="form-control" <%= col.is_nullable !== "YES" ? "required" : "" %>>
-                        </div>
+                        <input-group
+                            type="number" 
+                            step="any"
+                            v-model="<%= table.classLowerCamel %>.<%= col.propertyName %>"
+                            :placeholder="$t('persist.number')" 
+                            <%= col.is_nullable !== "YES" ? "required" : "" %>>
+                            {{ $t("classes.<%= table.className %>.columns.<%= col.propertyName %>") }}
+                        </input-group>
                     <% 
         } else if (["Long", "long"].indexOf(col.javaType) > -1) { 
                     %>
-                        <div class="form-group <%= col.is_nullable !== 'YES' ? 'required' : '' %>">
-                            <label for="input-<%= col.propertyName %>" 
-                                class="control-label">
-                                {{ $t("classes.<%= table.className %>.columns.<%= col.propertyName %>") }}</label>
-                            <input id="input-<%= col.propertyName %>" 
-                                type="number" step="1"
-                                v-model="<%= table.classLowerCamel %>.<%= col.propertyName %>"
-                                :placeholder="$t('persist.number')" 
-                                class="form-control" <%= col.is_nullable !== "YES" ? "required" : "" %>>
-                        </div>
+                        <input-group
+                            type="number" 
+                            step="1"
+                            v-model="<%= table.classLowerCamel %>.<%= col.propertyName %>"
+                            :placeholder="$t('persist.number')" 
+                            <%= col.is_nullable !== "YES" ? "required" : "" %>>
+                            {{ $t("classes.<%= table.className %>.columns.<%= col.propertyName %>") }}
+                        </input-group>
 <% 
         } else if (col.data_type === "date") {
 %>
-                        <div class="form-group <%= col.is_nullable !== 'YES' ? 'required' : '' %>">
-                            <label for="input-<%= col.propertyName %>" 
-                                class="control-label">
-                                {{ $t("classes.<%= table.className %>.columns.<%= col.propertyName %>") }}</label>
-                            <input 
-                                id="input-<%= col.propertyName %>" 
-                                type='text' 
-                                v-model.lazy="<%= col.propertyName %>Rendered"
-                                v-mask="$t('dateFormat.datemask')"
-                                :placeholder="$t('dateFormat.date')" 
-                                class="form-control" <%= col.is_nullable !== "YES" ? "required" : "" %>/>
-                        </div>
+                        <input-group 
+                            type="date"
+                            v-model="<%= table.classLowerCamel %>.<%= col.propertyName %>"
+                            :placeholder="$t('dateFormat.date')" 
+                            <%= col.is_nullable !== "YES" ? "required" : "" %>>
+                            {{ $t("classes.<%= table.className %>.columns.<%= col.propertyName %>") }}
+                        </input-group>
 <% 
         } else if (["time", "datetime", "timestamp"].indexOf(col.data_type) > -1) {
 %>
-                        <div class="form-group <%= col.is_nullable !== 'YES' ? 'required' : '' %>">
-                            <label class="control-label">
-                                {{ $t("classes.<%= table.className %>.columns.<%= col.propertyName %>") }}</label>
-                            <input 
-                                id="input-<%= col.propertyName %>" 
-                                type='text' 
-                                v-model.lazy="<%= col.propertyName %>Rendered"
-                                v-mask="$t('dateFormat.datetimemask')"
-                                :placeholder="$t('dateFormat.datetime')" 
-                                class="form-control" <%= col.is_nullable !== "YES" ? "required" : "" %>/>
-                        </div>
+                        <input-group
+                            type='datetime' 
+                            v-model="<%= table.classLowerCamel %>.<%= col.propertyName %>"
+                            :placeholder="$t('dateFormat.datetime')" 
+                            <%= col.is_nullable !== "YES" ? "required" : "" %>>
+                            {{ $t("classes.<%= table.className %>.columns.<%= col.propertyName %>") }}
+                        </input-group>
 <% 
         } else {
 %>
@@ -215,19 +195,20 @@ import AppBus from '../service/AppBus';
 import AppTranslator from '../service/AppTranslator';
 
 import Default from './fragment/Default.vue';
+import InputGroup from './fragment/form-group/InputGroup.vue';
 
 export default {
     name: "Persist<%= table.className %>",
-    components: { Default },
+    components: { Default, InputGroup },
     data() {
         return {
             <%= table.classLowerCamel %>: {<%
 var colocarVirgula = false;
 for (var i in table.columns) { 
     var col = table.columns[i];
-    if (col.extra !== "auto_increment" && col.referencedTable) {
+    if (col.extra !== "auto_increment") {
                 %><%= colocarVirgula ? ',' : '' %>
-                <%= col.notIdPropertyName %>: {} <%
+                <%= col.notIdPropertyName %>: <%= col.referencedTable ? '{}' : 'null' %><%
         colocarVirgula = true;
     }
 }
@@ -284,44 +265,7 @@ for (var i in table.NtoNcolumns) {
             }
         }<% 
 
-} 
-
-for (var i in table.columns) { var col = table.columns[i];
-
-    if (col.extra !== "auto_increment") {
-
-        if (col.data_type === "date") {
-
-%><%= colocarVirgula ? ',' : '' %>
-<% 
-            colocarVirgula = true; 
-%>
-        <%= col.propertyName %>Rendered: {
-            get() {
-                return this.renderDate(this.<%= table.classLowerCamel %>.<%= col.propertyName %>);
-            },
-            set(val) {
-                this.<%= table.classLowerCamel %>.<%= col.propertyName %> = this.transformToDate(val);
-            }
-        }<% 
-
-        } else if (["time", "datetime", "timestamp"].indexOf(col.data_type) > -1) { 
-%><%= colocarVirgula ? ',' : '' %><% 
-            colocarVirgula = true; 
-%>
-
-        <%= col.propertyName %>Rendered: {
-            get() {
-                return this.renderDatetime(this.<%= table.classLowerCamel %>.<%= col.propertyName %>);
-            },
-            set(val) {
-                this.<%= table.classLowerCamel %>.<%= col.propertyName %> = this.transformToDatetime(val);
-            }
-        }<% 
-
-        }
-    }
-} 
+}  
 %>
     },
     mounted() {
@@ -348,7 +292,7 @@ for (var i in table.columns) {
     if (c.referencedTable && antiRepeat.indexOf(c.referencedTable.className) < 0) {
         antiRepeat.push(c.referencedTable.className);
 %>
-                    this.all<%= c.referencedTable.className %> = resp.body.data.all<%= c.referencedTable.className %>;<%
+                this.all<%= c.referencedTable.className %> = resp.body.data.all<%= c.referencedTable.className %>;<%
     }
 }
 
@@ -358,7 +302,7 @@ for (var i in table.NtoNcolumns) {
     if (antiRepeat.indexOf(c.otherTable.className) < 0) {
         antiRepeat.push(c.otherTable.className);
 %>
-                    this.all<%= c.otherTable.className %> = resp.body.data.all<%= c.otherTable.className %>;<%
+                this.all<%= c.otherTable.className %> = resp.body.data.all<%= c.otherTable.className %>;<%
     }
 }
             %>
@@ -395,28 +339,6 @@ for (var i in table.columns) {
                     AppBus.$emit("alert", "danger", resp.body.message, 3000);
                 }
             });
-        },
-        renderDate(date) {
-            if (date) {
-                return moment(date).format(AppTranslator.data.dateFormat.date);
-            } else {
-                return null;
-            }
-        },
-        transformToDate(visual) {
-            var date = moment(visual, AppTranslator.data.dateFormat.date);
-            return date.isValid() ? date.format() : null;
-        },
-        renderDatetime(date) {
-            if (date) {
-                return moment(date).format(AppTranslator.data.dateFormat.datetime);
-            } else {
-                return null;
-            }
-        },
-        transformToDatetime(visual) {
-            var date = moment(visual, AppTranslator.data.dateFormat.datetime);
-            return date.isValid() ? date.format() : null;
         }
     }
 }

@@ -6,7 +6,7 @@ module.exports = {
 	readFromFile: function(main) {
         var done = main.async();
 
-        fs.readFile(main.destinationRoot() + '/src/main/webapp/META-INF/context.xml', function(err, data) {
+        fs.readFile(main.customDestinationPath('src/main/webapp/META-INF/context.xml'), function(err, data) {
             xml2js.parseString(data, function (err, result) {
                 main.props.metaInfCtx = result;
                 done();
@@ -72,19 +72,19 @@ module.exports = {
         var metaInfCtxAsXml = new xml2js.Builder().buildObject(main.props.metaInfCtx);
 
         try {
-            fs.mkdirSync(main.destinationRoot() + "/src");
+            fs.mkdirSync(main.customDestinationPath("src"));
         } catch (e) {}
         try {
-            fs.mkdirSync(main.destinationRoot() + "/src/main");
+            fs.mkdirSync(main.customDestinationPath("src/main"));
         } catch (e) {}
         try {
-            fs.mkdirSync(main.destinationRoot() + "/src/main/webapp");
+            fs.mkdirSync(main.customDestinationPath("src/main/webapp"));
         } catch (e) {}
         try {
-            fs.mkdirSync(main.destinationRoot() + "/src/main/webapp/META-INF");
+            fs.mkdirSync(main.customDestinationPath("src/main/webapp/META-INF"));
         } catch (e) {}
         
-        fs.writeFileSync(main.destinationRoot() + "/src/main/webapp/META-INF/context.xml", metaInfCtxAsXml, "utf8");
+        fs.writeFileSync(main.customDestinationPath("src/main/webapp/META-INF/context.xml"), metaInfCtxAsXml, "utf8");
     }
 
 };

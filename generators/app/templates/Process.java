@@ -68,7 +68,11 @@ public class <%= table.className %>Process {
         
         if (limit == null) {
             throw new RespException(2,  LanguageHolder.instance.cannotBeNull("Limit"));
-        }      
+        } 
+        
+        if (query != null) {
+            query = query.replaceAll("[.,:\\-\\/]", "");
+        }
 
         loginS.allowAccess(token);
 

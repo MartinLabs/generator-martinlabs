@@ -3,7 +3,7 @@ module.exports = {
 	install: function(main) {
 
 		if (main.props.runNpm) {
-            process.chdir("src/main/webapp/");
+            process.chdir(main.customDestinationPath("src/main/webapp/"));
 
             main.npmInstall([
                 "babel-core", 
@@ -42,7 +42,7 @@ module.exports = {
                 ], 
                 { save: true },
                 function() {
-                    process.chdir("../../../");
+                    process.chdir(main.customDestinationPath(""));
                 });
             });
         }

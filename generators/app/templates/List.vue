@@ -76,6 +76,9 @@ for (var i in table.columns) {
                 if (c.smartType === "imageUrl") { 
 %>
                                     <td><img :src="item.<%= c.propertyName %>" class="img-rounded" style="height: 100px"/></td><%
+                } else if (["cpf", "cnpj", "rg", "phone", "cep"].indexOf(c.smartType) != -1) { 
+%>
+                                    <td>{{ item.<%= c.propertyName %> | <%= c.smartType %> }}</td><%
                 } else { %>
                                     <td>{{ item.<%= c.propertyName %> | truncate("140") }}</td><%
                 } 

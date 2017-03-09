@@ -1,0 +1,15 @@
+{
+    "dist": {
+        "files": [
+            {
+                "expand": true,
+                "cwd": "webapp/scss",
+                "src": [
+                    "main.scss"
+                ],
+                "dest": "webapp/css",
+                "ext": ".css"
+            }
+        ]
+    }
+}

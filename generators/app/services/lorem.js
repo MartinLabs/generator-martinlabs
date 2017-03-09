@@ -186,7 +186,7 @@ lorem.zipcode = function() {
 };
 
 lorem.cep = function() {
-	return "" + randomInt() + randomInt() + randomInt() + randomInt() + randomInt() + "-" + randomInt() + randomInt() + randomInt();
+	return '' + randomInt() + randomInt() + randomInt() + randomInt() + randomInt() + randomInt() + randomInt() + randomInt();
 };
 
 lorem.uf = function() {
@@ -233,7 +233,7 @@ lorem.cpf = function() {
         d2 = 0;
     }
 
-    return '' + n1 + n2 + n3 + '.' + n4 + n5 + n6 + '.' + n7 + n8 + n9 + '-' + d1 + d2;
+    return '' + n1 + n2 + n3 + n4 + n5 + n6 + n7 + n8 + n9 + d1 + d2;
 };
 
 lorem.cnpj = function() {
@@ -262,7 +262,7 @@ lorem.cnpj = function() {
         d2 = 0;
     }
 
-    return '' + n1 + n2 + '.' + n3 + n4 + n5 + '.' + n6 + n7 + n8 + '/' + n9 + n10 + n11 + n12 + '-' + d1 + d2;
+    return '' + n1 + n2 + n3 + n4 + n5 + n6 + n7 + n8 + n9 + n10 + n11 + n12 + d1 + d2;
 };
 
 lorem.rg = function() {
@@ -276,11 +276,11 @@ lorem.rg = function() {
     var n8 = randomInt();
     var n9 = randomInt();
 
-    return n1 + n2 + "." + n3 + n4 + n5 + "." + n6 + n7 + n8 + "-" + n9;
+    return '' + n1 + n2 + n3 + n4 + n5 + n6 + n7 + n8 + n9;
 };
 
 lorem.phone = function() {
-	return "(" + randomInt() + randomInt() + ") " + randomInt() + randomInt() + randomInt() + randomInt() + randomInt() + "-" + randomInt() + randomInt() + randomInt() + randomInt();
+	return '' + randomInt() + randomInt() + randomInt() + randomInt() + randomInt() + randomInt() + randomInt() + randomInt() + randomInt() + randomInt() + randomInt();
 };
 
 module.exports = lorem;
