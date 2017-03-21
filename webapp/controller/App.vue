@@ -13,14 +13,17 @@
 
         </div>
 
-        <router-view></router-view>
+        <home></home>
+        
     </div>
 </template>
 
 <script>
+var Home = require('./Home.vue.js');
 
     export default {
         name: "App",
+        components: { Home },
         data() {
             return {
                 showAlert: false,
@@ -33,16 +36,14 @@
                 return "alert-" + this.alertType;
             }
         },
-        created() {
-            // AppBus.$on("alert", (type, message, duration) => {
-            //     this.alertType = type;
-            //     this.alertMessage = message;
-            //     this.showAlert = true;
+        showAlert(type, message, duration) {
+            this.alertType = type;
+            this.alertMessage = message;
+            this.showAlert = true;
 
-            //     setTimeout(() => {
-            //         this.showAlert = false;
-            //     }, duration);
-            // });
+            setTimeout(() => {
+                this.showAlert = false;
+            }, duration);
         }
     }
 

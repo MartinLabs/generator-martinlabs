@@ -69,7 +69,7 @@ for (var i in table.columns) {
     var c = table.columns[i]; 
     if (c.smartType != "password") {
 %>
-        orderRequestAndColumn.put("<%= c.column_name %>", "<%= c.column_name %>");<% 
+        orderRequestAndColumn.put("<%= c.column_name %>", "<%= table.name %>.<%= c.column_name %>");<% 
     }
 } 
 %>
@@ -85,7 +85,7 @@ for (var i in table.columns) {
     var c = table.columns[i]; 
     if (c.smartType != 'password') {
 %><%= colocarVirgula ? ',' : '' %> "
-            + "IFNULL(<%= c.column_name %>, '')<% 
+            + "IFNULL(<%= table.name %>.<%= c.column_name %>, '')<% 
         colocarVirgula = true;
     }
 } 
@@ -127,7 +127,7 @@ for (var i in table.columns) {
     var c = table.columns[i]; 
     if (c.smartType != 'password') {
 %><%= colocarVirgula ? ',' : '' %> "
-            + "IFNULL(<%= c.column_name %>, '')<% 
+            + "IFNULL(<%= table.name %>.<%= c.column_name %>, '')<% 
         colocarVirgula = true;
     }
 } 

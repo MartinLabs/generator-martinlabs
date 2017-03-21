@@ -1,24 +1,25 @@
 PRIORIDADE
+- formatar data no GET (pedir pro koba ver aquela parada do timezone)
+- colocar input groups do vue em outro component para que possamos trocar o estilo de todos facilmente
+- validar rg, cep, telefone
 - ao informar url colocar http:// se não tiver ://
-- não salva package.json pq tá tentando instalar npm antes disso
-- mysql bigint -> long; mysql int -> int;   -   é realmente necessário? vai dar mto trabalho (ids long)
+- usar nwjs para dar mais opções de input e gerar algo mais preciso
+- bug: não salva package.json pq tá tentando instalar npm antes disso
 - mostrar total de entradas no list
 - autocomplete de endereço
 - model em obj-c
-- remover construtor que clona, ngm vai usar e ficar atualizando é inviavel, pode trazer problemas
+- remover construtor que clona, ngm vai usar e ficar atualizando é inviavel, pode trazer problemas (teste unitario usa esse construtor)
 
 BUG TRIVIAL
 - incluir no BD do usecase um campo de texto com mais de 255 chars para virar um textarea
 - package.json n foi gerado da primeira vez (com a pasta totalmente vazia)
 - existe a suspeita que o computed do vue deu bug uma vez (dataRendered)
 - erro no teste unitario se a coluna de login n for de e-mail
+- mysql bigint -> long; mysql int -> int;   -   é realmente necessário? vai dar mto trabalho (ids long)
 
 FEATURES
-- validar rg, cep, telefone
-- colocar input groups do vue em outro component para que possamos trocar o estilo de todos facilmente
 - validar no JS tb
 - identificar constantes e colocar em variáveis estaticas e usa-las, no JS tb
-- usar nwjs para dar mais opções de input e gerar algo mais preciso
 - Usar @NotNull e @Nullable
 - gerar create.sql
 - perguntar se quer rodar o dados.sql
@@ -30,8 +31,8 @@ EXISTE IMPEDIMENTO OU PRECISA SER PENSADO MELHOR
 - smarttype: dinheiro
 - o usuário poder escolher tabelas para fazer join e where com campos obrigatorios e opcionais
 - o usuário poder escolher tabelas para fazer persist ao mesmo tempo
-- generator Android/iOS (pelo menos estrutura e process)
 - lista de itens conectados ao meu usuário
+- generator Android/iOS (pelo menos estrutura e process)
 - poder alterar "minha conta"
 - exportar csv total via servidor
 - organizar o generator para que possamos configurar em um arquivo externo os templates que irá usar

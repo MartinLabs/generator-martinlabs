@@ -5,8 +5,13 @@ var __vueify_style__ = __vueify_insert__.insert("/* line 3, stdin */\n.alert[_v-
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+
+var Home = require('./Home.vue.js');
+
 exports.default = {
     name: "App",
+    components: { Home: Home },
     data: function data() {
         return {
             showAlert: false,
@@ -20,20 +25,20 @@ exports.default = {
             return "alert-" + this.alertType;
         }
     },
-    created: function created() {
-        // AppBus.$on("alert", (type, message, duration) => {
-        //     this.alertType = type;
-        //     this.alertMessage = message;
-        //     this.showAlert = true;
+    showAlert: function showAlert(type, message, duration) {
+        var _this = this;
 
-        //     setTimeout(() => {
-        //         this.showAlert = false;
-        //     }, duration);
-        // });
+        this.alertType = type;
+        this.alertMessage = message;
+        this.showAlert = true;
+
+        setTimeout(function () {
+            _this.showAlert = false;
+        }, duration);
     }
 };
 if (module.exports.__esModule) module.exports = module.exports.default
-;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div _v-e8d1171c=\"\">\n    <div v-show=\"showAlert\" transition=\"fade\" role=\"alert\" :class=\"['alert', bsAlertType]\" _v-e8d1171c=\"\">\n\n        <button type=\"button\" class=\"close\" @click=\"showAlert = false\" _v-e8d1171c=\"\">\n            <span _v-e8d1171c=\"\">×</span>\n        </button> \n        <p _v-e8d1171c=\"\">{{ alertMessage }}</p>\n\n    </div>\n\n    <router-view _v-e8d1171c=\"\"></router-view>\n</div>\n"
+;(typeof module.exports === "function"? module.exports.options: module.exports).template = "\n<div _v-e8d1171c=\"\">\n    <div v-show=\"showAlert\" transition=\"fade\" role=\"alert\" :class=\"['alert', bsAlertType]\" _v-e8d1171c=\"\">\n\n        <button type=\"button\" class=\"close\" @click=\"showAlert = false\" _v-e8d1171c=\"\">\n            <span _v-e8d1171c=\"\">×</span>\n        </button> \n        <p _v-e8d1171c=\"\">{{ alertMessage }}</p>\n\n    </div>\n\n    <home _v-e8d1171c=\"\"></home>\n    \n</div>\n"
 if (module.hot) {(function () {  module.hot.accept()
   var hotAPI = require("vue-hot-reload-api")
   hotAPI.install(require("vue"), true)

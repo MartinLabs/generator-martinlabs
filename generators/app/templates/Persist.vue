@@ -21,19 +21,17 @@ var col = table.columns[i];
 
         if (col.referencedTable) { 
 %>
-                        <div class="form-group"<% 
+                        <select-group<% 
             if (col.column_key == "PRI") { 
                         %> v-if="!<%= table.classLowerCamel %>.<%= col.notIdPropertyName %>.<%= col.referencedTable.primaryColumns[0].propertyName %>"<% 
             } 
-                        %> required>
-                            <label for="input-<%= col.propertyName %>" 
-                                class="control-label"> 
-                                {{ $t("classes.<%= table.className %>.columns.<%= col.notIdPropertyName %>") }}</label>
-                            <select id="input-<%= col.propertyName %>"
-                                v-model="<%= table.classLowerCamel %>.<%= col.notIdPropertyName %>.<%= col.referencedTable.primaryColumns[0].propertyName %>" 
-                                class="form-control" required>
-                                <option value="">{{ $t("app.select") }}</option>
-                                <option v-for="item in all<%= col.referencedTable.className %>" :value="item.<%= col.referencedTable.primaryColumns[0].propertyName %>"><%
+%>
+                        v-model="<%= table.classLowerCamel %>.<%= col.notIdPropertyName %>.<%= col.referencedTable.primaryColumns[0].propertyName %>"
+                        <%= col.is_nullable !== "YES" ? "required" : "" %>>
+                            <span slot="label">{{ $t("classes.<%= table.className %>.columns.<%= col.notIdPropertyName %>") }}</span>
+                            
+                            <option value="">{{ $t("app.select") }}</option>
+                            <option v-for="item in all<%= col.referencedTable.className %>" :value="item.<%= col.referencedTable.primaryColumns[0].propertyName %>"><%
             if (col.referencedTable.nameColumn) { %>
                 {{ item.<%= col.referencedTable.nameColumn.propertyName %> }}<%
             } else { 
@@ -52,9 +50,8 @@ var col = table.columns[i];
                                 }}<%
             }
 %>
-                                </option>
-                            </select>
-                        </div>
+                            </option>
+                        </select-group>
 <% 
         } else if (col.javaType === "String") { 
             if (col.character_maximum_length <= 255 || col.smartType) {
@@ -128,15 +125,9 @@ var col = table.columns[i];
 <% 
         } else {
 %>
-                        <div class="form-group">
-                            <div class="checkbox">
-                                <label>
-                                    <input type="checkbox"
-                                    v-model="<%= table.classLowerCamel %>.<%= col.propertyName %>">
-                                    {{ $t("classes.<%= table.className %>.columns.<%= col.propertyName %>") }}
-                                </label>
-                            </div>
-                        </div>
+                        <checkbox-group v-model="<%= table.classLowerCamel %>.<%= col.propertyName %>">
+                            {{ $t("classes.<%= table.className %>.columns.<%= col.propertyName %>") }}
+                        </checkbox-group>
             <% 
         }
     } 
@@ -145,32 +136,30 @@ var col = table.columns[i];
 for (var i in table.NtoNcolumns) { 
     var col = table.NtoNcolumns[i];
 %>
-                        <div class="form-group">
-                            <label>{{ $t("classes.<%= col.NtoNtable.className %>.title") }}</label>
-                            <div>
-                                <div v-for="item in all<%= col.otherTable.className %>" class='checkbox'>
-                                    <label>
-                                        <input type='checkbox' :value='item.<%= col.otherTable.primaryColumns[0].propertyName %>' v-model="<%= col.NtoNtable.classLowerCamel %>Ids"><%
+                        <multiselect-group
+                            v-model="<%= table.classLowerCamel %>.<%= col.NtoNtable.classLowerCamel %>"
+                            :items="all<%= col.otherTable.className %>"
+                            propname="<%= col.otherTable.primaryColumns[0].propertyName %>">
+                            <span slot="label">{{ $t("classes.<%= col.NtoNtable.className %>.title") }}</span>
+                            <template slot="item" scope="props"><%
     if (col.otherTable.nameColumn) { %>
-        {{ item.<%= col.otherTable.nameColumn.propertyName %> }}<%
+                                {{ props.item.<%= col.otherTable.nameColumn.propertyName %> }}<%
     } else { 
 %>
-                                        {{
-                                        ""
+                                {{
+                                    ""
 <% 
         for (var j in col.otherTable.columns) { 
             var r = col.otherTable.columns[j]; 
 %>
-                                            + (item.<%= r.propertyName %> === undefined ? "" : item.<%= r.propertyName %> + "; ")<% 
+                                    + (props.item.<%= r.propertyName %> === undefined ? "" : props.item.<%= r.propertyName %> + "; ")<% 
         } 
 %>
-                                        }}<%
+                                }}<%
     } 
 %>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
+                            </template>
+                        </multiselect-group>
 <% 
 } 
 %>
@@ -196,10 +185,13 @@ import AppTranslator from '../service/AppTranslator';
 
 import Default from './fragment/Default.vue';
 import InputGroup from './fragment/form-group/InputGroup.vue';
+import SelectGroup from './fragment/form-group/SelectGroup.vue';
+import CheckboxGroup from './fragment/form-group/CheckboxGroup.vue';
+import MultiselectGroup from './fragment/form-group/MultiselectGroup.vue';
 
 export default {
     name: "Persist<%= table.className %>",
-    components: { Default, InputGroup },
+    components: { Default, InputGroup, SelectGroup, CheckboxGroup, MultiselectGroup },
     data() {
         return {
             <%= table.classLowerCamel %>: {<%
@@ -242,32 +234,6 @@ for (var i in table.NtoNcolumns) {
 %>
         };
     }, 
-    computed: {<%
-colocarVirgula = false;
-for (var i in table.NtoNcolumns) { 
-    var col = table.NtoNcolumns[i]; 
-    %><%= colocarVirgula ? ',' : '' %><% 
-    colocarVirgula = true; 
-%>
-        <%= col.NtoNtable.classLowerCamel %>Ids: {
-            get() {
-                var <%= col.NtoNtable.classLowerCamel %>Ids = [];
-                for (let item of this.<%= table.classLowerCamel %>.<%= col.NtoNtable.classLowerCamel %>) {
-                    <%= col.NtoNtable.classLowerCamel %>Ids.push(item.<%= col.otherTable.primaryColumns[0].propertyName %>);
-                }
-                return <%= col.NtoNtable.classLowerCamel %>Ids;
-            },
-            set(val) {
-                this.<%= table.classLowerCamel %>.<%= col.NtoNtable.classLowerCamel %> = [];
-                for (let item of val) {
-                    this.<%= table.classLowerCamel %>.<%= col.NtoNtable.classLowerCamel %>.push({ <%= col.otherTable.primaryColumns[0].propertyName %>: item });
-                }
-            }
-        }<% 
-
-}  
-%>
-    },
     mounted() {
         AppResource.<%= table.classLowerCamel %>.get({<% 
 if (table.primaryColumns.length == 1) {

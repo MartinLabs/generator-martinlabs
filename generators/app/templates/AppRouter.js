@@ -20,7 +20,7 @@ import Persist<%= table.className %> from '../controller/Persist<%= table.classN
 
 Vue.use(VueRouter);
 
-export default new VueRouter({
+var router = new VueRouter({
     routes: [
         { path: '/home', component: Home },
         { path: '/login', component: Login },<% 
@@ -53,3 +53,10 @@ if (table.primaryColumns.length == 1) {
         { path: '*', redirect: '/home' }
     ]
 });
+
+router.beforeEach(function (to, from, next) {
+  window.scrollTo(0, 0);
+  next();
+});
+
+export default router;

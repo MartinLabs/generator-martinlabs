@@ -150,6 +150,18 @@ module.exports = {
             main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/adap-table/Store.js"));
 
         main.fs.copy(
+            main.templatePath('CheckboxGroup.vue'),
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/form-group/CheckboxGroup.vue"));
+
+        main.fs.copy(
+            main.templatePath('SelectGroup.vue'),
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/form-group/SelectGroup.vue"));
+
+        main.fs.copy(
+            main.templatePath('MultiselectGroup.vue'),
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/form-group/MultiselectGroup.vue"));
+
+        main.fs.copy(
             main.templatePath('InputGroup.vue'),
             main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/form-group/InputGroup.vue"));
 
