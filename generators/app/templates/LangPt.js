@@ -15,7 +15,8 @@ export default {
         "onlyIfWantChangePassword": "Preencha este campo somente se quiser alterar a senha",
         "noDataToShow": "Nenhum dado para apresentar",
         "downloadCsv": "Baixar CSV",
-        "search": "Buscar"
+        "search": "Buscar",
+        "totalLines": "{total} entradas no total"
     },
     
     "dateFormat": {

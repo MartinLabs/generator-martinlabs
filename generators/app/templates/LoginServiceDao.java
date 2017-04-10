@@ -18,7 +18,7 @@ public class LoginServiceDao extends DaoWrapper{
                 + "SELECT <%= table.primaryColumns[0].column_name %> "
                 + "FROM <%= table.name %> "
                 + "WHERE <%= table.accountColumn.column_name %> = ? "
-                + "AND <%= table.passwordColumn.column_name %> = sha1(?) ", 
+                + "AND <%= table.passwordColumn.column_name %> = sha2(?, 256) ", 
                 account, password));
     }
 }

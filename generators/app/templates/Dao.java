@@ -136,7 +136,7 @@ for (var i in table.columns) {
             "%" + search + "%");
     }
     
-    public int update(<%= table.className %> <%= table.classLowerCamel %>){
+    public int update<%= table.className %>(<%= table.className %> <%= table.classLowerCamel %>){
         //TODO: review generated method
         return update("UPDATE <%= table.name %> SET<% 
 var colocarVirgula = false;
@@ -145,7 +145,7 @@ for (var i in table.columns) {
     if (c.extra !== 'auto_increment' && c.column_key != 'PRI' && c.smartType != 'createTime') {
         if (c.smartType === 'password') {
 %><%= colocarVirgula ? ',' : '' %> "
-            + "<%= c.column_name %> = IF(? IS NOT NULL, SHA1(?), <%= c.column_name %>)<%
+            + "<%= c.column_name %> = IF(? IS NOT NULL, SHA2(?, 256), <%= c.column_name %>)<%
         } else if (c.smartType == 'updateTime') {
 %><%= colocarVirgula ? ',' : '' %> "
             + "<%= c.column_name %> = NOW()<%
@@ -200,7 +200,7 @@ for (var i in table.columns) {
     if (c.extra !== 'auto_increment' && c.smartType != 'updateTime') { 
         %><%= colocarVirgula ? ',' : '' %><%
         if (c.smartType ===  'password') {
-            %>SHA1(?)<% 
+            %>SHA2(?, 256)<% 
         } else if (c.smartType == 'createTime') {
             %>NOW()<% 
         } else {

@@ -196,7 +196,7 @@ if (table.primaryColumns.length < 2 && !table.primaryColumns[0].referencedTable)
             <%= table.classLowerCamel %>.validate(true);
             id<%= table.className %> = <%= table.classLowerCamel %>.get<%= table.primaryColumns[0].propertyNameUpper %>();
             
-            dao.update(<%= table.classLowerCamel %>);
+            dao.update<%= table.className %>(<%= table.classLowerCamel %>);
         } else {
             <%= table.classLowerCamel %>.validate(false);
             id<%= table.className %> = dao.insert(<%= table.classLowerCamel %>);
@@ -212,7 +212,7 @@ for (var i in table.primaryColumns) {
             } %>);
         if (exist) {
             <%= table.classLowerCamel %>.validate(true);
-            dao.update(<%= table.classLowerCamel %>);
+            dao.update<%= table.className %>(<%= table.classLowerCamel %>);
         } else {
             <%= table.classLowerCamel %>.validate(false);
             dao.insert(<%= table.classLowerCamel %>);

@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import sha1 from 'js-sha1';
+import sha256 from 'js-sha256';
 import simpleStorage from 'simpleStorage.js';
 import AppResource from '../service/AppResource';
 import AppBus from '../service/AppBus';
@@ -31,7 +31,7 @@ export default {
 
             AppResource.login.save({
                 account: this.account,
-                password: sha1(this.password)
+                password: sha256(this.password)
             }).then((resp) => {
                 if (resp.body.success) {
                     simpleStorage.set("token<%= modulenameUpper %>", resp.body.data.token);

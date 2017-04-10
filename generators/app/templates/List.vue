@@ -22,6 +22,8 @@
 
                     <div class="table-responsive">
 
+                        <span v-if='list && list.length' class="pull-right">{{ $t("app.totalLines", { total: adapStore.count }) }}</span>
+
                         <div class="form-group form-inline">
                             <adap-searchfield :store="adapStore" :placeholder="$t('app.search')"/>
                         </div>

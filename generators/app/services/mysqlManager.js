@@ -83,28 +83,21 @@ module.exports = {
                 //and N-to-N tables
 
                 var refs = [];
-                var connectedToCrud = false;
                 for (var i in table.columns) {
                     var c = table.columns[i];
                     if (c.referenced_table_name) {
-                        if (main.props.crudTables.indexOf(c.referenced_table_name) > -1) {
-                            connectedToCrud = true;
-                        }
 
                         refs.push({
                             col: c,
                             ref: c.referenced_table_name
                         });
 
-                        if (table.inCrud) {
-                            main.props.referencedTables.add(c.referenced_table_name);
-                        }
+                        main.props.referencedTables.add(c.referenced_table_name);
                     }
                 }
 
-                if (table.columns.length == 2 && refs.length == 2 && connectedToCrud) {
+                if (table.columns.length == 2 && refs.length == 2) {
                     //is N to N when only have 2 fields and both are foreign keys
-                    //and one of them is connected to CRUD
                     table.isNtoNtable = true;
 
                     //add in a map of [referenced table name ; N to N table, column, and other table name]

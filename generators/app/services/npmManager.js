@@ -27,7 +27,7 @@ module.exports = {
                 
                 main.npmInstall([
                     "bootstrap-sass",
-                    "js-sha1",
+                    "js-sha256",
                     "lodash",
                     "moment",
                     "simplestorage.js",

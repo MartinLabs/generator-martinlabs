@@ -23,7 +23,7 @@ public class LoginServicesTest extends DaoUnitTestWrapper {
         super("<%= datasource %>", "<%= database %>");
         Connection con = getConnection();
         subject = new LoginServices(con);
-        token = subject.loginToToken("user@gmail.com", SecurityUtils.sha1("abcabc"));
+        token = subject.loginToToken("user@gmail.com", SecurityUtils.sha256("abcabc"));
     }
 
     @Test(expected = RespException.class)
@@ -33,12 +33,12 @@ public class LoginServicesTest extends DaoUnitTestWrapper {
 
     @Test(expected = RespException.class)
     public void testLoginFail() {
-        subject.login("user@gmail.com", SecurityUtils.sha1("wrongpassword"));
+        subject.login("user@gmail.com", SecurityUtils.sha256("wrongpassword"));
     }
 
     @Test
     public void testLoginAdmin() {
-        LoginResp result = subject.login("user@gmail.com", SecurityUtils.sha1("abcabc"));
+        LoginResp result = subject.login("user@gmail.com", SecurityUtils.sha256("abcabc"));
         assertEquals(token,
                 result.getToken());
     }
@@ -61,7 +61,7 @@ public class LoginServicesTest extends DaoUnitTestWrapper {
 
     @Test
     public void testGetId() {
-        long result = subject.getId("user@gmail.com", SecurityUtils.sha1("abcabc"));
+        long result = subject.getId("user@gmail.com", SecurityUtils.sha256("abcabc"));
         assertNotEquals(result, 0);
     }
 
@@ -83,7 +83,7 @@ public class LoginServicesTest extends DaoUnitTestWrapper {
 
     @Test
     public void testLoginToToken() {
-        String result = subject.loginToToken("user@gmail.com", SecurityUtils.sha1("abcabc"));
+        String result = subject.loginToToken("user@gmail.com", SecurityUtils.sha256("abcabc"));
         assertEquals(token,
                 result);
     }

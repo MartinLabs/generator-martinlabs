@@ -45,7 +45,7 @@ public class <%= table.className %>ProcessTest extends DaoUnitTestWrapper {
 
     @Test(expected = RespException.class)
     public void testListPageNull() {
-        String token = loginS.loginToToken("user@gmail.com", SecurityUtils.sha1("abcabc"));
+        String token = loginS.loginToToken("user@gmail.com", SecurityUtils.sha256("abcabc"));
         String query = null;
         Integer page = null;
         Integer limit = 20;
@@ -57,7 +57,7 @@ public class <%= table.className %>ProcessTest extends DaoUnitTestWrapper {
 
     @Test(expected = RespException.class)
     public void testListLimitNull() {
-        String token = loginS.loginToToken("user@gmail.com", SecurityUtils.sha1("abcabc"));
+        String token = loginS.loginToToken("user@gmail.com", SecurityUtils.sha256("abcabc"));
         String query = null;
         Integer page = 0;
         Integer limit = null;
@@ -69,7 +69,7 @@ public class <%= table.className %>ProcessTest extends DaoUnitTestWrapper {
 
     @Test
     public void testListNoQuery() {
-        String token = loginS.loginToToken("user@gmail.com", SecurityUtils.sha1("abcabc"));
+        String token = loginS.loginToToken("user@gmail.com", SecurityUtils.sha256("abcabc"));
         String query = null;
         Integer page = 0;
         Integer limit = 20;
@@ -86,7 +86,7 @@ public class <%= table.className %>ProcessTest extends DaoUnitTestWrapper {
 
     @Test
     public void testListWithQuery() {
-        String token = loginS.loginToToken("user@gmail.com", SecurityUtils.sha1("abcabc"));<%
+        String token = loginS.loginToToken("user@gmail.com", SecurityUtils.sha256("abcabc"));<%
 
 var existPureStringColumn = false;
 for (var i in table.columns) {
@@ -119,7 +119,7 @@ if (existPureStringColumn) {
 
     @Test
     public void testGet() {
-        String token = loginS.loginToToken("user@gmail.com", SecurityUtils.sha1("abcabc"));
+        String token = loginS.loginToToken("user@gmail.com", SecurityUtils.sha256("abcabc"));
 
         <%= table.className %>Resp result = subject.get(<% 
 for (var k in table.primaryColumns) {
@@ -160,7 +160,7 @@ for (var i in table.columns) {
 %>
     @Test(expected = RespException.class)
     public void testPersistWithRepeated<%= c.propertyNameUpper %>() {
-        String token = loginS.loginToToken("user@gmail.com", SecurityUtils.sha1("abcabc"));
+        String token = loginS.loginToToken("user@gmail.com", SecurityUtils.sha256("abcabc"));
         <%= table.className %> <%= table.classLowerCamel %> = new <%= table.className %>(); <%
         for (var j in table.columns) { 
             var cx = table.columns[j]; 
@@ -207,7 +207,7 @@ for (var i in table.columns) {
 %>
     @Test
     public void testPersist() {
-        String token = loginS.loginToToken("user@gmail.com", SecurityUtils.sha1("abcabc"));
+        String token = loginS.loginToToken("user@gmail.com", SecurityUtils.sha256("abcabc"));
         <%= table.className %> <%= table.classLowerCamel %> = new <%= table.className %>(); <%
 for (var j in table.columns) { 
     var cx = table.columns[j]; 
@@ -242,7 +242,7 @@ for (var i in table.NtoNcolumns) {
 %>
     @Test
     public void testPersistWith<%= col.NtoNtable.className %>() {
-        String token = loginS.loginToToken("user@gmail.com", SecurityUtils.sha1("abcabc"));
+        String token = loginS.loginToToken("user@gmail.com", SecurityUtils.sha256("abcabc"));
         <%= table.className %> <%= table.classLowerCamel %> = new <%= table.className %>(); <%
     for (var j in table.columns) { 
         var cx = table.columns[j]; 
@@ -281,7 +281,7 @@ if (!table.primaryColumns[0].referencedTable) {
 %>
     @Test
     public void testPersistUpdating() {
-        String token = loginS.loginToToken("user@gmail.com", SecurityUtils.sha1("abcabc"));
+        String token = loginS.loginToToken("user@gmail.com", SecurityUtils.sha256("abcabc"));
         <%= table.className %> <%= table.classLowerCamel %> = new <%= table.className %>(); 
         <%= table.classLowerCamel %>.set<%= table.primaryColumns[0].propertyNameUpper %>(1);<%
     for (var j in table.columns) { 
@@ -315,7 +315,7 @@ if (!table.primaryColumns[0].referencedTable) {
 %>
     @Test
     public void testPersistInserting() {
-        String token = loginS.loginToToken("user@gmail.com", SecurityUtils.sha1("abcabc"));
+        String token = loginS.loginToToken("user@gmail.com", SecurityUtils.sha256("abcabc"));
         <%= table.className %> <%= table.classLowerCamel %> = new <%= table.className %>();
 <% 
     for (var i in table.primaryColumns) {
@@ -432,7 +432,7 @@ if (table.deactivableColumn) {
 %>
     @Test
     public void testRemove() {
-        String token = loginS.loginToToken("user@gmail.com", SecurityUtils.sha1("abcabc"));
+        String token = loginS.loginToToken("user@gmail.com", SecurityUtils.sha256("abcabc"));
         
         subject.remove(<% 
     for (var k in table.primaryColumns) {

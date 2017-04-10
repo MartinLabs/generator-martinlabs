@@ -20,6 +20,11 @@ module.exports = {
             main.props);
 
         main.fs.copyTpl(
+            main.templatePath('DateParameterConverterProvider.java'),
+            main.customDestinationPath(main.props.javaFolder+"/DateParameterConverterProvider.java"), 
+            main.props);
+
+        main.fs.copyTpl(
             main.templatePath('Router.java'),
             main.customDestinationPath(main.props.moduleFolder+"/Router.java"), 
             main.props);
@@ -162,6 +167,10 @@ module.exports = {
             main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/form-group/MultiselectGroup.vue"));
 
         main.fs.copy(
+            main.templatePath('TextareaGroup.vue'),
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/form-group/TextareaGroup.vue"));
+
+        main.fs.copy(
             main.templatePath('InputGroup.vue'),
             main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/form-group/InputGroup.vue"));
 
@@ -213,6 +222,11 @@ module.exports = {
                     props: main.props,
                     table: table
                 };
+
+                main.fs.copyTpl(
+                    main.templatePath('Model.js'),
+                    main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/model/"+table.className+".js"),
+                    params);
 
                 main.fs.copyTpl(
                     main.templatePath('List.vue'),

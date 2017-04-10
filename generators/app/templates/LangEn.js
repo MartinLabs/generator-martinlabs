@@ -15,20 +15,8 @@ export default {
         "onlyIfWantChangePassword": "Fill this field only if you want to change the password",
         "noDataToShow": "No data to show",
         "downloadCsv": "Download CSV",
-        "search": "Search"
-    },
-    
-    "dataTable": {
-        "count": "Showing {from} to {to} of {count} records|{count} records|One record",
-        "filter": "Filter Results:",
-        "filterPlaceholder": "Search query",
-        "limit": "Records:",
-        "noResults": "No matching records",
-        "page": "Page:",
-        "filterBy": "Filter by {column}",
-        "loading": "Loading...",
-        "defaultOption": "Select {column}"
-
+        "search": "Search",
+        "totalLines": "{total} total lines"
     },
     
     "dateFormat": {

@@ -44,7 +44,6 @@ module.exports = {
             table.classLowerCamel = this.lowerCamelCase(table.name);
             table.classNatural = this.naturalCase(table.className);
 
-            //marks that main table should have List WS even if it's not choosen to be CRUD
             table.isReferenced = main.props.referencedTables.has(table.name);
 
             var isLoginTable = false;
@@ -213,7 +212,7 @@ module.exports = {
         }
 
         if (column.smartType === "password") {
-            return "SHA1(SHA1(\"abcabc\"))";
+            return "SHA2(SHA2(\"abcabc\", 256), 256)";
         }
 
         if (column.smartType === "imageUrl") {
@@ -277,7 +276,11 @@ module.exports = {
         }
 
         if (["char", "varchar", "text"].indexOf(column.data_type) > -1) {
-            return "\"" + lorem(Math.min(2000, column.character_maximum_length), index === 0) + "\"";
+            if (index % 10) { //others will have half of maximum capacity (100 max)
+                return "\"" + lorem(Math.min(100, column.character_maximum_length / 2), false) + "\"";
+            } else { //0th, 10th, 20th, 30th... line will have maximum capacity (2000 max)
+                return "\"" + lorem(Math.min(2000, column.character_maximum_length), index === 0) + "\"";
+            }
         }
 
         else if (["float", "double", "real", "double precision", "numeric", "decimal"].indexOf(column.data_type) > -1) {
