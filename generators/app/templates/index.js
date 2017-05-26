@@ -12,6 +12,7 @@ Vue.use(VueMoment);
 
 new Vue({
     el: '#app',
+    i18n: AppTranslator.i18n,
     router: AppRouter,
     render: h => h(App)
 });

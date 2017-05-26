@@ -30,7 +30,7 @@ export default {
         "quarter": "DD/MM/YY",
         "year": "DD/MM/YY",
         "date": "DD/MM/YYYY",
-        "datetime": "DD/MM/YYYY hh:mm",
+        "datetime": "DD/MM/YYYY HH:mm",
         "time": "hh:mm",
         "datemask": "##/##/####",
         "datetimemask": "##/##/#### ##:##"
