@@ -32,6 +32,8 @@ module.exports = {
                     "moment",
                     "simplestorage.js",
                     "v-mask",
+                    "debounce-promise",
+                    "chart.js",
                     "vue",
                     "vue-awesome",
                     "vue-chartjs",

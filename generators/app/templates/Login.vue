@@ -16,7 +16,6 @@
 import sha256 from 'js-sha256';
 import simpleStorage from 'simpleStorage.js';
 import AppResource from '../service/AppResource';
-import AppBus from '../service/AppBus';
 
 export default {
     name: "Login", 
@@ -33,20 +32,15 @@ export default {
                 account: this.account,
                 password: sha256(this.password)
             }).then((resp) => {
-                if (resp.body.success) {
-                    simpleStorage.set("token<%= modulenameUpper %>", resp.body.data.token);
-                    simpleStorage.set("id<%= modulenameUpper %>", resp.body.data.id);
-                                        
-                    var beforeLoginIntention = simpleStorage.get("beforeLoginIntention") || null;
-                    if (beforeLoginIntention) {
-                        simpleStorage.deleteKey("beforeLoginIntention");
-                        location.href = beforeLoginIntention;
-                    } else {
-                        this.$router.push("/home");
-                    }
-
+                simpleStorage.set("token<%= modulenameUpper %>", resp.body.token);
+                simpleStorage.set("id<%= modulenameUpper %>", resp.body.id);
+                                    
+                var beforeLoginIntention = simpleStorage.get("beforeLoginIntention") || null;
+                if (beforeLoginIntention) {
+                    simpleStorage.deleteKey("beforeLoginIntention");
+                    location.href = beforeLoginIntention;
                 } else {
-                    AppBus.$emit("alert", "danger", resp.body.message, 3000);
+                    this.$router.push("/home");
                 }
             });
         }

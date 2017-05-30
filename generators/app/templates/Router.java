@@ -1,9 +1,10 @@
 package <%= modulePackage %>;
 
 import br.com.martinlabs.commons.LanguageHolder;
-import br.com.martinlabs.commons.OpResp;
-import br.com.martinlabs.commons.OperationPipe;
+import br.com.martinlabs.commons.TransactionPipe;
 import br.com.martinlabs.commons.PagedResp;
+import br.com.martinlabs.commons.exceptions.RespException;
+import br.com.martinlabs.commons.OauthHelper;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.DELETE;
@@ -41,11 +42,11 @@ import <%= modelPackage %>.<%= table.className %>;<%
 @Produces(MediaType.APPLICATION_JSON)
 public class Router implements ExceptionMapper<Throwable> {
 
-    private OperationPipe pipe = new OperationPipe("<%= datasource %>");
+    private TransactionPipe pipe = new TransactionPipe("<%= datasource %>");
 
     @POST
     @Path("/Login")
-    public OpResp<LoginResp> login(LoginHolder body) {
+    public LoginResp login(LoginHolder body) {
         //TODO: review generated method
         return pipe.handle(con -> {
             return new LoginServices(con).login(body.getAccount(), body.getPassword());
@@ -66,7 +67,7 @@ if (table.primaryColumns.length == 1) {
     } 
 }
         %>")
-    public OpResp<<%= table.className %>Resp> get<%= table.className %>(<% 
+    public <%= table.className %>Resp get<%= table.className %>(<% 
 if (table.primaryColumns.length == 1) {
 %>
             @PathParam("id") Long id,<%
@@ -79,7 +80,7 @@ if (table.primaryColumns.length == 1) {
 %>
             @Context HttpServletRequest req) {
         //TODO: review generated method
-        return pipe.handle(req, (con, token) -> {
+        return pipe.handle(con -> {
             return new <%= table.className %>Process(con).get(<% 
 if (table.primaryColumns.length == 1) {
     %>id, <%
@@ -88,13 +89,13 @@ if (table.primaryColumns.length == 1) {
         %><%= table.primaryColumns[k].propertyName %>, <%
     } 
 }
-                %>token);
+                %>OauthHelper.getToken(req));
         });
     }
 
     @GET
     @Path("/<%= table.className %>")
-    public OpResp<PagedResp<<%= table.className %>>> list<%= table.className %>(
+    public PagedResp<<%= table.className %>> list<%= table.className %>(
             @Context HttpServletRequest req,
             @QueryParam("query") String query,
             @QueryParam("page") Integer page,
@@ -102,19 +103,19 @@ if (table.primaryColumns.length == 1) {
             @QueryParam("orderBy") String orderRequest,
             @QueryParam("ascending") Boolean asc) {
         //TODO: review generated method
-        return pipe.handle(req, (con, token) -> {
-            return new <%= table.className %>Process(con).list(token, query, page, limit, orderRequest, asc != null && asc);
+        return pipe.handle(con -> {
+            return new <%= table.className %>Process(con).list(OauthHelper.getToken(req), query, page, limit, orderRequest, asc != null && asc);
         });
     }
 
     @POST
     @Path("/<%= table.className %>")
-    public OpResp<Long> persist<%= table.className %>(
+    public Long persist<%= table.className %>(
         @Context HttpServletRequest req,
         <%= table.className %> <%= table.classLowerCamel %>) {
         //TODO: review generated method
-        return pipe.handle(req, (con, token) -> {
-            return new <%= table.className %>Process(con).persist(<%= table.classLowerCamel %>, token);
+        return pipe.handle(con -> {
+            return new <%= table.className %>Process(con).persist(<%= table.classLowerCamel %>, OauthHelper.getToken(req));
         });
     }
 <%
@@ -122,7 +123,7 @@ if (table.primaryColumns.length == 1) {
 %>
     @DELETE
     @Path("/<%= table.className %>/{id}")
-    public OpResp remove<%= table.className %>(<% 
+    public Object remove<%= table.className %>(<% 
             if (table.primaryColumns.length == 1) {
 %>
             @PathParam("id") Long id,<%
@@ -135,8 +136,8 @@ if (table.primaryColumns.length == 1) {
 %>
             @Context HttpServletRequest req) {
         //TODO: review generated method
-        return pipe.handle(req, (con, token) -> {
-            new <%= table.className %>Process(con).remove(id, token);
+        return pipe.handle(con -> {
+            new <%= table.className %>Process(con).remove(id, OauthHelper.getToken(req));
             return null;
         });
     }
@@ -149,10 +150,24 @@ if (table.primaryColumns.length == 1) {
     public Response toResponse(Throwable e) {
         Logger.getLogger(Router.class.getName()).log(Level.SEVERE, e.getMessage(), e);
         
-        return Response.status(200)
-            .entity("{\"success\": false, \"message\": \""+LanguageHolder.instance.invalidEntry()+"\"}")
+        if (e instanceof RespException) {
+            RespException re = (RespException) e;
+            
+            String code = "";
+            if (re.getCode() != null) {
+                code = "\"code\": " + re.getCode() + ", ";
+            }
+            
+            return Response.status(403)
+            .entity("{"+code+" \"message\": \""+e.getMessage()+"\"}")
             .type(MediaType.APPLICATION_JSON)
             .build();
+        } else {
+            return Response.status(500)
+                .entity("{\"message\": \""+LanguageHolder.instance.invalidEntry()+"\"}")
+                .type(MediaType.APPLICATION_JSON)
+                .build();
+        }
     }
 
 }

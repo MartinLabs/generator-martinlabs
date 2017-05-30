@@ -130,17 +130,21 @@ for (var k in table.primaryColumns) {
                 %><%= k > 0 ? ', ' : '' %><%= table.primaryColumns[k].propertyName %><%
 } 
                 %>);
-            resp.set<%= table.className %>(<%= table.classLowerCamel %>);<% 
-for (var i in table.NtoNcolumns) { 
-    var c = table.NtoNcolumns[i]; 
+            resp.set<%= table.className %>(<%= table.classLowerCamel %>);<%
+if (table.NtoNcolumns && table.NtoNcolumns.length) { %>
+            if (<%= table.classLowerCamel %> != null) {<% 
+    for (var i in table.NtoNcolumns) { 
+        var c = table.NtoNcolumns[i]; 
 %>
-            <%= table.classLowerCamel %>.set<%= c.NtoNtable.className %>(<%= c.NtoNtable.classLowerCamel %>Dao.list<%= c.otherTable.className %>Of<%= table.className %>(<% 
-for (var k in table.primaryColumns) {
-                %><%= k > 0 ? ', ' : '' %><%= table.primaryColumns[k].propertyName %><%
-} 
-                %>));
+                <%= table.classLowerCamel %>.set<%= c.NtoNtable.className %>(<%= c.NtoNtable.classLowerCamel %>Dao.list<%= c.otherTable.className %>Of<%= table.className %>(<% 
+        for (var k in table.primaryColumns) {
+                    %><%= k > 0 ? ', ' : '' %><%= table.primaryColumns[k].propertyName %><%
+        } 
+%>));
+            }
 <% 
-} 
+    } 
+}
 %>
         }<% 
 antiRepeat = [];

@@ -225,17 +225,16 @@ if (table.primaryColumns.length == 1) {
 
 %>
         }).then((resp) => {
-            if (resp.body.success) {
-                if (resp.body.data.<%= table.classLowerCamel %>) {
-                    this.<%= table.classLowerCamel %> = resp.body.data.<%= table.classLowerCamel %>;
-                }<% 
+            if (resp.body.<%= table.classLowerCamel %>) {
+                this.<%= table.classLowerCamel %> = resp.body.<%= table.classLowerCamel %>;
+            }<% 
 var antiRepeat = [];
 for (var i in table.columns) { 
     var c = table.columns[i]; 
     if (c.referencedTable && antiRepeat.indexOf(c.referencedTable.className) < 0) {
         antiRepeat.push(c.referencedTable.className);
 %>
-                this.all<%= c.referencedTable.className %> = resp.body.data.all<%= c.referencedTable.className %>;<%
+            this.all<%= c.referencedTable.className %> = resp.body.all<%= c.referencedTable.className %>;<%
     }
 }
 
@@ -245,13 +244,10 @@ for (var i in table.NtoNcolumns) {
     if (antiRepeat.indexOf(c.otherTable.className) < 0) {
         antiRepeat.push(c.otherTable.className);
 %>
-                this.all<%= c.otherTable.className %> = resp.body.data.all<%= c.otherTable.className %>;<%
+            this.all<%= c.otherTable.className %> = resp.body.all<%= c.otherTable.className %>;<%
     }
 }
             %>
-            } else {
-                AppBus.$emit("alert", "danger", resp.body.message, 3000);
-            }
         });
     },
     methods: {
@@ -275,12 +271,8 @@ for (var i in table.columns) {
 } 
 %>
             AppResource.<%= table.classLowerCamel %>.save(this.<%= table.classLowerCamel %>).then((resp) => {
-                if (resp.body.success) {
-                    AppBus.$emit("alert", "success", AppTranslator.data.app.persistedSuccessfully, 3000);
-                    this.$router.push("/list<%= table.className %>");
-                } else {
-                    AppBus.$emit("alert", "danger", resp.body.message, 3000);
-                }
+                AppBus.$emit("alert", "success", AppTranslator.data.app.persistedSuccessfully, 3000);
+                this.$router.push("/list<%= table.className %>");
             });
         }
     }

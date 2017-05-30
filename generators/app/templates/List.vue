@@ -172,7 +172,6 @@ import moment from "moment";
 import downloadCsv from '../util/downloadCsv.js';
 
 import AppResource from '../service/AppResource';
-import AppBus from '../service/AppBus';
 import AppTranslator  from '../service/AppTranslator';
 
 import Default from './fragment/Default.vue';
@@ -203,12 +202,8 @@ if (table.deactivableColumn) { %>
     methods: {
         populateList(params) {
             AppResource.<%= table.classLowerCamel %>.query(params).then((resp) => {
-                if (resp.body.success) {
-                    this.list = resp.body.data.list;
-                    this.adapStore.setCount(resp.body.data.count);
-                } else {
-                    AppBus.$emit("alert", "danger", resp.body.message, 3000);
-                }
+                this.list = resp.body.list;
+                this.adapStore.setCount(resp.body.count);
             });
         },
         openPersist(item) {
@@ -237,7 +232,7 @@ if (table.deactivableColumn) { %>,
             AppResource.<%= table.classLowerCamel %>.delete({<% 
 if (table.primaryColumns.length == 1) {
 %>
-            id: this.<%= table.classLowerCamel %>ToRemove.<%= table.primaryColumns[0].propertyName %><%
+                id: this.<%= table.classLowerCamel %>ToRemove.<%= table.primaryColumns[0].propertyName %><%
 } else {
     for (var k in table.primaryColumns) {
         %><%= k > 0 ? ',' : '' %>
@@ -247,12 +242,8 @@ if (table.primaryColumns.length == 1) {
 
 %>
             }).then((resp) => {
-                if (resp.body.success) {
-                    this.list.splice(this.list.indexOf(this.<%= table.classLowerCamel %>ToRemove), 1);
-                    this.<%= table.classLowerCamel %>ToRemove = null;
-                } else {
-                    AppBus.$emit("alert", "danger", resp.body.message, 3000);
-                }
+                this.list.splice(this.list.indexOf(this.<%= table.classLowerCamel %>ToRemove), 1);
+                this.<%= table.classLowerCamel %>ToRemove = null;
             });
         }<%
 }

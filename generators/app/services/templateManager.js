@@ -183,6 +183,10 @@ module.exports = {
             main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/LineChart.vue"));
 
         main.fs.copy(
+            main.templatePath('LoadBox.vue'),
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/LoadBox.vue"));
+
+        main.fs.copy(
             main.templatePath('Modal.vue'),
             main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/Modal.vue"));
 
