@@ -1,5 +1,6 @@
 package <%= props.modelPackage %>;
 
+import br.com.martinlabs.commons.EnglishLanguage;
 import br.com.martinlabs.commons.exceptions.RespException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -43,7 +44,7 @@ for (var i in table.columns) {
         } 
 %>
         
-        <%= table.classLowerCamel %>.validate(false);
+        <%= table.classLowerCamel %>.validate(false, new EnglishLanguage());
     } 
 <%
 
@@ -79,7 +80,7 @@ for (var i in table.columns) {
         } 
 %>
         
-        <%= table.classLowerCamel %>.validate(false);
+        <%= table.classLowerCamel %>.validate(false, new EnglishLanguage());
     } <%
         if (c.smartType === "email") { %>
     @Test(expected = RespException.class)
@@ -110,7 +111,7 @@ for (var i in table.columns) {
         } 
 %>
         
-        <%= table.classLowerCamel %>.validate(false);
+        <%= table.classLowerCamel %>.validate(false, new EnglishLanguage());
     } <%
         }
     }
@@ -156,7 +157,7 @@ for (var i in table.columns) {
         } 
 %>
         
-        <%= table.classLowerCamel %>.validate(false);
+        <%= table.classLowerCamel %>.validate(false, new EnglishLanguage());
     }
 
     @Test

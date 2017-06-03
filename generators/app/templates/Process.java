@@ -48,10 +48,15 @@ public class <%= table.className %>Process {
 
     private Connection con;
     private LoginServices loginS;
+    private LanguageHolder lang;
+    private String clientVersion;
 
-    public <%= table.className %>Process(Connection con) {
+    public <%= table.className %>Process(Connection con, LanguageHolder lang, String clientVersion) {
         this.con = con;
-        loginS = new LoginServices(con);
+        this.lang = lang;
+        this.clientVersion = clientVersion;
+        this.loginS = new LoginServices(con, lang, clientVersion);
+
     }
 
     public PagedResp<<%= table.className %>> list(
@@ -63,11 +68,11 @@ public class <%= table.className %>Process {
         Boolean asc) {
         //TODO: review generated method
         if (page == null) {
-            throw new RespException(1,  LanguageHolder.instance.cannotBeNull("Page"));
+            throw new RespException(1,  lang.cannotBeNull("Page"));
         }
         
         if (limit == null) {
-            throw new RespException(2,  LanguageHolder.instance.cannotBeNull("Limit"));
+            throw new RespException(2,  lang.cannotBeNull("Limit"));
         } 
         
         if (query != null) {
@@ -76,7 +81,7 @@ public class <%= table.className %>Process {
 
         loginS.allowAccess(token);
 
-        <%= table.className %>Dao dao = new <%= table.className %>Dao(con);
+        <%= table.className %>Dao dao = new <%= table.className %>Dao(con, lang);
 
         List<<%= table.className %>> list<%= table.className %> = dao.list(query, page, limit, orderRequest, asc);
 
@@ -102,13 +107,13 @@ for (var k in table.primaryColumns) {
 antiRepeat = [];
 antiRepeat.push(table.className);
 %>
-        <%= table.className %>Dao <%= table.classLowerCamel %>Dao = new <%= table.className %>Dao(con);<% 
+        <%= table.className %>Dao <%= table.classLowerCamel %>Dao = new <%= table.className %>Dao(con, lang);<% 
 for (var i in table.columns) { 
     var c = table.columns[i]; 
     if (c.referencedTable && antiRepeat.indexOf(c.referencedTable.className) < 0) {
         antiRepeat.push(c.referencedTable.className);
 %>
-        <%= c.referencedTable.className %>Dao <%= c.referencedTable.classLowerCamel %>Dao = new <%= c.referencedTable.className %>Dao(con);<%
+        <%= c.referencedTable.className %>Dao <%= c.referencedTable.classLowerCamel %>Dao = new <%= c.referencedTable.className %>Dao(con, lang);<%
     }
 }
 
@@ -117,8 +122,8 @@ for (var i in table.NtoNcolumns) {
     if (antiRepeat.indexOf(c.otherTable.className) < 0) {
         antiRepeat.push(c.otherTable.className);
 %>
-        <%= c.NtoNtable.className %>Dao <%= c.NtoNtable.classLowerCamel %>Dao = new <%= c.NtoNtable.className %>Dao(con);
-        <%= c.otherTable.className %>Dao <%= c.otherTable.classLowerCamel %>Dao = new <%= c.otherTable.className %>Dao(con);<%
+        <%= c.NtoNtable.className %>Dao <%= c.NtoNtable.classLowerCamel %>Dao = new <%= c.NtoNtable.className %>Dao(con, lang);
+        <%= c.otherTable.className %>Dao <%= c.otherTable.classLowerCamel %>Dao = new <%= c.otherTable.className %>Dao(con, lang);<%
     }
 }
 %>
@@ -177,7 +182,7 @@ for (var j in table.NtoNcolumns) {
         //TODO: review generated method
         loginS.allowAccess(token);
 
-        <%= table.className %>Dao dao = new <%= table.className %>Dao(con);
+        <%= table.className %>Dao dao = new <%= table.className %>Dao(con, lang);
 <%
 for (var i in table.columns) { 
     var c = table.columns[i];
@@ -187,7 +192,7 @@ for (var i in table.columns) {
     for (var i in table.primaryColumns) { 
         %>, <%= table.classLowerCamel %>.get<%= table.primaryColumns[i].propertyNameUpper %>()<% 
     } %>)) {
-            throw new RespException(LanguageHolder.instance.alreadyExist("<%= c.propertyNatural %>"));
+            throw new RespException(lang.alreadyExist("<%= c.propertyNatural %>"));
         }
 <% 
     }
@@ -197,12 +202,12 @@ if (table.primaryColumns.length < 2 && !table.primaryColumns[0].referencedTable)
 %>
         long id<%= table.className %>;
         if (<%= table.classLowerCamel %>.get<%= table.primaryColumns[0].propertyNameUpper %>() > 0) {
-            <%= table.classLowerCamel %>.validate(true);
+            <%= table.classLowerCamel %>.validate(true, lang);
             id<%= table.className %> = <%= table.classLowerCamel %>.get<%= table.primaryColumns[0].propertyNameUpper %>();
             
             dao.update<%= table.className %>(<%= table.classLowerCamel %>);
         } else {
-            <%= table.classLowerCamel %>.validate(false);
+            <%= table.classLowerCamel %>.validate(false, lang);
             id<%= table.className %> = dao.insert(<%= table.classLowerCamel %>);
             <%= table.classLowerCamel %>.set<%= table.primaryColumns[0].propertyNameUpper %>(id<%= table.className %>);
         }
@@ -215,17 +220,17 @@ for (var i in table.primaryColumns) {
             %><%= i > 0 ? ', ' : '' %><%= table.classLowerCamel %>.get<%= table.primaryColumns[i].propertyNameUpper %>()<% 
             } %>);
         if (exist) {
-            <%= table.classLowerCamel %>.validate(true);
+            <%= table.classLowerCamel %>.validate(true, lang);
             dao.update<%= table.className %>(<%= table.classLowerCamel %>);
         } else {
-            <%= table.classLowerCamel %>.validate(false);
+            <%= table.classLowerCamel %>.validate(false, lang);
             dao.insert(<%= table.classLowerCamel %>);
         }
 <% 
 } 
 for (var i in table.NtoNcolumns) { var col = table.NtoNcolumns[i]; 
 %>
-        <%= col.NtoNtable.className %>Dao <%= col.NtoNtable.classLowerCamel %>Dao = new <%= col.NtoNtable.className %>Dao(con);
+        <%= col.NtoNtable.className %>Dao <%= col.NtoNtable.classLowerCamel %>Dao = new <%= col.NtoNtable.className %>Dao(con, lang);
     
         <%= col.NtoNtable.classLowerCamel %>Dao.removeAllFrom<%= table.className %>(id<%= table.className %>);
         
@@ -252,7 +257,7 @@ for (var i in table.NtoNcolumns) { var col = table.NtoNcolumns[i];
         String token) {
         //TODO: review generated method
         loginS.allowAccess(token);
-        <%= table.className %>Dao <%= table.classLowerCamel %>Dao = new <%= table.className %>Dao(con);
+        <%= table.className %>Dao <%= table.classLowerCamel %>Dao = new <%= table.className %>Dao(con, lang);
             
         <%= table.classLowerCamel %>Dao.softDelete(<% 
     for (var k in table.primaryColumns) {

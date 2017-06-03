@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import VueResource from 'vue-resource';
 import AppRouter from './AppRouter';
+import AppTranslator from './AppTranslator';
 import simpleStorage from 'simpleStorage.js';
 import AppBus from '../service/AppBus';
 
@@ -8,6 +9,10 @@ Vue.use(VueResource);
 
 Vue.http.interceptors.push((request, next) => {
     //all requests pass by here
+
+    request.headers.set("Accept-Language", AppTranslator.lang);
+    request.headers.set("X-Client-Version", "w1.0.0"); //w = web
+    
     var token = simpleStorage.get("token<%= modulenameUpper %>") || null;
     if (token) {
         request.headers.set('Authorization', 'Bearer ' + token);

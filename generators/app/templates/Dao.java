@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
+import br.com.martinlabs.commons.LanguageHolder;
 
 /**
  *
@@ -14,8 +15,8 @@ import java.util.HashMap;
  */
 public class <%= table.className %>Dao extends DaoWrapper {
     
-    public <%= table.className %>Dao(Connection con) {
-        super(con);
+    public <%= table.className %>Dao(Connection con, LanguageHolder lang) {
+        super(con, lang);
     }
     
     public <%= table.className %> get(<% 

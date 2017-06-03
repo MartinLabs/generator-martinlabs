@@ -18,9 +18,4 @@
         <servlet-name>javax.ws.rs.core.Application</servlet-name>
         <url-pattern>/ws/*</url-pattern>
     </servlet-mapping>
-
-    
-    <listener>
-        <listener-class><%= package %>.ServerListener</listener-class>
-    </listener>
 </web-app>

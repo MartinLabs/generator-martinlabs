@@ -1,6 +1,8 @@
 package <%= processPackage %>;
 
 import br.com.martinlabs.commons.DaoUnitTestWrapper;
+import br.com.martinlabs.commons.EnglishLanguage;
+import br.com.martinlabs.commons.LanguageHolder;
 import br.com.martinlabs.commons.SecurityUtils;
 import br.com.martinlabs.commons.exceptions.RespException;
 import <%= responsePackage %>.LoginResp;
@@ -22,7 +24,9 @@ public class LoginServicesTest extends DaoUnitTestWrapper {
     public LoginServicesTest() throws NamingException, SQLException {
         super("<%= datasource %>", "<%= database %>");
         Connection con = getConnection();
-        subject = new LoginServices(con);
+        LanguageHolder lang = new EnglishLanguage();
+        String clientVersion = "w1.0.0";
+        subject = new LoginServices(con, lang, clientVersion);
         token = subject.loginToToken("user@gmail.com", SecurityUtils.sha256("abcabc"));
     }
 

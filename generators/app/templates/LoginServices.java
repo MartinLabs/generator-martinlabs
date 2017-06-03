@@ -19,9 +19,14 @@ public class LoginServices {
 
     protected static final String CRIPTOGRAPHY_HASH = "<%= Math.random().toString(36).substring(7) %>";
     private Connection con;
+    private LanguageHolder lang;
+    private String clientVersion;
 
-    public LoginServices(Connection con) {
+
+    public LoginServices(Connection con, LanguageHolder lang, String clientVersion) {
         this.con = con;
+        this.lang = lang;
+        this.clientVersion = clientVersion;
     }
     
     public LoginResp login(String account, String password) {
@@ -37,20 +42,20 @@ public class LoginServices {
         LoginHolder login = tokenToLogin(token);
         
         if (login == null) {
-            throw new RespException(ErrorCode.INVALID_LOGIN, LanguageHolder.instance.pleaseLogin());
+            throw new RespException(ErrorCode.INVALID_LOGIN, lang.pleaseLogin());
         }
         
         long id = getId(login.account, login.password);
         
         if (id == 0) {
-            throw new RespException(ErrorCode.INVALID_LOGIN, LanguageHolder.instance.pleaseLogin());
+            throw new RespException(ErrorCode.INVALID_LOGIN, lang.pleaseLogin());
         }
         
         return new LoginHolderWithId(login, id);
     }
     
     protected long getId(String account, String password) {
-        LoginServiceDao dao = new LoginServiceDao(con);
+        LoginServiceDao dao = new LoginServiceDao(con, lang);
         
         return dao.getId(account, password);
     }

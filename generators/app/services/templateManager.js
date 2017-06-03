@@ -5,11 +5,6 @@ module.exports = {
 	javaClasses: function(main) {
 
         main.fs.copyTpl(
-            main.templatePath('ServerListener.java'),
-            main.customDestinationPath(main.props.javaFolder+"/ServerListener.java"),
-            main.props);
-
-        main.fs.copyTpl(
             main.templatePath('ErrorCode.java'),
             main.customDestinationPath(main.props.javaFolder+"/ErrorCode.java"),
             main.props);

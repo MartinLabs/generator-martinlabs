@@ -1,6 +1,7 @@
 package <%= props.daoPackage %>;
 
 import br.com.martinlabs.commons.DaoWrapper;
+import br.com.martinlabs.commons.LanguageHolder;
 import java.sql.Connection;
 
 /**
@@ -9,8 +10,8 @@ import java.sql.Connection;
  */
 public class LoginServiceDao extends DaoWrapper{
     
-    public LoginServiceDao(Connection con) {
-        super(con);
+    public LoginServiceDao(Connection con, LanguageHolder lang) {
+        super(con, lang);
     }
     
     public long getId(String account, String password) {

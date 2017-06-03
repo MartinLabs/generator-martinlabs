@@ -2,15 +2,15 @@
 
 $brand-primary-dark: darken($brand-primary, 5%) !default;
 $brand-primary-darker: darken($brand-primary, 10%) !default;
-$brandname-text: #ffffff !default;
-$navbar-text: #ffffff !default;
+$brandname-text: #333333 !default;
+$navbar-text: #aaaaaa !default;
 $menu: #222d32 !default;
 $menu-text: #b8c7ce !default;
 $menu-selected: #1e282c !default;
 $menu-selected-text: #ffffff !default;
 $menu-header: #1a2226 !default;
 $menu-header-text: #4b646f !default;
-$background: #ecf0f5 !default;
+$background: #fafafa !default;
 
 html, body {
     min-height: 100%;
@@ -563,6 +563,7 @@ a {
     list-style: none;
     margin: 0;
     padding: 0;
+    padding-top: 20px;
     > li {
         position: relative;
         margin: 0;
@@ -5385,7 +5386,8 @@ table.text-center {
 
 .main-header {
     .navbar {
-        background-color: $brand-primary;
+        background-color: white;
+        border-bottom: 1px solid $brand-primary;
         .nav {
             > li > a {
                 color: $navbar-text;
@@ -5417,12 +5419,11 @@ table.text-center {
         }
     }
     .logo {
-        background-color: $brand-primary-dark;
+        background-color: white;
+        border-bottom: 1px solid $brand-primary;
         color: $brandname-text;
-        border-bottom: 0 solid transparent;
-        &:hover {
-            background-color: $brand-primary-darker;
-        }
+        margin-bottom: -1px;
+        height: 51px;
     }
     li.user-header {
         background-color: $brand-primary;
@@ -5431,9 +5432,6 @@ table.text-center {
 .content-header {
     background: transparent;
 }
-.main-sidebar, .left-side {
-    background-color: $menu;
-}
 .user-panel > .info {
     color: #fff;
     > a {
@@ -5441,16 +5439,19 @@ table.text-center {
     }
 }
 .sidebar-menu > li {
+    background: transparent;
+    
     &.header {
         color: $menu-header-text;
         background: $menu-header;
     }
     > a {
+        color: #4b646f;
         border-left: 3px solid transparent;
     }
     &:hover > a, .router-link-active {
-        color: $menu-selected-text;
-        background: $menu-selected;
+        color: #333333;
+        background: white;
         border-left-color: $brand-primary;
     }
     > .treeview-menu {

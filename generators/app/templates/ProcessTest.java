@@ -2,6 +2,8 @@ package <%= props.processPackage %>;
 
 import br.com.martinlabs.commons.DaoUnitTestWrapper;
 import br.com.martinlabs.commons.DaoWrapper;
+import br.com.martinlabs.commons.EnglishLanguage;
+import br.com.martinlabs.commons.LanguageHolder;
 import <%= props.modelPackage %>.<%= table.className %>;<% 
 var antiRepeat = [];
 for (var i in table.NtoNcolumns) { 
@@ -39,8 +41,10 @@ public class <%= table.className %>ProcessTest extends DaoUnitTestWrapper {
     public <%= table.className %>ProcessTest() throws NamingException, SQLException {
         super("<%= props.datasource %>", "<%= props.database %>");
         con = getConnection();
-        subject = new <%= table.className %>Process(con);
-        loginS = new LoginServices(con);
+        LanguageHolder lang = new EnglishLanguage();
+        String clientVersion = "w1.0.0";
+        subject = new <%= table.className %>Process(con, lang, clientVersion);
+        loginS = new LoginServices(con, lang, clientVersion);
     }
 
     @Test(expected = RespException.class)

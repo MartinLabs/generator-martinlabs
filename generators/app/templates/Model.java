@@ -59,7 +59,7 @@ for (var i in table.NtoNcolumns) {
 %>
     }
 
-    public void validate(boolean updating) {<% 
+    public void validate(boolean updating, LanguageHolder lang) {<% 
 for (var i in table.columns) { 
     var c = table.columns[i]; 
     if (c.is_nullable === "NO") { 
@@ -67,18 +67,18 @@ for (var i in table.columns) {
 %>
         if (!updating) {
             if (get<%= c.propertyNameUpper %>() == null || get<%= c.propertyNameUpper %>().isEmpty()) {
-                throw new RespException(<%= c.ordinal_position %>,  LanguageHolder.instance.cannotBeNull("<%= c.propertyNatural %>"));
+                throw new RespException(<%= c.ordinal_position %>,  lang.cannotBeNull("<%= c.propertyNatural %>"));
             }
         }<% 
         } else if (c.javaType === "String") {
 %>
         if (get<%= c.propertyNameUpper %>() == null || get<%= c.propertyNameUpper %>().isEmpty()) {
-            throw new RespException(<%= c.ordinal_position %>,  LanguageHolder.instance.cannotBeNull("<%= c.propertyNatural %>"));
+            throw new RespException(<%= c.ordinal_position %>,  lang.cannotBeNull("<%= c.propertyNatural %>"));
         }<% 
         } else if (c.javaType === "Date" && c.smartType != "createTime" && c.smartType != "updateTime") {
 %>
         if (get<%= c.propertyNameUpper %>() == null) {
-            throw new RespException(<%= c.ordinal_position %>,  LanguageHolder.instance.cannotBeNull("<%= c.propertyNatural %>"));
+            throw new RespException(<%= c.ordinal_position %>,  lang.cannotBeNull("<%= c.propertyNatural %>"));
         }<% 
         }
     }
@@ -88,12 +88,12 @@ for (var i in table.columns) {
         if (c.is_nullable === "NO" && c.smartType != "password") {
 %>
         if (get<%= c.propertyNameUpper %>().length() > <%= Math.min(65500, c.character_maximum_length) %>) {
-            throw new RespException(<%= c.ordinal_position %>, LanguageHolder.instance.lengthCannotBeMoreThan("<%= c.propertyNatural %>", <%= Math.min(65500, c.character_maximum_length) %>));
+            throw new RespException(<%= c.ordinal_position %>, lang.lengthCannotBeMoreThan("<%= c.propertyNatural %>", <%= Math.min(65500, c.character_maximum_length) %>));
         }<%
         } else {
 %>
         if (get<%= c.propertyNameUpper %>() != null && get<%= c.propertyNameUpper %>().length() > <%= Math.min(65500, c.character_maximum_length) %>) {
-            throw new RespException(<%= c.ordinal_position %>, LanguageHolder.instance.lengthCannotBeMoreThan("<%= c.propertyNatural %>", <%= Math.min(65500, c.character_maximum_length) %>));
+            throw new RespException(<%= c.ordinal_position %>, lang.lengthCannotBeMoreThan("<%= c.propertyNatural %>", <%= Math.min(65500, c.character_maximum_length) %>));
         }<%
         }
 
@@ -101,36 +101,36 @@ for (var i in table.columns) {
             if (c.is_nullable === "NO") {
 %>
         if (!Validator.isEmail(get<%= c.propertyNameUpper%>())) {
-            throw new RespException(<%= c.ordinal_position %>, LanguageHolder.instance.isNotAValidEmail("<%= c.propertyNatural %>"));
+            throw new RespException(<%= c.ordinal_position %>, lang.isNotAValidEmail("<%= c.propertyNatural %>"));
         }<%
             } else {
 %>
         if (get<%= c.propertyNameUpper %>() != null && !Validator.isEmail(get<%= c.propertyNameUpper%>())) {
-            throw new RespException(<%= c.ordinal_position %>, LanguageHolder.instance.isNotAValidEmail("<%= c.propertyNatural %>"));
+            throw new RespException(<%= c.ordinal_position %>, lang.isNotAValidEmail("<%= c.propertyNatural %>"));
         }<%
             }
         } else if (c.smartType === "cpf") {
             if (c.is_nullable === "NO") {
 %>
         if (!Validator.isCPF(get<%= c.propertyNameUpper%>())) {
-            throw new RespException(<%= c.ordinal_position %>, LanguageHolder.instance.isNotAValidCPF("<%= c.propertyNatural %>"));
+            throw new RespException(<%= c.ordinal_position %>, lang.isNotAValidCPF("<%= c.propertyNatural %>"));
         }<%
             } else {
 %>
         if (get<%= c.propertyNameUpper %>() != null && !Validator.isCPF(get<%= c.propertyNameUpper%>())) {
-            throw new RespException(<%= c.ordinal_position %>, LanguageHolder.instance.isNotAValidCPF("<%= c.propertyNatural %>"));
+            throw new RespException(<%= c.ordinal_position %>, lang.isNotAValidCPF("<%= c.propertyNatural %>"));
         }<%
             }
         } else if (c.smartType === "cnpj") {
             if (c.is_nullable === "NO") {
 %>
         if (!Validator.isCNPJ(get<%= c.propertyNameUpper%>())) {
-            throw new RespException(<%= c.ordinal_position %>, LanguageHolder.instance.isNotAValidCNPJ("<%= c.propertyNatural %>"));
+            throw new RespException(<%= c.ordinal_position %>, lang.isNotAValidCNPJ("<%= c.propertyNatural %>"));
         }<%
             } else {
 %>
         if (get<%= c.propertyNameUpper %>() != null && !Validator.isCNPJ(get<%= c.propertyNameUpper%>())) {
-            throw new RespException(<%= c.ordinal_position %>, LanguageHolder.instance.isNotAValidCNPJ("<%= c.propertyNatural %>"));
+            throw new RespException(<%= c.ordinal_position %>, lang.isNotAValidCNPJ("<%= c.propertyNatural %>"));
         }<%
             }
         }
@@ -139,7 +139,7 @@ for (var i in table.columns) {
     if (c.referencedTable && c.is_nullable === "NO") {
 %>
         if (get<%= c.propertyNameUpper %>() == 0) {
-            throw new RespException(<%= c.ordinal_position %>,  LanguageHolder.instance.cannotBeNull("<%= c.propertyNatural %>"));
+            throw new RespException(<%= c.ordinal_position %>,  lang.cannotBeNull("<%= c.propertyNatural %>"));
         }<% 
     }
 } 

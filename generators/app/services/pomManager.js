@@ -179,15 +179,7 @@ module.exports = {
                             rules: [{
                                 rule: [{
                                     "$": { implementation: "org.jacoco.maven.RuleConfiguration" },
-                                    element: ["BUNDLE"],
-                                    limits: [{
-                                        limit: [{
-                                            "$": { implementation: "org.jacoco.report.check.Limit" },
-                                            counter: ["INSTRUCTION"],
-                                            value: ["COVEREDRATIO"],
-                                            minimum: ["0.96"]
-                                        }]
-                                    }]
+                                    element: ["BUNDLE"]
                                 }]
                             }],
                             excludes: [{

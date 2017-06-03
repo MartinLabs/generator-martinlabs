@@ -5,6 +5,8 @@ import br.com.martinlabs.commons.TransactionPipe;
 import br.com.martinlabs.commons.PagedResp;
 import br.com.martinlabs.commons.exceptions.RespException;
 import br.com.martinlabs.commons.OauthHelper;
+import br.com.martinlabs.commons.EnglishLanguage;
+import br.com.martinlabs.commons.PortugueseLanguage;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.DELETE;
@@ -19,6 +21,8 @@ import javax.ws.rs.ext.ExceptionMapper;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import javax.ws.rs.HeaderParam;
 import <%= processPackage %>.LoginServices;
 import <%= processPackage %>.LoginServices.LoginHolder;
 import <%= responsePackage %>.LoginResp;<%
@@ -44,12 +48,23 @@ public class Router implements ExceptionMapper<Throwable> {
 
     private TransactionPipe pipe = new TransactionPipe("<%= datasource %>");
 
+    private HashMap<String, LanguageHolder> langs = new HashMap<String, LanguageHolder>() {{
+        put("en", new EnglishLanguage());
+        put("pt", new PortugueseLanguage());
+    }};
+
+
     @POST
     @Path("/Login")
-    public LoginResp login(LoginHolder body) {
+    public LoginResp login(
+        @HeaderParam("Accept-Language") String lang, 
+        @HeaderParam("X-Client-Version") String clientVersion, 
+        
+        LoginHolder body) {
         //TODO: review generated method
         return pipe.handle(con -> {
-            return new LoginServices(con).login(body.getAccount(), body.getPassword());
+            return new LoginServices(con, langs.get(lang), clientVersion)
+                .login(body.getAccount(), body.getPassword());
         });
     }
 <%
@@ -78,10 +93,14 @@ if (table.primaryColumns.length == 1) {
     }
 } 
 %>
-            @Context HttpServletRequest req) {
+
+        @HeaderParam("Accept-Language") String lang, 
+        @HeaderParam("X-Client-Version") String clientVersion, 
+        @Context HttpServletRequest req) {
         //TODO: review generated method
         return pipe.handle(con -> {
-            return new <%= table.className %>Process(con).get(<% 
+            return new <%= table.className %>Process(con, langs.get(lang), clientVersion)
+                .get(<% 
 if (table.primaryColumns.length == 1) {
     %>id, <%
 } else {
@@ -96,7 +115,10 @@ if (table.primaryColumns.length == 1) {
     @GET
     @Path("/<%= table.className %>")
     public PagedResp<<%= table.className %>> list<%= table.className %>(
+            @HeaderParam("Accept-Language") String lang, 
+            @HeaderParam("X-Client-Version") String clientVersion, 
             @Context HttpServletRequest req,
+
             @QueryParam("query") String query,
             @QueryParam("page") Integer page,
             @QueryParam("limit") Integer limit,
@@ -104,18 +126,23 @@ if (table.primaryColumns.length == 1) {
             @QueryParam("ascending") Boolean asc) {
         //TODO: review generated method
         return pipe.handle(con -> {
-            return new <%= table.className %>Process(con).list(OauthHelper.getToken(req), query, page, limit, orderRequest, asc != null && asc);
+            return new <%= table.className %>Process(con, langs.get(lang), clientVersion)
+                .list(OauthHelper.getToken(req), query, page, limit, orderRequest, asc != null && asc);
         });
     }
 
     @POST
     @Path("/<%= table.className %>")
     public Long persist<%= table.className %>(
+        @HeaderParam("Accept-Language") String lang, 
+        @HeaderParam("X-Client-Version") String clientVersion, 
         @Context HttpServletRequest req,
+
         <%= table.className %> <%= table.classLowerCamel %>) {
         //TODO: review generated method
         return pipe.handle(con -> {
-            return new <%= table.className %>Process(con).persist(<%= table.classLowerCamel %>, OauthHelper.getToken(req));
+            return new <%= table.className %>Process(con, langs.get(lang), clientVersion)
+                .persist(<%= table.classLowerCamel %>, OauthHelper.getToken(req));
         });
     }
 <%
@@ -134,10 +161,14 @@ if (table.primaryColumns.length == 1) {
     }
 } 
 %>
+
+            @HeaderParam("Accept-Language") String lang, 
+            @HeaderParam("X-Client-Version") String clientVersion, 
             @Context HttpServletRequest req) {
         //TODO: review generated method
         return pipe.handle(con -> {
-            new <%= table.className %>Process(con).remove(id, OauthHelper.getToken(req));
+            new <%= table.className %>Process(con, langs.get(lang), clientVersion)
+                .remove(id, OauthHelper.getToken(req));
             return null;
         });
     }
@@ -164,7 +195,7 @@ if (table.primaryColumns.length == 1) {
             .build();
         } else {
             return Response.status(500)
-                .entity("{\"message\": \""+LanguageHolder.instance.invalidEntry()+"\"}")
+                .entity("{\"message\": \"Invalid Entry\"}")
                 .type(MediaType.APPLICATION_JSON)
                 .build();
         }

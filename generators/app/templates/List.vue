@@ -243,6 +243,7 @@ if (table.primaryColumns.length == 1) {
 %>
             }).then((resp) => {
                 this.list.splice(this.list.indexOf(this.<%= table.classLowerCamel %>ToRemove), 1);
+                this.adapStore.count--;
                 this.<%= table.classLowerCamel %>ToRemove = null;
             });
         }<%

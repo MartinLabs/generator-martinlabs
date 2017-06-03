@@ -6,19 +6,22 @@ import LangPt from '../const/LangPt';
      
 Vue.use(VueI18n);
 
-var i18n = new VueI18n({
-    locale: "pt",
+var at = {
+    lang: "en"
+};
+
+at.i18n = new VueI18n({
+    locale: at.lang,
     messages: {
         en: LangEn,
         pt: LangPt
     }
 });
     
-var at;
-if (Vue.config.lang === "en") {
-    at = { i18n, data: LangEn };
+if (at.lang === "en") {
+    at.data = LangEn;
 } else {
-    at = { i18n, data: LangPt };
+    at.data = LangPt;
 }
 
 export default at;

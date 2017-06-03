@@ -30,14 +30,13 @@
                 <section class="sidebar">
                     <!-- sidebar menu: : style can be found in sidebar.less -->
                     <ul class="sidebar-menu">
-                        <li class="header">Menu</li>
 
                         <li><router-link to="/home">{{ $t("home.title") }}</router-link></li><% 
                         for (var i in tables) { 
                         	var table = tables[i];
                         	if (table.inCrud && !table.isNtoNtable) {
 					    %>
-                        <li><router-link to="/list<%= table.className %>">{{ $t("classes.<%= table.className %>.title") }}</router-link></li><%
+                        <li><router-link to="/list<%= table.className %>" exact>{{ $t("classes.<%= table.className %>.title") }}</router-link></li><%
                         	}
                     	} %>
 

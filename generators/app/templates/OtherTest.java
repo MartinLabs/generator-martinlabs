@@ -24,12 +24,4 @@ public class OtherTest {
         assertNotNull(context);
     }
     
-    @Test
-    public void testServerListenerContextInitialized() {
-        ServerListener sl = new ServerListener();
-        sl.contextInitialized(null);
-        assertEquals(LanguageHolder.instance.language(), new EnglishLanguage().language());
-        sl.contextDestroyed(null);
-    }
-    
 }

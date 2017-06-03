@@ -4,6 +4,8 @@ import <%= props.modelPackage %>.<%= c.referencedTable.className %>;<% } %>
 import br.com.martinlabs.commons.DaoWrapper;
 import java.sql.Connection;
 import java.util.List;
+import br.com.martinlabs.commons.LanguageHolder;
+
 
 /**
  *
@@ -11,8 +13,8 @@ import java.util.List;
  */
 public class <%= table.className %>Dao extends DaoWrapper {
     
-    public <%= table.className %>Dao(Connection con) {
-        super(con);
+    public <%= table.className %>Dao(Connection con, LanguageHolder lang) {
+        super(con, lang);
     }
     
     public int insert(<% 
