@@ -1,6 +1,6 @@
 <template>
 
-    <Default>
+    <div>
         <section class="content-header">
             <h1>
                 {{ $t("classes.<%= table.className %>.title") }}
@@ -162,7 +162,7 @@ for (var i in table.NtoNcolumns) {
                 </div>
             </div>
         </section>
-    </Default>
+    </div>
 
 </template>
 
@@ -174,7 +174,6 @@ import AppResource from '../service/AppResource';
 import AppBus from '../service/AppBus';
 import AppTranslator from '../service/AppTranslator';
 
-import Default from './fragment/Default.vue';
 import InputGroup from './fragment/form-group/InputGroup.vue';
 import SelectGroup from './fragment/form-group/SelectGroup.vue';
 import CheckboxGroup from './fragment/form-group/CheckboxGroup.vue';
@@ -185,7 +184,7 @@ import <%= table.className %> from '../model/<%= table.className %>';
 
 export default {
     name: "Persist<%= table.className %>",
-    components: { Default, InputGroup, SelectGroup, CheckboxGroup, MultiselectGroup, TextareaGroup },
+    components: { InputGroup, SelectGroup, CheckboxGroup, MultiselectGroup, TextareaGroup },
     data() {
         return {
             <%= table.classLowerCamel %>: new <%= table.className %>()<% 

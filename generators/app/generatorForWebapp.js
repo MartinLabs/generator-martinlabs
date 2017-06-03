@@ -5,7 +5,7 @@ var generators = require('yeoman-generator').generators;
 var lorem = require("./services/lorem");
 var pomManager = require("./services/pomManager");
 var metaInfCtxManager = require("./services/metaInfCtxManager");
-var gruntManager = require("./services/gruntManager");
+var webpackManager = require("./services/webpackManager");
 var mysqlManager = require("./services/mysqlManager");
 var npmManager = require("./services/npmManager");
 var processor = require("./services/processor");
@@ -17,7 +17,7 @@ O QUE USAMOS DO YEOMAN:
 - npmInstall - procurar na internet como executar `npm install --save <modulo>`
 - fs (copy, copyTpl) - require('fs') e underscore
 - templatePath - só criar um método igual customDestinationPath
-- spawnCommand(grunt) - procurar na internet
+- spawnCommand(npm run dev) - procurar na internet
 */
 
 module.exports = function(params, cb) {
@@ -42,8 +42,8 @@ module.exports = function(params, cb) {
             metaInfCtxManager.readFromFile(this);
         },
 
-        readGruntConfig: function() {
-            gruntManager.readFromFile(this);
+        readWebpackConfig: function() {
+            webpackManager.readFromFile(this);
         },
 
         generateProjectProps: function() {
@@ -58,8 +58,8 @@ module.exports = function(params, cb) {
             metaInfCtxManager.fillMissingContent(this);
         },
 
-        generateGruntConfig: function() {
-            gruntManager.fillMissingContent(this);
+        generateWebpackConfig: function() {
+            webpackManager.fillMissingContent(this);
         },
 
         connectToDatabase: function(){
@@ -95,7 +95,7 @@ module.exports = function(params, cb) {
         },
 
         writeSomeFolders: function() {
-            gruntManager.writeToFile(this);
+            webpackManager.writeToFile(this);
             tplManager.otherFiles(this);
             pomManager.writeToFile(this);
             metaInfCtxManager.writeToFile(this);
@@ -108,7 +108,7 @@ module.exports = function(params, cb) {
         //everthing after npm install needs to be at `end`
         end: function() {
             process.chdir(this.customDestinationPath("src/main/webapp/"));
-            this.spawnCommand('grunt');
+            this.spawnCommand('npm run dev');
             process.chdir(this.customDestinationPath(""));
             // process.exit();
         }

@@ -1,6 +1,6 @@
 <template>
 
-    <default>
+    <div>
         
         <section class="content-header">
 
@@ -163,7 +163,7 @@ for (var i in table.columns) {
             </div>
         </modal>
 <% } %>
-    </default>
+    </div>
 
 </template>
 
@@ -174,7 +174,6 @@ import downloadCsv from '../util/downloadCsv.js';
 import AppResource from '../service/AppResource';
 import AppTranslator  from '../service/AppTranslator';
 
-import Default from './fragment/Default.vue';
 import AdapOrderby from './fragment/adap-table/orderby.vue';
 import AdapPagination from './fragment/adap-table/pagination.vue';
 import AdapSearchfield from './fragment/adap-table/searchfield.vue';
@@ -185,7 +184,7 @@ import Modal from './fragment/Modal.vue';
 
 export default {
     name: "List<%= table.className %>",
-    components: { Default, AdapOrderby, AdapPagination, AdapSearchfield, LineChart, Modal },
+    components: { AdapOrderby, AdapPagination, AdapSearchfield, LineChart, Modal },
     data() {
         return {
             list: [], <%

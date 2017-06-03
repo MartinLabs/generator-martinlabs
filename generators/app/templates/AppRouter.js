@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
+import DefaultBuild from './DefaultBuild';
 
 import Home from '../controller/Home.vue';
 import Login from '../controller/Login.vue';<%
@@ -22,13 +23,13 @@ Vue.use(VueRouter);
 
 var router = new VueRouter({
     routes: [
-        { path: '/home', component: Home },
+        { path: '/home', component: DefaultBuild(Home) },
         { path: '/login', component: Login },<% 
 for (var i in tables) { 
     var table = tables[i];
     if (table.inCrud && !table.isNtoNtable) {
 %>
-        { path: '/list<%= table.className %>', component: List<%= table.className %> },<% 
+        { path: '/list<%= table.className %>', component: DefaultBuild(List<%= table.className %>) },<% 
     } 
 } 
 
@@ -36,7 +37,7 @@ for (var i in tables) {
     var table = tables[i];
     if (table.inCrud && !table.isNtoNtable) {
 %>
-        { path: '/persist<%= table.className %>', component: Persist<%= table.className %> },
+        { path: '/persist<%= table.className %>', component: DefaultBuild(Persist<%= table.className %>) },
         { path: '/persist<%= table.className %><% 
 if (table.primaryColumns.length == 1) {
     %>/:id<%
@@ -45,7 +46,7 @@ if (table.primaryColumns.length == 1) {
         %>/:<%= table.primaryColumns[k].propertyName %><%
     } 
 }
-        %>', component: Persist<%= table.className %> },<% 
+        %>', component: DefaultBuild(Persist<%= table.className %>) },<% 
     } 
 } 
 %>

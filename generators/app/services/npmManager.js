@@ -6,21 +6,21 @@ module.exports = {
             process.chdir(main.customDestinationPath("src/main/webapp/"));
 
             main.npmInstall([
+                "babel-cli",
                 "babel-core", 
-                "babel-helper-vue-jsx-merge-props", 
-                "babel-plugin-syntax-jsx", 
-                "babel-plugin-transform-vue-jsx", 
+                "babel-loader",
                 "babel-preset-es2015", 
-                "babelify", 
-                "browserify", 
-                "browserify-hmr", 
-                "grunt@0.4.5", 
-                "grunt-browserify", 
-                "grunt-contrib-sass", 
-                "grunt-contrib-uglify", 
+                "babel-preset-stage-2",
+                "clean-webpack-plugin",
+                "css-loader",
+                "extract-text-webpack-plugin",
+                "file-loader",
                 "node-sass", 
-                "uglify", 
-                "vueify", 
+                "sass-loader",
+                "style-loader",
+                "vue-loader@11.3.4",
+                "vue-template-compiler",
+                "webpack"
             ], 
             { saveDev: true },
             function () {

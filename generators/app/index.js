@@ -5,7 +5,7 @@ var lorem = require("./services/lorem");
 var pomManager = require("./services/pomManager");
 var promptManager = require("./services/promptManager");
 var metaInfCtxManager = require("./services/metaInfCtxManager");
-var gruntManager = require("./services/gruntManager");
+var webpackManager = require("./services/webpackManager");
 var mysqlManager = require("./services/mysqlManager");
 var npmManager = require("./services/npmManager");
 var processor = require("./services/processor");
@@ -40,8 +40,8 @@ module.exports = yeoman.generators.Base.extend({
         metaInfCtxManager.readFromFile(this);
     },
 
-    readGruntConfig: function() {
-        gruntManager.readFromFile(this);
+    readWebpackConfig: function() {
+        webpackManager.readFromFile(this);
     },
 
     generateProjectProps: function() {
@@ -56,8 +56,8 @@ module.exports = yeoman.generators.Base.extend({
         metaInfCtxManager.fillMissingContent(this);
     },
 
-    generateGruntConfig: function() {
-        gruntManager.fillMissingContent(this);
+    generateWebpackConfig: function() {
+        webpackManager.fillMissingContent(this);
     },
 
     connectToDatabase: function(){
@@ -93,7 +93,7 @@ module.exports = yeoman.generators.Base.extend({
     },
 
     writeSomeFolders: function() {
-        gruntManager.writeToFile(this);
+        webpackManager.writeToFile(this);
         tplManager.otherFiles(this);
         pomManager.writeToFile(this);
         metaInfCtxManager.writeToFile(this);
@@ -106,7 +106,7 @@ module.exports = yeoman.generators.Base.extend({
     //everthing after npm install needs to be at `end`
     end: function() {
         process.chdir("src/main/webapp/");
-        this.spawnCommand('grunt');
+        this.spawnCommand('npm run dev');
         process.chdir("../../../");
         process.exit();
     }

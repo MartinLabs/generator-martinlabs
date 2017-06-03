@@ -126,6 +126,10 @@ module.exports = {
             main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/service/AppFilter.js"));
 
         main.fs.copy(
+            main.templatePath('DefaultBuild.js'),
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/service/DefaultBuild.js"));
+
+        main.fs.copy(
             main.templatePath('App.vue'),
             main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/App.vue"));
 
@@ -210,8 +214,12 @@ module.exports = {
             main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/util/downloadCsv.js"));
 
         main.fs.copy(
-            main.templatePath('Gruntfile.js'),
-            main.customDestinationPath("src/main/webapp/Gruntfile.js"));
+            main.templatePath('webpack.config.js'),
+            main.customDestinationPath("src/main/webapp/webpack.config.js"));
+
+        main.fs.copy(
+            main.templatePath('manifest.js'),
+            main.customDestinationPath("src/main/webapp/manifest.js"));
 
         for (var i in main.props.tables) {
             var table = main.props.tables[i];
@@ -275,8 +283,8 @@ module.exports = {
             main.templatePath('.babelrc'),
             main.customDestinationPath("src/main/webapp/.babelrc"));
 
-        main.directory("fonts", 
-            main.customDestinationPath("src/main/webapp/" + main.props.modulename + "/fonts"));
+        main.directory("font", 
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/font"));
 
         main.fs.copyTpl(
             main.templatePath('LangEn.js'),

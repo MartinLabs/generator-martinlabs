@@ -1,21 +1,18 @@
 <template>
-
-    <default>
         
+    <div>
         <section class="content-header">
             <h1>
                 Home
             </h1>
         </section>
-    </default>
+    </div>
 
 </template>
 
 <script>
-import Default from './fragment/Default.vue';
 
 export default {
-    name: "Home",
-    components: { Default }
+    name: "Home"
 }
 </script>
