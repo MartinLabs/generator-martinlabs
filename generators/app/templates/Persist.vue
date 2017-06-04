@@ -170,10 +170,6 @@ for (var i in table.NtoNcolumns) {
 import moment from 'moment';
 import sha256 from 'js-sha256';
 
-import AppResource from '../service/AppResource';
-import AppBus from '../service/AppBus';
-import AppTranslator from '../service/AppTranslator';
-
 import InputGroup from './fragment/form-group/InputGroup.vue';
 import SelectGroup from './fragment/form-group/SelectGroup.vue';
 import CheckboxGroup from './fragment/form-group/CheckboxGroup.vue';
@@ -211,7 +207,7 @@ for (var i in table.NtoNcolumns) {
         };
     }, 
     mounted() {
-        AppResource.<%= table.classLowerCamel %>.get({<% 
+        this.$resources.<%= table.classLowerCamel %>.get({<% 
 if (table.primaryColumns.length == 1) {
 %>
             id: this.$route.params.id || 0<%
@@ -223,7 +219,7 @@ if (table.primaryColumns.length == 1) {
 }
 
 %>
-        }).then((resp) => {
+        }).then(resp => {
             if (resp.body.<%= table.classLowerCamel %>) {
                 this.<%= table.classLowerCamel %> = resp.body.<%= table.classLowerCamel %>;
             }<% 
@@ -259,7 +255,7 @@ for (var i in table.columns) {
 %>            
             if (this.<%= table.classLowerCamel %>.<%= c.propertyName %>NotEncrypted && this.<%= table.classLowerCamel %>.<%= c.propertyName %>NotEncrypted.length) {
                 if (this.<%= table.classLowerCamel %>.<%= c.propertyName %>NotEncrypted.length < 6) {
-                    AppBus.$emit("alert", "danger", AppTranslator.data.app.passwordMustHaveAtleast6Chars, 3000);
+                    this.$bus.error(this.$lang.app.passwordMustHaveAtleast6Chars, true, 3000);
                     return;
                 }
                 
@@ -269,8 +265,8 @@ for (var i in table.columns) {
     }
 } 
 %>
-            AppResource.<%= table.classLowerCamel %>.save(this.<%= table.classLowerCamel %>).then((resp) => {
-                AppBus.$emit("alert", "success", AppTranslator.data.app.persistedSuccessfully, 3000);
+            this.$resources.<%= table.classLowerCamel %>.save(this.<%= table.classLowerCamel %>).then(resp => {
+                this.$bus.success(this.$lang.app.persistedSuccessfully, true, 3000);
                 this.$router.push("/list<%= table.className %>");
             });
         }

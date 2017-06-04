@@ -18,8 +18,6 @@
 </template>
 
 <script>
-    import AppBus from '../service/AppBus';
-
     export default {
         name: "App",
         data() {
@@ -34,8 +32,8 @@
                 return "alert-" + this.alertType;
             }
         },
-        created() {
-            AppBus.$on("alert", (type, message, duration) => {
+        mounted() {
+            this.$bus.on("alert", (message, type, closeable = true, duration) => {
                 this.alertType = type;
                 this.alertMessage = message;
                 this.showAlert = true;

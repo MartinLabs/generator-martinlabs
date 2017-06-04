@@ -15,10 +15,15 @@
 <script>
 import sha256 from 'js-sha256';
 import simpleStorage from 'simpleStorage.js';
-import AppResource from '../service/AppResource';
 
 export default {
     name: "Login", 
+    data() {
+        return {
+            account: null,
+            password: null
+        };
+    },
     mounted() {
         if (simpleStorage.get("token<%= modulenameUpper %>")) {
             this.$router.push("/home");
@@ -28,10 +33,10 @@ export default {
         login(e) {
             e.preventDefault();
 
-            AppResource.login.save({
+            this.$resources.login.save({
                 account: this.account,
                 password: sha256(this.password)
-            }).then((resp) => {
+            }).then(resp => {
                 simpleStorage.set("token<%= modulenameUpper %>", resp.body.token);
                 simpleStorage.set("id<%= modulenameUpper %>", resp.body.id);
                                     

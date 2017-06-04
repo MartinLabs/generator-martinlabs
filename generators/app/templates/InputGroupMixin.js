@@ -1,6 +1,4 @@
 import moment from 'moment';
-import AppTranslator from '../../../service/AppTranslator';
-import AppFilter from '../../../service/AppFilter';
 
 export default {
     props: ["value", "required", "type", "maxlength", "label", "step", "placeholder"],
@@ -10,19 +8,19 @@ export default {
     computed: {
         mask() {
             if (this.type === "date") {
-                return AppTranslator.data.dateFormat.datemask;
+                return this.$lang.dateFormat.datemask;
             } else if (this.type === "datetime") {
-                return AppTranslator.data.dateFormat.datetimemask;
+                return this.$lang.dateFormat.datetimemask;
             } else if (this.type === "cpf") {
-                return AppTranslator.data.format.cpf;
+                return this.$lang.format.cpf;
             } else if (this.type === "cnpj") {
-                return AppTranslator.data.format.cnpj;
+                return this.$lang.format.cnpj;
             } else if (this.type === "rg") {
-                return AppTranslator.data.format.rg;
+                return this.$lang.format.rg;
             } else if (this.type === "phone") {
-                return AppTranslator.data.format.phone;
+                return this.$lang.format.phone;
             } else if (this.type === "cep") {
-                return AppTranslator.data.format.cep;
+                return this.$lang.format.cep;
             } else {
                 return null;
             }
@@ -34,15 +32,15 @@ export default {
                 } else if (this.type === "datetime") {
                     return this.renderDatetime(this.value);
                 } else if (this.type === "cpf") {
-                    return AppFilter.cpf(this.value);
+                    return this.$filters.cpf(this.value);
                 } else if (this.type === "cnpj") {
-                    return AppFilter.cnpj(this.value);
+                    return this.$filters.cnpj(this.value);
                 } else if (this.type === "rg") {
-                    return AppFilter.rg(this.value);
+                    return this.$filters.rg(this.value);
                 } else if (this.type === "phone") {
-                    return AppFilter.phone(this.value);
+                    return this.$filters.phone(this.value);
                 } else if (this.type === "cep") {
-                    return AppFilter.cep(this.value);
+                    return this.$filters.cep(this.value);
                 } else {
                     return this.value;
                 }
@@ -65,11 +63,11 @@ export default {
             this.$emit('input', val);
         },
         populateWithoutDelimiters(visual) {
-            this.updateValue(AppFilter.removeDelimiters(visual));
+            this.updateValue(this.$filters.removeDelimiters(visual));
         },
         renderDate(date) {
             if (date) {
-                return moment(date).format(AppTranslator.data.dateFormat.date);
+                return moment(date).format(this.$lang.dateFormat.date);
             } else {
                 return null;
             }
@@ -80,7 +78,7 @@ export default {
                 return;
             }
             
-            var date = moment(visual, AppTranslator.data.dateFormat.date);
+            var date = moment(visual, this.$lang.dateFormat.date);
             
             if (date.isValid()) {
                 this.updateValue(date.format());
@@ -88,7 +86,7 @@ export default {
         },
         renderDatetime(date) {
             if (date) {
-                return moment(date).format(AppTranslator.data.dateFormat.datetime);
+                return moment(date).format(this.$lang.dateFormat.datetime);
             } else {
                 return null;
             }
@@ -99,7 +97,7 @@ export default {
                 return;
             }
             
-            var date = moment(visual, AppTranslator.data.dateFormat.datetime);
+            var date = moment(visual, this.$lang.dateFormat.datetime);
             
             if (date.isValid()) {
                 this.updateValue(date.format());

@@ -1,7 +1,6 @@
 <script>
     import { Line } from 'vue-chartjs';
     import moment from 'moment';
-    import AppTranslator  from '../../service/AppTranslator';
 
     export default Line.extend({
         name: "line-chart",
@@ -17,15 +16,15 @@
                                 type: 'time',
                                 time: {
                                     displayFormats: {
-                                        "millisecond": AppTranslator.data.dateFormat.date,
-                                        "second": AppTranslator.data.dateFormat.date,
-                                        "minute": AppTranslator.data.dateFormat.date,
-                                        "hour": AppTranslator.data.dateFormat.date,
-                                        "day": AppTranslator.data.dateFormat.date,
-                                        "week": AppTranslator.data.dateFormat.date,
-                                        "month": AppTranslator.data.dateFormat.date,
-                                        "quarter": AppTranslator.data.dateFormat.date,
-                                        "year": AppTranslator.data.dateFormat.date
+                                        millisecond: this.$lang.dateFormat.date,
+                                        second: this.$lang.dateFormat.date,
+                                        minute: this.$lang.dateFormat.date,
+                                        hour: this.$lang.dateFormat.date,
+                                        day: this.$lang.dateFormat.date,
+                                        week: this.$lang.dateFormat.date,
+                                        month: this.$lang.dateFormat.date,
+                                        quarter: this.$lang.dateFormat.date,
+                                        year: this.$lang.dateFormat.date
                                     }
                                 }
                             }]
@@ -33,7 +32,7 @@
                     tooltips: {
                         callbacks: {
                             title: function (tooltip, data) {
-                                return moment(tooltip[0].xLabel).format(AppTranslator.data.dateFormat.datetime);
+                                return moment(tooltip[0].xLabel).format(this.$lang.dateFormat.datetime);
                             }
                         }
                     }

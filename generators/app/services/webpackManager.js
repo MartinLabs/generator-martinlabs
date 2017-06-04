@@ -1,4 +1,5 @@
 var jsonfile = require('jsonfile');
+var generatorPackage = require('../../../package.json');
 
 module.exports = {
 
@@ -23,7 +24,7 @@ module.exports = {
                 name: main.props.modulename,
                 version: "1.0.0",
                 private: true,
-                description: main.props.modulename,
+                description: main.props.modulename + " - made with generator-martinlabs " + generatorPackage.version,
                 scripts: {
                 	dev: "webpack",
                 	production: "NODE_ENV=production webpack",

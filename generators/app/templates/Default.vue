@@ -51,7 +51,7 @@
 
             <footer class="main-footer">
                 <div class="pull-right hidden-xs">
-                    <b>Versão</b> 0.0.1
+                    <b>Versão</b> {{ version }}
                 </div>
                 {{ $t("app.title") }}
             </footer>
@@ -60,13 +60,13 @@
 </template>
 
 <script>
-
+import {version} from '../../../../../package.json';
 import simpleStorage from 'simpleStorage.js';
 
 export default {
     name: "Default",
     data() {
-        return  { sidebarOpen: false };
+        return  { sidebarOpen: false, version };
     },
     methods: {
         logout() {

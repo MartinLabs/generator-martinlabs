@@ -171,9 +171,6 @@ for (var i in table.columns) {
 import moment from "moment";
 import downloadCsv from '../util/downloadCsv.js';
 
-import AppResource from '../service/AppResource';
-import AppTranslator  from '../service/AppTranslator';
-
 import AdapOrderby from './fragment/adap-table/orderby.vue';
 import AdapPagination from './fragment/adap-table/pagination.vue';
 import AdapSearchfield from './fragment/adap-table/searchfield.vue';
@@ -200,7 +197,7 @@ if (table.deactivableColumn) { %>
     },
     methods: {
         populateList(params) {
-            AppResource.<%= table.classLowerCamel %>.query(params).then((resp) => {
+            this.$resources.<%= table.classLowerCamel %>.query(params).then(resp => {
                 this.list = resp.body.list;
                 this.adapStore.setCount(resp.body.count);
             });
@@ -220,7 +217,7 @@ for (var k in table.primaryColumns) {
         downloadCsv() {
             downloadCsv("<%= table.classLowerCamel %>.csv",
                 this.list,
-                AppTranslator.data.classes.<%= table.className %>.columns);
+                this.$lang.classes.<%= table.className %>.columns);
 
         }<%
 if (table.deactivableColumn) { %>,
@@ -228,7 +225,7 @@ if (table.deactivableColumn) { %>,
             this.<%= table.classLowerCamel %>ToRemove = item;
         },
         removeItem() {
-            AppResource.<%= table.classLowerCamel %>.delete({<% 
+            this.$resources.<%= table.classLowerCamel %>.delete({<% 
 if (table.primaryColumns.length == 1) {
 %>
                 id: this.<%= table.classLowerCamel %>ToRemove.<%= table.primaryColumns[0].propertyName %><%
@@ -240,7 +237,7 @@ if (table.primaryColumns.length == 1) {
 }
 
 %>
-            }).then((resp) => {
+            }).then(resp => {
                 this.list.splice(this.list.indexOf(this.<%= table.classLowerCamel %>ToRemove), 1);
                 this.adapStore.count--;
                 this.<%= table.classLowerCamel %>ToRemove = null;
