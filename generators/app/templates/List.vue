@@ -171,17 +171,8 @@ for (var i in table.columns) {
 import moment from "moment";
 import downloadCsv from '../util/downloadCsv.js';
 
-import AdapOrderby from './fragment/adap-table/orderby.vue';
-import AdapPagination from './fragment/adap-table/pagination.vue';
-import AdapSearchfield from './fragment/adap-table/searchfield.vue';
-import AdapStore from './fragment/adap-table/Store.js';
-import LineChart from './fragment/LineChart.vue';
-import Modal from './fragment/Modal.vue';
-
-
 export default {
     name: "List<%= table.className %>",
-    components: { AdapOrderby, AdapPagination, AdapSearchfield, LineChart, Modal },
     data() {
         return {
             list: [], <%
@@ -189,7 +180,7 @@ if (table.deactivableColumn) { %>
             <%= table.classLowerCamel %>ToRemove: null,<%
 }
 %>
-            adapStore: new AdapStore("<%= table.primaryColumns[0].propertyName %>", (params) => this.populateList(params))
+            adapStore: new this.$AdapStore("<%= table.primaryColumns[0].propertyName %>", (params) => this.populateList(params))
         };
     }, 
     mounted() {

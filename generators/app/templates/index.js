@@ -7,6 +7,7 @@ import VueMoment from 'vue-moment';
 import AppBus from './service/AppBus';
 import AppFilter from './service/AppFilter';
 import AppResource from './service/AppResource';
+import AppFragments from './controller/fragment';
 
 //builders
 import AppTranslator from './service/AppTranslator';
@@ -19,6 +20,7 @@ Vue.use(VueMoment);
 Vue.use(AppBus);
 Vue.use(AppFilter);
 Vue.use(AppResource);
+Vue.use(AppFragments);
 
 new Vue({
     el: '#app',

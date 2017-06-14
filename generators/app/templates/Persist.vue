@@ -170,17 +170,10 @@ for (var i in table.NtoNcolumns) {
 import moment from 'moment';
 import sha256 from 'js-sha256';
 
-import InputGroup from './fragment/form-group/InputGroup.vue';
-import SelectGroup from './fragment/form-group/SelectGroup.vue';
-import CheckboxGroup from './fragment/form-group/CheckboxGroup.vue';
-import MultiselectGroup from './fragment/form-group/MultiselectGroup.vue';
-import TextareaGroup from './fragment/form-group/TextareaGroup.vue';
-
 import <%= table.className %> from '../model/<%= table.className %>';
 
 export default {
     name: "Persist<%= table.className %>",
-    components: { InputGroup, SelectGroup, CheckboxGroup, MultiselectGroup, TextareaGroup },
     data() {
         return {
             <%= table.classLowerCamel %>: new <%= table.className %>()<% 
