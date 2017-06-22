@@ -1,8 +1,8 @@
 package <%= package %>;
 
-import br.com.martinlabs.commons.EnglishLanguage;
-import br.com.martinlabs.commons.LanguageHolder;
+import <%= package %>.AppProvider.DateParameterConverter;
 import com.google.gson.Gson;
+import java.util.Date;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -18,10 +18,14 @@ public class OtherTest {
     }
     
     @Test
-    public void testGsonContextResolver() {
-        GsonContextResolver gcr = new GsonContextResolver();
-        Gson context = gcr.getContext(null);
+    public void testAppProvider() {
+        AppProvider appProvider = new AppProvider();
+        
+        Gson context = appProvider.getContext(null);
+        DateParameterConverter converter = (DateParameterConverter) appProvider.getConverter(Date.class, null, null);
+        
         assertNotNull(context);
+        assertNotNull(converter);
     }
     
 }

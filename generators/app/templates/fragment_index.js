@@ -1,6 +1,6 @@
 import Default from './Default.vue';
 import AdapTable from './adap-table';
-import FormBox from './form-group';
+import FormGroup from './form-group';
 import LineChart from './LineChart.vue';
 import LoadBox from './LoadBox.vue';
 import Modal from './Modal.vue';
@@ -12,6 +12,6 @@ export default {
         Vue.component("LoadBox", LoadBox);
         Vue.component("Modal" , Modal);
         Vue.use(AdapTable);
-        Vue.use(FormBox);
+        Vue.use(FormGroup);
     }   
 };

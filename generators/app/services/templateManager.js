@@ -10,13 +10,8 @@ module.exports = {
             main.props);
 
         main.fs.copyTpl(
-            main.templatePath('GsonContextResolver.java'),
-            main.customDestinationPath(main.props.javaFolder+"/GsonContextResolver.java"), 
-            main.props);
-
-        main.fs.copyTpl(
-            main.templatePath('DateParameterConverterProvider.java'),
-            main.customDestinationPath(main.props.javaFolder+"/DateParameterConverterProvider.java"), 
+            main.templatePath('AppProvider.java'),
+            main.customDestinationPath(main.props.javaFolder+"/AppProvider.java"), 
             main.props);
 
         main.fs.copyTpl(
@@ -138,6 +133,31 @@ module.exports = {
             main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/Home.vue"));
 
         main.fs.copy(
+            main.templatePath('fragment_index.js'),
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/index.js"));
+
+        main.fs.copy(
+            main.templatePath('LineChart.vue'),
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/LineChart.vue"));
+
+        main.fs.copy(
+            main.templatePath('LoadBox.vue'),
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/LoadBox.vue"));
+
+        main.fs.copy(
+            main.templatePath('Modal.vue'),
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/Modal.vue"));
+
+        main.fs.copyTpl(
+            main.templatePath('Default.vue'),
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/Default.vue"),
+            main.props);
+
+        main.fs.copy(
+            main.templatePath('adap-table_index.js'),
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/adap-table/index.js"));
+
+        main.fs.copy(
             main.templatePath('pagination.vue'),
             main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/adap-table/pagination.vue"));
 
@@ -152,6 +172,10 @@ module.exports = {
         main.fs.copy(
             main.templatePath('Store.js'),
             main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/adap-table/Store.js"));
+
+        main.fs.copy(
+            main.templatePath('form-group_index.js'),
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/form-group/index.js"));
 
         main.fs.copy(
             main.templatePath('CheckboxGroup.vue'),
@@ -176,23 +200,6 @@ module.exports = {
         main.fs.copy(
             main.templatePath('InputGroupMixin.js'),
             main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/form-group/InputGroupMixin.js"));
-
-        main.fs.copy(
-            main.templatePath('LineChart.vue'),
-            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/LineChart.vue"));
-
-        main.fs.copy(
-            main.templatePath('LoadBox.vue'),
-            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/LoadBox.vue"));
-
-        main.fs.copy(
-            main.templatePath('Modal.vue'),
-            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/Modal.vue"));
-
-        main.fs.copyTpl(
-            main.templatePath('Default.vue'),
-            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/Default.vue"),
-            main.props);
 
         main.fs.copyTpl(
             main.templatePath('Login.vue'),

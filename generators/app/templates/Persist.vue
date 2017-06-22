@@ -11,7 +11,7 @@
             <div class="box col-sm-9">
                 <div class="box-body">
 
-                    <form @submit="persist" role="form">
+                    <form @submit.prevent="persist" role="form">
 
 <% 
 for (var i in table.columns) { 
@@ -239,8 +239,7 @@ for (var i in table.NtoNcolumns) {
         });
     },
     methods: {
-        persist(e) {
-            e.preventDefault();
+        persist() {
 <% 
 for (var i in table.columns) {
     var c = table.columns[i];
