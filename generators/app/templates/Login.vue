@@ -53,7 +53,7 @@ export default {
 }
 </script>
 
-<style lang="sass" scoped>
+<style lang="scss" scoped>
 
 .container {  
     margin-top: 80px;

@@ -105,128 +105,121 @@ module.exports = {
 
     jsClasses: function(main) {
         main.fs.copy(
-            main.templatePath('index.js'),
-            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/index.js"));
+            main.templatePath('main.js'),
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/main.js"));
 
         main.fs.copy(
             main.templatePath('AppBus.js'),
-            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/service/AppBus.js"));
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/service/AppBus.js"));
 
         main.fs.copy(
             main.templatePath('AppTranslator.js'),
-            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/service/AppTranslator.js"));
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/service/AppTranslator.js"));
 
         main.fs.copy(
             main.templatePath('AppFilter.js'),
-            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/service/AppFilter.js"));
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/service/AppFilter.js"));
 
         main.fs.copy(
             main.templatePath('DefaultBuild.js'),
-            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/service/DefaultBuild.js"));
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/service/DefaultBuild.js"));
 
         main.fs.copy(
             main.templatePath('App.vue'),
-            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/App.vue"));
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/controller/App.vue"));
 
         main.fs.copy(
             main.templatePath('Home.vue'),
-            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/Home.vue"));
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/controller/Home.vue"));
 
         main.fs.copy(
             main.templatePath('fragment_index.js'),
-            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/index.js"));
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/controller/fragment/index.js"));
 
         main.fs.copy(
             main.templatePath('LineChart.vue'),
-            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/LineChart.vue"));
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/controller/fragment/LineChart.vue"));
 
         main.fs.copy(
             main.templatePath('LoadBox.vue'),
-            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/LoadBox.vue"));
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/controller/fragment/LoadBox.vue"));
 
         main.fs.copy(
             main.templatePath('Modal.vue'),
-            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/Modal.vue"));
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/controller/fragment/Modal.vue"));
 
         main.fs.copyTpl(
             main.templatePath('Default.vue'),
-            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/Default.vue"),
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/controller/fragment/Default.vue"),
             main.props);
 
         main.fs.copy(
             main.templatePath('adap-table_index.js'),
-            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/adap-table/index.js"));
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/controller/fragment/adap-table/index.js"));
 
         main.fs.copy(
             main.templatePath('pagination.vue'),
-            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/adap-table/pagination.vue"));
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/controller/fragment/adap-table/pagination.vue"));
 
         main.fs.copy(
             main.templatePath('orderby.vue'),
-            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/adap-table/orderby.vue"));
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/controller/fragment/adap-table/orderby.vue"));
 
         main.fs.copy(
             main.templatePath('searchfield.vue'),
-            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/adap-table/searchfield.vue"));
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/controller/fragment/adap-table/searchfield.vue"));
 
         main.fs.copy(
             main.templatePath('Store.js'),
-            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/adap-table/Store.js"));
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/controller/fragment/adap-table/Store.js"));
 
         main.fs.copy(
             main.templatePath('form-group_index.js'),
-            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/form-group/index.js"));
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/controller/fragment/form-group/index.js"));
 
         main.fs.copy(
             main.templatePath('CheckboxGroup.vue'),
-            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/form-group/CheckboxGroup.vue"));
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/controller/fragment/form-group/CheckboxGroup.vue"));
 
         main.fs.copy(
             main.templatePath('SelectGroup.vue'),
-            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/form-group/SelectGroup.vue"));
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/controller/fragment/form-group/SelectGroup.vue"));
 
         main.fs.copy(
             main.templatePath('MultiselectGroup.vue'),
-            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/form-group/MultiselectGroup.vue"));
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/controller/fragment/form-group/MultiselectGroup.vue"));
 
         main.fs.copy(
             main.templatePath('TextareaGroup.vue'),
-            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/form-group/TextareaGroup.vue"));
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/controller/fragment/form-group/TextareaGroup.vue"));
 
         main.fs.copy(
             main.templatePath('InputGroup.vue'),
-            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/form-group/InputGroup.vue"));
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/controller/fragment/form-group/InputGroup.vue"));
 
         main.fs.copy(
             main.templatePath('InputGroupMixin.js'),
-            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/fragment/form-group/InputGroupMixin.js"));
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/controller/fragment/form-group/InputGroupMixin.js"));
 
         main.fs.copyTpl(
             main.templatePath('Login.vue'),
-            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/Login.vue"),
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/controller/Login.vue"),
             main.props);
 
         main.fs.copyTpl(
             main.templatePath('AppResource.js'),
-            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/service/AppResource.js"),
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/service/AppResource.js"),
             main.props);
 
         main.fs.copyTpl(
             main.templatePath('AppRouter.js'),
-            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/service/AppRouter.js"),
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/service/AppRouter.js"),
             main.props);
 
         main.fs.copy(
             main.templatePath('downloadCsv.js'),
-            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/util/downloadCsv.js"));
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/util/downloadCsv.js"));
 
-        main.fs.copy(
-            main.templatePath('webpack.config.js'),
-            main.customDestinationPath("src/main/webapp/webpack.config.js"));
-
-        main.fs.copy(
-            main.templatePath('manifest.js'),
-            main.customDestinationPath("src/main/webapp/manifest.js"));
 
         for (var i in main.props.tables) {
             var table = main.props.tables[i];
@@ -239,17 +232,17 @@ module.exports = {
 
                 main.fs.copyTpl(
                     main.templatePath('Model.js'),
-                    main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/model/"+table.className+".js"),
+                    main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/model/"+table.className+".js"),
                     params);
 
                 main.fs.copyTpl(
                     main.templatePath('List.vue'),
-                    main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/List"+table.className+".vue"),
+                    main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/controller/List"+table.className+".vue"),
                     params);
 
                 main.fs.copyTpl(
                     main.templatePath('Persist.vue'),
-                    main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/controller/Persist"+table.className+".vue"),
+                    main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/controller/Persist"+table.className+".vue"),
                     params);
             }
         }
@@ -261,15 +254,8 @@ module.exports = {
             main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/scss/template.scss"));
 
         main.fs.copy(
-            main.templatePath('crud.scss'),
-            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/scss/" + main.props.modulename + ".scss"));
-    },
-
-    htmlFiles: function(main) {
-        main.fs.copyTpl(
-            main.templatePath('index.html'),
-            main.customDestinationPath("src/main/webapp/" + main.props.modulename + "/index.html"),
-            main.props);
+            main.templatePath('main.scss'),
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/scss/main.scss"));
     },
 
     otherFiles: function(main) {
@@ -287,20 +273,49 @@ module.exports = {
             main.customDestinationPath("src/main/webapp/.babelrc"));
 
         main.fs.copy(
-            main.templatePath('.babelrc'),
-            main.customDestinationPath("src/main/webapp/.babelrc"));
+            main.templatePath('.eslintignore'),
+            main.customDestinationPath("src/main/webapp/.eslintignore"));
+
+        main.fs.copy(
+            main.templatePath('.eslintrc.js'),
+            main.customDestinationPath("src/main/webapp/.eslintrc.js"));
+
+        main.fs.copy(
+            main.templatePath('.postcssrc.js'),
+            main.customDestinationPath("src/main/webapp/.postcssrc.js"));
+
+        main.fs.copyTpl(
+            main.templatePath('index.html'),
+            main.customDestinationPath("src/main/webapp/index.html"),
+            main.props);
+
+        main.directory("build", 
+            main.customDestinationPath("src/main/webapp/build"));
+
+        main.fs.copy(
+            main.templatePath('config/dev.env.js'),
+            main.customDestinationPath("src/main/webapp/config/dev.env.js"));
+
+        main.fs.copyTpl(
+            main.templatePath('config/prod.env.js'),
+            main.customDestinationPath("src/main/webapp/config/prod.env.js"));
+
+        main.fs.copyTpl(
+            main.templatePath('config/index.js'),
+            main.customDestinationPath("src/main/webapp/config/index.js"),
+            main.props);
 
         main.directory("font", 
             main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/font"));
 
         main.fs.copyTpl(
             main.templatePath('LangEn.js'),
-            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/const/LangEn.js"),
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/const/LangEn.js"),
             main.props);
 
         main.fs.copyTpl(
             main.templatePath('LangPt.js'),
-            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/js/const/LangPt.js"),
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/const/LangPt.js"),
             main.props);
 
         main.props.generateDataForColumn = processor.generateDataForColumn;

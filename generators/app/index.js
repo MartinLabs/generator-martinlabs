@@ -88,10 +88,6 @@ module.exports = yeoman.generators.Base.extend({
         tplManager.scssFiles(this);
     },
 
-    writeHtmlFiles: function() {
-        tplManager.htmlFiles(this);
-    },
-
     writeSomeFolders: function() {
         webpackManager.writeToFile(this);
         tplManager.otherFiles(this);

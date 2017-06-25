@@ -1,6 +1,6 @@
 import VueResource from 'vue-resource';
 import simpleStorage from 'simpleStorage.js';
-import {version} from '../../../../package.json';
+import {version} from '../../../package.json';
 
 export default {
     install(Vue) {
@@ -30,14 +30,15 @@ export default {
             });
         });
 
+        var apiPath = 'http://localhost:8080/<%= projectName %>/ws';
         var resources = {
-            login: Vue.resource("../ws/<%= modulenameUpper %>/Login"),<% 
+            login: Vue.resource(`${apiPath}/<%= modulenameUpper %>/Login`),<% 
     
     for (var i in tables) {
         var table = tables[i];
         if (table.inCrud && !table.isNtoNtable) {
     %>
-            <%= table.classLowerCamel %>: Vue.resource("../ws/<%= modulenameUpper %>/<%= table.className %><% 
+            <%= table.classLowerCamel %>: Vue.resource(`${apiPath}/<%= modulenameUpper %>/<%= table.className %><% 
 if (table.primaryColumns.length == 1) {
     %>{/id}<%
 } else {
@@ -45,7 +46,7 @@ if (table.primaryColumns.length == 1) {
         %>{/<%= table.primaryColumns[k].propertyName %>}<%
     } 
 }
-        %>"),<%
+        %>`),<%
         }
     }
     %>

@@ -46,7 +46,8 @@
     }
 
 </script>
-<style lang="sass" scoped>
+<style lang="scss">
+    @import '../scss/main.scss';
 
     .alert{
         width: 400px;

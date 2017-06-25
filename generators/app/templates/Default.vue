@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import {version} from '../../../../../package.json';
+import {version} from '../../../../package.json';
 import simpleStorage from 'simpleStorage.js';
 
 export default {

@@ -9,8 +9,8 @@ module.exports = {
 		jsonfile.readFile(main.customDestinationPath("src/main/webapp/package.json"), function(err, obj) {
 		    main.props.npmPackage = obj;
 
-		    jsonfile.readFile(main.customDestinationPath("src/main/webapp/webpack.path.json"), function(err, obj) {
-		        main.props.webpackPath = obj;
+		    jsonfile.readFile(main.customDestinationPath("src/main/webapp/config/entries.json"), function(err, obj) {
+		        main.props.webpackEntries = obj;
 
                 done();
 		    });
@@ -26,22 +26,30 @@ module.exports = {
                 private: true,
                 description: main.props.modulename + " - made with generator-martinlabs " + generatorPackage.version,
                 scripts: {
-                	dev: "webpack",
-                	production: "NODE_ENV=production webpack",
-                	watch: "npm run dev -- --watch"
-                }
+                	dev: "node build/dev-server.js",
+            	    start: "node build/dev-server.js",
+                    build: "node build/build.js",
+                    lint: "eslint --ext .js,.vue src"
+                },
+                engines: {
+                    node: ">= 4.0.0",
+                    npm: ">= 3.0.0"
+                },
+                browserslist: [
+                    "> 1%",
+                    "last 2 versions",
+                    "not ie <= 8"
+                ]
+
             };
         }
 
         //webpack path
-        if (!main.props.webpackPath) {
-            main.props.webpackPath = {};
+        if (!main.props.webpackEntries) {
+            main.props.webpackEntries = {};
         }
 
-        main.props.webpackPath[main.props.modulename] = [
-        	`./src/${main.props.modulename}/js/index.js`,
-    	    `./src/${main.props.modulename}/scss/${main.props.modulename}.scss`
-        ];
+        main.props.webpackEntries[main.props.modulename] = `./src/${main.props.modulename}/main.js`;
 	},
 
     writeToFile: function(main) {
@@ -57,10 +65,17 @@ module.exports = {
         try {
             fs.mkdirSync(main.customDestinationPath("src/main/webapp"));
         } catch (e) {}
+        try {
+            fs.mkdirSync(main.customDestinationPath("src/main/webapp/config"));
+        } catch (e) {}
 
         jsonfile.writeFile(main.customDestinationPath("src/main/webapp/package.json"), main.props.npmPackage, function(err) {
 
-            jsonfile.writeFile(main.customDestinationPath("src/main/webapp/webpack.path.json"), main.props.webpackPath, function(err) {
+            console.info("vai porra");
+            console.info(main.props.webpackEntries);
+
+            jsonfile.writeFile(main.customDestinationPath("src/main/webapp/config/entries.json"), main.props.webpackEntries, function(err) {
+                console.info("foi?");
                 done();
             });
         });
