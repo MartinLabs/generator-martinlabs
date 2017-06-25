@@ -121,10 +121,6 @@ module.exports = {
             main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/service/AppFilter.js"));
 
         main.fs.copy(
-            main.templatePath('DefaultBuild.js'),
-            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/service/DefaultBuild.js"));
-
-        main.fs.copy(
             main.templatePath('App.vue'),
             main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/controller/App.vue"));
 

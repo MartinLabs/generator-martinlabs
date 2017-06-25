@@ -1,18 +1,20 @@
 import VueRouter from 'vue-router';
-import DefaultBuild from './DefaultBuild'; 
 
 export default function buildRouter(Vue) {
     Vue.use(VueRouter);
 
     var router = new VueRouter({
         routes: [
-            { path: '/home', component: DefaultBuild(require('../controller/Home.vue')) },
-            { path: '/login', component: require('../controller/Login.vue') },<% 
+            { path: '/login', component: require('../controller/Login.vue') },
+
+            { 
+                path: '/home', component: require('../controller/fragment/Default.vue'),
+                children: [<% 
 for (var i in tables) { 
     var table = tables[i];
     if (table.inCrud && !table.isNtoNtable) {
 %>
-            { path: '/list<%= table.className %>', component: DefaultBuild(require('../controller/List<%= table.className %>.vue')) },<% 
+                    { path: '/list<%= table.className %>', component: require('../controller/List<%= table.className %>.vue') },<% 
     } 
 } 
 
@@ -20,8 +22,8 @@ for (var i in tables) {
     var table = tables[i];
     if (table.inCrud && !table.isNtoNtable) {
 %>
-            { path: '/persist<%= table.className %>', component: DefaultBuild(require('../controller/Persist<%= table.className %>.vue')) },
-            { path: '/persist<%= table.className %><% 
+                    { path: '/persist<%= table.className %>', component: require('../controller/Persist<%= table.className %>.vue') },
+                    { path: '/persist<%= table.className %><% 
 if (table.primaryColumns.length == 1) {
     %>/:id<%
 } else {
@@ -29,10 +31,12 @@ if (table.primaryColumns.length == 1) {
         %>/:<%= table.primaryColumns[k].propertyName %><%
     } 
 }
-        %>', component: DefaultBuild(require('../controller/Persist<%= table.className %>.vue')) },<% 
+        %>', component: require('../controller/Persist<%= table.className %>.vue') },<% 
     } 
 } 
 %>
+                ]
+            },
             { path: '/', redirect: '/login' },
             { path: '*', redirect: '/home' }
         ]

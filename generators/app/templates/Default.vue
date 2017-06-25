@@ -46,7 +46,7 @@
             </aside>
             <!-- Main -->
             <div class="content-wrapper">
-                <slot></slot>
+                <router-view></router-view>
             </div>
 
             <footer class="main-footer">
