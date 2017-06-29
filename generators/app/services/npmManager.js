@@ -33,6 +33,7 @@ module.exports = {
                 "html-webpack-plugin",
                 "http-proxy-middleware",
                 "node-sass",
+                "offline-plugin",
                 "opn",
                 "optimize-css-assets-webpack-plugin",
                 "ora",

@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import App from './controller/App.vue';
+import * as OfflinePluginRuntime from 'offline-plugin/runtime';
 
 //plugins
 import VueMask from 'v-mask';
@@ -8,6 +9,7 @@ import AppBus from './service/AppBus';
 import AppFilter from './service/AppFilter';
 import AppResource from './service/AppResource';
 import AppFragments from './controller/fragment';
+
 
 //builders
 import AppTranslator from './service/AppTranslator';
@@ -21,6 +23,8 @@ Vue.use(AppBus);
 Vue.use(AppFilter);
 Vue.use(AppResource);
 Vue.use(AppFragments);
+
+OfflinePluginRuntime.install()
 
 new Vue({
     el: '#app',
