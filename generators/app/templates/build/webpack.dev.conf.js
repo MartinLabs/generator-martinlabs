@@ -37,6 +37,8 @@ module.exports = merge(baseWebpackConfig, {
       });
   }))
   .concat([
-    new OfflinePlugin()
+    new OfflinePlugin({
+        AppCache: false
+    })
   ])
 })
