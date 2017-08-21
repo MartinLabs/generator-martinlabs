@@ -1,17 +1,12 @@
 <template>
 
-    <div>
-        <section class="content-header">
+    <div class="y-scroll">
+        <div class="verti">
             <h1>
                 {{ $t("classes.<%= table.className %>.title") }}
             </h1>
-        </section>
 
-        <section class="content">
-            <div class="box col-sm-9">
-                <div class="box-body">
-
-                    <form @submit.prevent="persist" role="form">
+            <form @submit.prevent="persist" class="elevated p-20">
 
 <% 
 for (var i in table.columns) { 
@@ -21,104 +16,104 @@ var col = table.columns[i];
 
         if (col.referencedTable) { 
 %>
-                        <select-group <%= col.is_nullable !== "YES" ? "required" : "" %><% 
+                <select-group <%= col.is_nullable !== "YES" ? "required" : "" %><% 
             if (col.column_key == "PRI") { 
 %> 
-                            v-if="!<%= table.classLowerCamel %>.<%= col.notIdPropertyName %>.<%= col.referencedTable.primaryColumns[0].propertyName %>"<% 
+                    v-if="!<%= table.classLowerCamel %>.<%= col.notIdPropertyName %>.<%= col.referencedTable.primaryColumns[0].propertyName %>"<% 
             } 
 %>
-                            v-model="<%= table.classLowerCamel %>.<%= col.notIdPropertyName %>.<%= col.referencedTable.primaryColumns[0].propertyName %>">
-                            <span slot="label">{{ $t("classes.<%= table.className %>.columns.<%= col.notIdPropertyName %>") }}</span>
-                            <option value="">{{ $t("app.select") }}</option>
-                            <option v-for="item in all<%= col.referencedTable.className %>" :value="item.<%= col.referencedTable.primaryColumns[0].propertyName %>"><%
+                    v-model="<%= table.classLowerCamel %>.<%= col.notIdPropertyName %>.<%= col.referencedTable.primaryColumns[0].propertyName %>">
+                    <span slot="label">{{ $t("classes.<%= table.className %>.columns.<%= col.notIdPropertyName %>") }}</span>
+                    <option value="">{{ $t("app.select") }}</option>
+                    <option v-for="item in all<%= col.referencedTable.className %>" :value="item.<%= col.referencedTable.primaryColumns[0].propertyName %>"><%
             if (col.referencedTable.nameColumn) { %>
-                                {{ item.<%= col.referencedTable.nameColumn.propertyName %> }}<%
+                        {{ item.<%= col.referencedTable.nameColumn.propertyName %> }}<%
             } else { 
 %>
-                                {{ 
-                                    ""
+                        {{ 
+                            ""
 <% 
                 for (var j in col.referencedTable.columns) { 
                     var r = col.referencedTable.columns[j]; 
                     if (r.smartType != "active" && r.smartType != "password") {
 %>
-                                    + (item.<%= r.propertyName %> === undefined ? "" : item.<%= r.propertyName %> + "; ")<% 
+                            + (item.<%= r.propertyName %> === undefined ? "" : item.<%= r.propertyName %> + "; ")<% 
                     }
                 } 
                             %>
-                                }}<%
+                        }}<%
             }
 %>
-                            </option>
-                        </select-group>
+                    </option>
+                </select-group>
 <% 
         } else if (col.javaType === "String") { 
             if (col.character_maximum_length <= 255 || col.smartType) {
 %>
-                        <input-group <%= col.is_nullable !== "YES" && col.smartType != "password" ? "required" : "" %>
-                            type="<%= ['email', 'password', 'cpf', 'cnpj', 'rg', 'phone', 'cep'].indexOf(col.smartType) > -1 ? col.smartType : 'text' %>" 
-                            maxlength="<%= col.character_maximum_length %>"
-                            v-model="<%= table.classLowerCamel %>.<%= col.propertyName %><%= col.smartType === 'password' ? 'NotEncrypted' : '' %>"<% 
+                <input-group <%= col.is_nullable !== "YES" && col.smartType != "password" ? "required" : "" %>
+                    type="<%= ['email', 'password', 'cpf', 'cnpj', 'rg', 'phone', 'cep'].indexOf(col.smartType) > -1 ? col.smartType : 'text' %>" 
+                    maxlength="<%= col.character_maximum_length %>"
+                    v-model="<%= table.classLowerCamel %>.<%= col.propertyName %><%= col.smartType === 'password' ? 'NotEncrypted' : '' %>"<% 
             if (col.smartType === 'password') { 
 %>
-                            :placeholder="<%= table.classLowerCamel %>.<%= table.primaryColumns[0].propertyName %> ? $t('app.onlyIfWantChangePassword') : ''"<%
+                    :placeholder="<%= table.classLowerCamel %>.<%= table.primaryColumns[0].propertyName %> ? $t('app.onlyIfWantChangePassword') : ''"<%
             }
                             %>>
-                            {{ $t("classes.<%= table.className %>.columns.<%= col.propertyName %>") }}
-                        </input-group>
-                    <% 
+                    {{ $t("classes.<%= table.className %>.columns.<%= col.propertyName %>") }}
+                </input-group>
+            <% 
             } else {
                     %>
-                        <textarea-group <%= col.is_nullable !== 'YES' ? 'required' : '' %>
-                            v-model="<%= table.classLowerCamel %>.<%= col.propertyName %>"
-                            rows="3">
-                            {{ $t("classes.<%= table.className %>.columns.<%= col.propertyName %>") }}
-                        </textarea-group>
-                    <%
+                <textarea-group <%= col.is_nullable !== 'YES' ? 'required' : '' %>
+                    v-model="<%= table.classLowerCamel %>.<%= col.propertyName %>"
+                    rows="3">
+                    {{ $t("classes.<%= table.className %>.columns.<%= col.propertyName %>") }}
+                </textarea-group>
+            <%
             }
         } else if (["Double", "double"].indexOf(col.javaType) > -1) { 
         %>
-                        <input-group <%= col.is_nullable !== "YES" ? "required" : "" %>
-                            type="number" 
-                            step="any"
-                            v-model="<%= table.classLowerCamel %>.<%= col.propertyName %>"
-                            :placeholder="$t('persist.number')">
-                            {{ $t("classes.<%= table.className %>.columns.<%= col.propertyName %>") }}
-                        </input-group>
+                <input-group <%= col.is_nullable !== "YES" ? "required" : "" %>
+                    type="number" 
+                    step="any"
+                    v-model="<%= table.classLowerCamel %>.<%= col.propertyName %>"
+                    :placeholder="$t('persist.number')">
+                    {{ $t("classes.<%= table.className %>.columns.<%= col.propertyName %>") }}
+                </input-group>
                     <% 
         } else if (["Long", "long"].indexOf(col.javaType) > -1) { 
                     %>
-                        <input-group <%= col.is_nullable !== "YES" ? "required" : "" %>
-                            type="number" 
-                            step="1"
-                            v-model="<%= table.classLowerCamel %>.<%= col.propertyName %>"
-                            :placeholder="$t('persist.number')">
-                            {{ $t("classes.<%= table.className %>.columns.<%= col.propertyName %>") }}
-                        </input-group>
+                <input-group <%= col.is_nullable !== "YES" ? "required" : "" %>
+                    type="number" 
+                    step="1"
+                    v-model="<%= table.classLowerCamel %>.<%= col.propertyName %>"
+                    :placeholder="$t('persist.number')">
+                    {{ $t("classes.<%= table.className %>.columns.<%= col.propertyName %>") }}
+                </input-group>
 <% 
         } else if (col.data_type === "date") {
 %>
-                        <input-group <%= col.is_nullable !== "YES" ? "required" : "" %>
-                            type="date"
-                            v-model="<%= table.classLowerCamel %>.<%= col.propertyName %>"
-                            :placeholder="$t('dateFormat.date')">
-                            {{ $t("classes.<%= table.className %>.columns.<%= col.propertyName %>") }}
-                        </input-group>
+                <input-group <%= col.is_nullable !== "YES" ? "required" : "" %>
+                    type="date"
+                    v-model="<%= table.classLowerCamel %>.<%= col.propertyName %>"
+                    :placeholder="$t('dateFormat.date')">
+                    {{ $t("classes.<%= table.className %>.columns.<%= col.propertyName %>") }}
+                </input-group>
 <% 
         } else if (["time", "datetime", "timestamp"].indexOf(col.data_type) > -1) {
 %>
-                        <input-group <%= col.is_nullable !== "YES" ? "required" : "" %>
-                            type='datetime' 
-                            v-model="<%= table.classLowerCamel %>.<%= col.propertyName %>"
-                            :placeholder="$t('dateFormat.datetime')">
-                            {{ $t("classes.<%= table.className %>.columns.<%= col.propertyName %>") }}
-                        </input-group>
+                <input-group <%= col.is_nullable !== "YES" ? "required" : "" %>
+                    type='datetime' 
+                    v-model="<%= table.classLowerCamel %>.<%= col.propertyName %>"
+                    :placeholder="$t('dateFormat.datetime')">
+                    {{ $t("classes.<%= table.className %>.columns.<%= col.propertyName %>") }}
+                </input-group>
 <% 
         } else {
 %>
-                        <checkbox-group v-model="<%= table.classLowerCamel %>.<%= col.propertyName %>">
-                            {{ $t("classes.<%= table.className %>.columns.<%= col.propertyName %>") }}
-                        </checkbox-group>
+                <checkbox-group v-model="<%= table.classLowerCamel %>.<%= col.propertyName %>">
+                    {{ $t("classes.<%= table.className %>.columns.<%= col.propertyName %>") }}
+                </checkbox-group>
             <% 
         }
     } 
@@ -127,41 +122,40 @@ var col = table.columns[i];
 for (var i in table.NtoNcolumns) { 
     var col = table.NtoNcolumns[i];
 %>
-                        <multiselect-group
-                            v-model="<%= table.classLowerCamel %>.<%= col.NtoNtable.classLowerCamel %>"
-                            :items="all<%= col.otherTable.className %>"
-                            propname="<%= col.otherTable.primaryColumns[0].propertyName %>">
-                            <span slot="label">{{ $t("classes.<%= col.NtoNtable.className %>.title") }}</span>
-                            <template slot="item" scope="props"><%
+                <multiselect-group
+                    v-model="<%= table.classLowerCamel %>.<%= col.NtoNtable.classLowerCamel %>"
+                    :items="all<%= col.otherTable.className %>"
+                    propname="<%= col.otherTable.primaryColumns[0].propertyName %>">
+                    <span slot="label">{{ $t("classes.<%= col.NtoNtable.className %>.title") }}</span>
+                    <template slot="item" scope="props"><%
     if (col.otherTable.nameColumn) { %>
-                                {{ props.item.<%= col.otherTable.nameColumn.propertyName %> }}<%
+                        {{ props.item.<%= col.otherTable.nameColumn.propertyName %> }}<%
     } else { 
 %>
-                                {{
-                                    ""
+                        {{
+                            ""
 <% 
         for (var j in col.otherTable.columns) { 
             var r = col.otherTable.columns[j]; 
 %>
-                                    + (props.item.<%= r.propertyName %> === undefined ? "" : props.item.<%= r.propertyName %> + "; ")<% 
+                                + (props.item.<%= r.propertyName %> === undefined ? "" : props.item.<%= r.propertyName %> + "; ")<% 
         } 
 %>
-                                }}<%
+                        }}<%
     } 
 %>
-                            </template>
-                        </multiselect-group>
+                    </template>
+                </multiselect-group>
 <% 
 } 
 %>
 
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-primary">{{ $t("persist.submit") }}</button>
-                        </div>
-                    </form> 
+                <hr class="mb-20"/>
+                <div class="verti items-center">
+                    <button type="submit" class="accent">{{ $t("persist.submit") }}</button>
                 </div>
-            </div>
-        </section>
+            </form> 
+        </div>
     </div>
 
 </template>

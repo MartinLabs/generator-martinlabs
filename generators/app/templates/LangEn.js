@@ -16,7 +16,8 @@ export default {
         "noDataToShow": "No data to show",
         "downloadCsv": "Download CSV",
         "search": "Search",
-        "totalLines": "{total} total lines"
+        "totalLines": "{total} total lines",
+        "version": "Version"
     },
     
     "dateFormat": {
@@ -34,7 +35,6 @@ export default {
         "time": "hh:mm",
         "datemask": "####/##/##",
         "datetimemask": "####/##/## ##:##"
-
     },
 
     "format": {

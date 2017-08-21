@@ -55,10 +55,12 @@ module.exports = {
             function () {
                 
                 main.npmInstall([
-                    "bootstrap-sass",
                     "js-sha256",
+                    "linelay",
                     "lodash",
                     "moment",
+                    "normalize-scss",
+                    "simple-line-icons",
                     "simplestorage.js",
                     "v-mask@1.0.4",
                     "debounce-promise",

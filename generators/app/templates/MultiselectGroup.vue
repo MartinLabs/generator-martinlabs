@@ -1,7 +1,7 @@
 <template>
 
     <div class="form-group">
-        <label>
+        <label class="multiselect-label">
             {{ label }}
             <slot name="label"></slot>
         </label>

@@ -1,6 +1,6 @@
 <template>
 
-    <div @click="store.setOrder(name)" style="cursor:pointer" :class="{ 'dropup': !store.asc }">
+    <div @click="store.setOrder(name)" style="cursor:pointer" class="orderby" :class="{ 'asc': store.asc, 'desc': !store.asc }">
         <slot></slot>
         <span :class="{ 'caret': store.orderBy === name }"></span>
     </div>

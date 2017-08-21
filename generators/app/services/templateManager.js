@@ -246,8 +246,8 @@ module.exports = {
 
     scssFiles: function(main) {
         main.fs.copy(
-            main.templatePath('template.scss'),
-            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/scss/template.scss"));
+            main.templatePath('base.scss'),
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/scss/base.scss"));
 
         main.fs.copy(
             main.templatePath('main.scss'),
@@ -263,6 +263,10 @@ module.exports = {
         main.fs.copy(
             main.templatePath('version.properties'),
             main.customDestinationPath("src/main/resources/version.properties"));
+
+        main.fs.copy(
+            main.templatePath('.gitignore'),
+            main.customDestinationPath(".gitignore"));
 
         main.fs.copy(
             main.templatePath('.babelrc'),
@@ -300,9 +304,6 @@ module.exports = {
             main.templatePath('config/index.js'),
             main.customDestinationPath("src/main/webapp/config/index.js"),
             main.props);
-
-        main.directory("font", 
-            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/font"));
 
         main.fs.copyTpl(
             main.templatePath('LangEn.js'),

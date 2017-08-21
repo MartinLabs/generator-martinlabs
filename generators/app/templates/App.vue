@@ -1,19 +1,11 @@
 <template>
     <div>
-        <div 
-            v-show="showAlert" 
-            transition="fade" 
-            role="alert" 
-            :class="['alert', bsAlertType]">
-
-            <button type="button" class="close" @click="showAlert = false">
-                <span>×</span>
-            </button> 
-            <p>{{ alertMessage }}</p>
-
-        </div>
-
         <router-view></router-view>
+        
+        <div v-show="showAlert" class="alert horiz" :class="[alertType]">
+            <span class="weight-1 text-center">{{ alertMessage }}</span>
+            <a class="close" @click="showAlert = false"></a>
+        </div>
     </div>
 </template>
 
@@ -26,11 +18,6 @@
                 alertType: "danger",
                 alertMessage: ""
             };
-        },
-        computed: {
-            bsAlertType() {
-                return "alert-" + this.alertType;
-            }
         },
         mounted() {
             this.$bus.on("alert", (message, type, closeable = true, duration) => {
@@ -48,15 +35,4 @@
 </script>
 <style lang="scss">
     @import '../scss/main.scss';
-
-    .alert{
-        width: 400px;
-        position: fixed;
-        top: 30px;
-        margin: 0 auto;
-        left: 0;
-        right: 0;
-        z-index: 1050;
-    }
-
 </style>

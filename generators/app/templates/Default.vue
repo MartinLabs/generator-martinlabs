@@ -1,61 +1,34 @@
 <template>
-    <div class="wrapper">
-        <div class="hold-transition skin-blue sidebar-mini" :class="{ 'sidebar-open': sidebarOpen }">
-            <header class="main-header">
-                <router-link to="/home" class="logo">
-                    <!-- mini logo for sidebar mini 50x50 pixels -->
-                    <span class="logo-mini"><b></b></span>
-                    <!-- logo for regular state and mobile devices -->
-                    <span class="logo-lg"><b>{{ $t("app.title") }}</b></span>
-                </router-link>
-                <!-- Header Navbar: style can be found in header.less -->
-                <nav class="navbar navbar-static-top">
-                    <a class="sidebar-toggle" role="button" @click="sidebarOpen = !sidebarOpen">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </a>
-                    <!-- Navbar Right Menu -->
-                    <div class="navbar-custom-menu">
-                        <ul class="nav navbar-nav">
-                            <!-- User Account: style can be found in dropdown.less -->
-                            <li><a @click="logout"><i class="glyphicon glyphicon-lock"></i> <span>{{ $t("app.logout") }}</span></a></li>
-                        </ul>
-                    </div>
-                </nav>
-            </header>
-            <aside class="main-sidebar">
-                <!-- sidebar: style can be found in sidebar.less -->
-                <section class="sidebar">
-                    <!-- sidebar menu: : style can be found in sidebar.less -->
-                    <ul class="sidebar-menu">
-
-                        <li><router-link to="/home">{{ $t("home.title") }}</router-link></li><% 
-                        for (var i in tables) { 
-                        	var table = tables[i];
-                        	if (table.inCrud && !table.isNtoNtable) {
-					    %>
-                        <li><router-link to="/list<%= table.className %>" exact>{{ $t("classes.<%= table.className %>.title") }}</router-link></li><%
-                        	}
-                    	} %>
-
-                    </ul>
-                </section>
-                <!-- /.sidebar -->
-            </aside>
-            <!-- Main -->
-            <div class="content-wrapper">
-                <router-view></router-view>
+    <div class="horiz mob-verti w-window h-window">
+        <aside class="menu des-w-200 tab-w-200 w-full verti">
+            <div class="horiz items-center">
+                <a class="mobile icon icon-menu" @click="showMenu = !showMenu"></a>
+                <h1 class="weight-1 text-center accent">
+                    {{ $t("app.title") }}
+                </h1>
             </div>
+            <ul class="p-0 py-10 weight-1" :class="{ 'desktop-tablet': !showMenu }">
 
-            <footer class="main-footer">
-                <div class="pull-right hidden-xs">
-                    <b>Versão</b> {{ version }}
-                </div>
-                {{ $t("app.title") }}
+                <li><router-link to="/home" @click.native="showMenu = false">
+                    {{ $t("home.title") }}
+                </router-link></li><% 
+                for (var i in tables) { 
+                	var table = tables[i];
+                	if (table.inCrud && !table.isNtoNtable) {
+			    %>
+                <li><router-link to="/list<%= table.className %>" exact @click.native="showMenu = false">
+                    {{ $t("classes.<%= table.className %>.title") }}
+                </router-link></li><%
+                	}
+            	} %>
+                <li><a @click="logout">{{ $t("app.logout") }}</a></li>
+            </ul>
+            <footer class="h-wrap p-10 desktop-tablet">
+                <small><b>{{ $t("app.version") }}</b> {{ version }}</small>
             </footer>
-        </div>
+        </aside>
+
+        <router-view class="weight-1 px-20 py-10"></router-view>
     </div>
 </template>
 
@@ -64,9 +37,11 @@ import {version} from '../../../../package.json';
 import simpleStorage from 'simpleStorage.js';
 
 export default {
-    name: "Default",
     data() {
-        return  { sidebarOpen: false, version };
+        return  { 
+            showMenu: false, 
+            version 
+        };
     },
     methods: {
         logout() {

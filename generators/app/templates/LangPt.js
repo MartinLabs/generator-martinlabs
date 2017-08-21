@@ -4,7 +4,7 @@ export default {
         "title": "<%= modulenameUpper %>",
         "logout": "Sair",
         "menu": "Menu",
-        "add": "Adicionar",
+        "add": "Cadastrar",
         "export": "Exportar",
         "select": "Selecione",
         "persistedSuccessfully": "Salvo com Sucesso!",
@@ -16,7 +16,8 @@ export default {
         "noDataToShow": "Nenhum dado para apresentar",
         "downloadCsv": "Baixar CSV",
         "search": "Buscar",
-        "totalLines": "{total} entradas no total"
+        "totalLines": "{total} entradas no total",
+        "version": "Versão"
     },
     
     "dateFormat": {

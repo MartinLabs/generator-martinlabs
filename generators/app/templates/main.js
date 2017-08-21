@@ -15,7 +15,7 @@ import AppFragments from './controller/fragment';
 import AppTranslator from './service/AppTranslator';
 import AppRouter from './service/AppRouter';
 
-Vue.lang = "pt";
+Vue.lang = "en";
 
 Vue.use(VueMask);
 Vue.use(VueMoment);
