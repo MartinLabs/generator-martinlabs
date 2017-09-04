@@ -47,30 +47,6 @@ public class <%= table.className %>ProcessTest extends DaoUnitTestWrapper {
         loginS = new LoginServices(con, lang, clientVersion);
     }
 
-    @Test(expected = RespException.class)
-    public void testListPageNull() {
-        String token = loginS.loginToToken("user@gmail.com", SecurityUtils.sha256("abcabc"));
-        String query = null;
-        Integer page = null;
-        Integer limit = 20;
-        String orderRequest = null;
-        Boolean asc = null;
-                
-        subject.list(token, query, page, limit, orderRequest, asc);
-    }
-
-    @Test(expected = RespException.class)
-    public void testListLimitNull() {
-        String token = loginS.loginToToken("user@gmail.com", SecurityUtils.sha256("abcabc"));
-        String query = null;
-        Integer page = 0;
-        Integer limit = null;
-        String orderRequest = null;
-        Boolean asc = null;
-                
-        subject.list(token, query, page, limit, orderRequest, asc);
-    }
-
     @Test
     public void testListNoQuery() {
         String token = loginS.loginToToken("user@gmail.com", SecurityUtils.sha256("abcabc"));

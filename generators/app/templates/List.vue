@@ -172,10 +172,15 @@ for (var k in table.primaryColumns) {
                 %>`);
         },
         downloadCsv() {
-            downloadCsv("<%= table.classLowerCamel %>.csv",
-                this.list,
-                this.$lang.classes.<%= table.className %>.columns);
-
+            this.$resources.<%= table.classLowerCamel %>.query({
+                query: this.adapStore.query,
+                orderBy: this.adapStore.orderBy,
+                ascending: this.adapStore.asc
+            }).then(resp => {
+                downloadCsv("<%= table.classLowerCamel %>.csv",
+                  resp.body.list,
+                  this.$lang.classes.<%= table.className %>.columns);
+            });
         }<%
 if (table.deactivableColumn) { %>,
         openRemoveModal(item) {

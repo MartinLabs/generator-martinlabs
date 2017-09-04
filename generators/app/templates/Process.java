@@ -67,13 +67,6 @@ public class <%= table.className %>Process {
         String orderRequest,
         Boolean asc) {
         //TODO: review generated method
-        if (page == null) {
-            throw new RespException(1,  lang.cannotBeNull("Page"));
-        }
-        
-        if (limit == null) {
-            throw new RespException(2,  lang.cannotBeNull("Limit"));
-        } 
         
         if (query != null) {
             query = query.replaceAll("[.,:\\-\\/]", "");

@@ -95,13 +95,18 @@ for (var i in table.columns) {
             params.add("%" + query + "%");
         }
 
-        params.add(page * limit);
-        params.add(limit);
+        String limitQuery = "";
+        if (page != null && limit != null) {
+            limitQuery = "LIMIT ?, ? ";
+            params.add(page * limit);
+            params.add(limit);
+        }
+
         return selectList("SELECT * "
             + "FROM <%= table.name %> "
             + where
             + (orderColumn != null ? "ORDER BY " + orderColumn + " " + (asc ? "ASC " : "DESC ") : "")
-            + "LIMIT ?, ? ",
+            + limitQuery,
             rs -> <%= table.className %>.buildAll(rs), 
             params.toArray());
     }
