@@ -4,21 +4,21 @@
  * @author martinlabs CRUD generator
  */
 export default class {
-    constructor() {<%
+  constructor() {<%
 for (var i in table.columns) { 
     var col = table.columns[i];
     if (col.extra !== "auto_increment") { 
     	if (["Boolean", "boolean"].indexOf(col.javaType) > -1) { %>
-        this.<%= col.notIdPropertyName %> = false;<%
+    this.<%= col.notIdPropertyName %> = false;<%
     	} else { %>
-        this.<%= col.notIdPropertyName %> = <%= col.referencedTable ? '{}' : 'null' %>;<%
+    this.<%= col.notIdPropertyName %> = <%= col.referencedTable ? '{}' : 'null' %>;<%
     	}
-    }
+  }
 }
 for (var i in table.NtoNcolumns) { 
     var col = table.NtoNcolumns[i]; %>
-    	this.<%= col.NtoNtable.classLowerCamel %> = [];<%
+    this.<%= col.NtoNtable.classLowerCamel %> = [];<%
 }
 %>
-    }
+  }
 }

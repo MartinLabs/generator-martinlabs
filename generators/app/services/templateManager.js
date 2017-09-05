@@ -137,10 +137,6 @@ module.exports = {
             main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/controller/fragment/LineChart.vue"));
 
         main.fs.copy(
-            main.templatePath('LoadBox.vue'),
-            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/controller/fragment/LoadBox.vue"));
-
-        main.fs.copy(
             main.templatePath('Modal.vue'),
             main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/controller/fragment/Modal.vue"));
 
@@ -307,12 +303,12 @@ module.exports = {
 
         main.fs.copyTpl(
             main.templatePath('LangEn.js'),
-            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/const/LangEn.js"),
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/locale/LangEn.js"),
             main.props);
 
         main.fs.copyTpl(
             main.templatePath('LangPt.js'),
-            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/const/LangPt.js"),
+            main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/locale/LangPt.js"),
             main.props);
 
         main.props.generateDataForColumn = processor.generateDataForColumn;

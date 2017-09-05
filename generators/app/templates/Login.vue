@@ -12,42 +12,42 @@
 </template>
 
 <script>
-import sha256 from 'js-sha256';
-import simpleStorage from 'simpleStorage.js';
+  import sha256 from 'js-sha256';
+  import simpleStorage from 'simplestorage.js';
 
-export default {
-    name: "Login", 
+  export default {
+    name: 'Login',
     data() {
-        return {
-            account: null,
-            password: null
-        };
+      return {
+        account: null,
+        password: null,
+      };
     },
     mounted() {
-        if (simpleStorage.get("token<%= modulenameUpper %>")) {
-            this.$router.push("/home");
-        }
+      if (simpleStorage.get('token<%= modulenameUpper %>')) {
+        this.$router.push('/home');
+      }
     },
     methods: {
-        login(e) {
-            e.preventDefault();
+      login(e) {
+        e.preventDefault();
 
-            this.$resources.login.save({
-                account: this.account,
-                password: sha256(this.password)
-            }).then(resp => {
-                simpleStorage.set("token<%= modulenameUpper %>", resp.body.token);
-                simpleStorage.set("id<%= modulenameUpper %>", resp.body.id);
-                                    
-                var beforeLoginIntention = simpleStorage.get("beforeLoginIntention") || null;
-                if (beforeLoginIntention) {
-                    simpleStorage.deleteKey("beforeLoginIntention");
-                    location.href = beforeLoginIntention;
-                } else {
-                    this.$router.push("/home");
-                }
-            });
-        }
-    }
-}
+        this.$resources.login.save({
+          account: this.account,
+          password: sha256(this.password),
+        }).then((resp) => {
+          simpleStorage.set('token<%= modulenameUpper %>', resp.body.token);
+          simpleStorage.set('id<%= modulenameUpper %>', resp.body.id);
+
+          const beforeLoginIntention = simpleStorage.get('beforeLoginIntention') || null;
+          if (beforeLoginIntention) {
+            simpleStorage.deleteKey('beforeLoginIntention');
+            location.href = beforeLoginIntention;
+          } else {
+            this.$router.push('/home');
+          }
+        });
+      },
+    },
+  };
 </script>

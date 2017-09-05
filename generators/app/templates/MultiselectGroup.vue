@@ -17,38 +17,28 @@
 
 </template>
 <script>
-    export default {
-        name: "MultiselectGroup",
-        props: ["value", "label", "items", "propname"],
-        data() {
-            return  {};
+  export default {
+    name: 'MultiselectGroup',
+    props: ['value', 'label', 'items', 'propname'],
+    data() {
+      return {};
+    },
+    computed: {
+      computedModel: {
+        get() {
+          return this.value.map(item => item[this.propname]);
         },
-        computed: {
-            computedModel: {
-                get() {
-                    var values = [];
-                    for (let item of this.value) {
-                        values.push(item[this.propname]);
-                    }
-                    return values;
-                },
-                set(val) {
-                    var values = [];
-                    for (let item of val) {
-                        var obj = {};
-                        obj[this.propname] = item;
-                        values.push(obj);
-                    }
-                    this.updateValue(values);
-                }
-            }
+        set(val) {
+          this.updateValue(val.map(item => ({ [this.propname]: item })));
         },
-        methods: {
-            updateValue(val) {
-                this.$emit('input', val);
-            }
-        }
-    }
+      },
+    },
+    methods: {
+      updateValue(val) {
+        this.$emit('input', val);
+      },
+    },
+  };
 
 </script>
 

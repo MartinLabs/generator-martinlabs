@@ -33,22 +33,22 @@
 </template>
 
 <script>
-import {version} from '../../../../package.json';
-import simpleStorage from 'simpleStorage.js';
+  import simpleStorage from 'simplestorage.js';
+  import { version } from '../../../../package.json';
 
-export default {
+  export default {
     data() {
-        return  { 
-            showMenu: false, 
-            version 
-        };
+      return {
+        showMenu: false,
+        version,
+      };
     },
     methods: {
-        logout() {
-            simpleStorage.deleteKey("token<%= modulenameUpper %>");
-            this.$router.push("/login");
-        }
-    }
-}
+      logout() {
+        simpleStorage.deleteKey('token<%= modulenameUpper %>');
+        this.$router.push('/login');
+      },
+    },
+  };
 
 </script>

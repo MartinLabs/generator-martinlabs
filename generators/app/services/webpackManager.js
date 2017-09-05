@@ -71,11 +71,9 @@ module.exports = {
 
         jsonfile.writeFile(main.customDestinationPath("src/main/webapp/package.json"), main.props.npmPackage, function(err) {
 
-            console.info("vai porra");
             console.info(main.props.webpackEntries);
 
             jsonfile.writeFile(main.customDestinationPath("src/main/webapp/config/entries.json"), main.props.webpackEntries, function(err) {
-                console.info("foi?");
                 done();
             });
         });

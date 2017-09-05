@@ -160,24 +160,31 @@ for (var i in table.NtoNcolumns) {
 
 </template>
 
-<script>
-import moment from 'moment';
-import sha256 from 'js-sha256';
+<script><%
+  var hasPassword = false;
+  for (var i in table.columns) {
+    if (table.columns[i].smartType === "password") {
+      hasPassword = true;
+    }
+  }
+  if (hasPassword) {
+%>
+  import sha256 from 'js-sha256';<% }
+%>
+  import <%= table.className %> from '../model/<%= table.className %>';
 
-import <%= table.className %> from '../model/<%= table.className %>';
-
-export default {
-    name: "Persist<%= table.className %>",
+  export default {
+    name: 'Persist<%= table.className %>',
     data() {
-        return {
-            <%= table.classLowerCamel %>: new <%= table.className %>()<% 
+      return {
+        <%= table.classLowerCamel %>: new <%= table.className %>(),<%
 var antiRepeat = [];
 for (var i in table.columns) { 
     var c = table.columns[i]; 
     if (c.referencedTable && antiRepeat.indexOf(c.referencedTable.className) < 0) {
         antiRepeat.push(c.referencedTable.className);
-            %>,
-            all<%= c.referencedTable.className %>: {}<%
+%>
+        all<%= c.referencedTable.className %>: {},<%
     }
 }
 
@@ -186,37 +193,37 @@ for (var i in table.NtoNcolumns) {
     var c = table.NtoNcolumns[i]; 
     if (antiRepeat.indexOf(c.otherTable.className) < 0) {
         antiRepeat.push(c.otherTable.className);
-            %>,
-            all<%= c.otherTable.className %>: {}<%
+%>
+        all<%= c.otherTable.className %>: {},<%
     }
 }
 %>
-        };
-    }, 
+      };
+    },
     mounted() {
-        this.$resources.<%= table.classLowerCamel %>.get({<% 
+      this.$resources.<%= table.classLowerCamel %>.get({<%
 if (table.primaryColumns.length == 1) {
 %>
-            id: this.$route.params.id || 0<%
+        id: this.$route.params.id || 0,<%
 } else {
     for (var k in table.primaryColumns) {
-        %><%= k > 0 ? ',' : '' %>
-            <%= table.primaryColumns[k].propertyName %>: this.$route.params.<%= table.primaryColumns[k].propertyName %> || 0<%
+%>
+        <%= table.primaryColumns[k].propertyName %>: this.$route.params.<%= table.primaryColumns[k].propertyName %> || 0,<%
     } 
 }
 
 %>
-        }).then(resp => {
-            if (resp.body.<%= table.classLowerCamel %>) {
-                this.<%= table.classLowerCamel %> = resp.body.<%= table.classLowerCamel %>;
-            }<% 
+      }).then((resp) => {
+        if (resp.body.<%= table.classLowerCamel %>) {
+          this.<%= table.classLowerCamel %> = resp.body.<%= table.classLowerCamel %>;
+        }<%
 var antiRepeat = [];
 for (var i in table.columns) { 
     var c = table.columns[i]; 
     if (c.referencedTable && antiRepeat.indexOf(c.referencedTable.className) < 0) {
         antiRepeat.push(c.referencedTable.className);
 %>
-            this.all<%= c.referencedTable.className %> = resp.body.all<%= c.referencedTable.className %>;<%
+        this.all<%= c.referencedTable.className %> = resp.body.all<%= c.referencedTable.className %>;<%
     }
 }
 
@@ -226,36 +233,35 @@ for (var i in table.NtoNcolumns) {
     if (antiRepeat.indexOf(c.otherTable.className) < 0) {
         antiRepeat.push(c.otherTable.className);
 %>
-            this.all<%= c.otherTable.className %> = resp.body.all<%= c.otherTable.className %>;<%
+        this.all<%= c.otherTable.className %> = resp.body.all<%= c.otherTable.className %>;<%
     }
 }
             %>
-        });
+      });
     },
     methods: {
-        persist() {
-<% 
+      persist() {<%
 for (var i in table.columns) {
     var c = table.columns[i];
     if (c.smartType === "password") {
-%>            
-            if (this.<%= table.classLowerCamel %>.<%= c.propertyName %>NotEncrypted && this.<%= table.classLowerCamel %>.<%= c.propertyName %>NotEncrypted.length) {
-                if (this.<%= table.classLowerCamel %>.<%= c.propertyName %>NotEncrypted.length < 6) {
-                    this.$bus.error(this.$lang.app.passwordMustHaveAtleast6Chars, true, 3000);
-                    return;
-                }
-                
-                this.<%= table.classLowerCamel %>.<%= c.propertyName %> = sha256(this.<%= table.classLowerCamel %>.<%= c.propertyName %>NotEncrypted);
-            }
+%>
+        if (this.<%= table.classLowerCamel %>.<%= c.propertyName %>NotEncrypted && this.<%= table.classLowerCamel %>.<%= c.propertyName %>NotEncrypted.length) {
+          if (this.<%= table.classLowerCamel %>.<%= c.propertyName %>NotEncrypted.length < 6) {
+            this.$bus.error(this.$lang.app.passwordMustHaveAtleast6Chars, true, 3000);
+            return;
+          }
+
+          this.<%= table.classLowerCamel %>.<%= c.propertyName %> = sha256(this.<%= table.classLowerCamel %>.<%= c.propertyName %>NotEncrypted);
+        }
 <%
     }
 } 
 %>
-            this.$resources.<%= table.classLowerCamel %>.save(this.<%= table.classLowerCamel %>).then(resp => {
-                this.$bus.success(this.$lang.app.persistedSuccessfully, true, 3000);
-                this.$router.push("/list<%= table.className %>");
-            });
-        }
-    }
-}
+        this.$resources.<%= table.classLowerCamel %>.save(this.<%= table.classLowerCamel %>).then(() => {
+          this.$bus.success(this.$lang.app.persistedSuccessfully, true, 3000);
+          this.$router.push('/list<%= table.className %>');
+        });
+      },
+    },
+  };
 </script>

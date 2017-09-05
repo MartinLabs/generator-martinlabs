@@ -1,20 +1,22 @@
+/* eslint global-require: 0 */
 import VueRouter from 'vue-router';
 
 export default function buildRouter(Vue) {
-    Vue.use(VueRouter);
+  Vue.use(VueRouter);
 
-    var router = new VueRouter({
-        routes: [
-            { path: '/login', component: require('../controller/Login.vue') },
+  const router = new VueRouter({
+    routes: [
+      { path: '/login', component: require('../controller/Login.vue') },
 
-            { 
-                path: '/home', component: require('../controller/fragment/Default.vue'),
-                children: [<% 
+      {
+        path: '/home',
+        component: require('../controller/fragment/Default.vue'),
+        children: [<%
 for (var i in tables) { 
     var table = tables[i];
     if (table.inCrud && !table.isNtoNtable) {
 %>
-                    { path: '/list<%= table.className %>', component: require('../controller/List<%= table.className %>.vue') },<% 
+          { path: '/list<%= table.className %>', component: require('../controller/List<%= table.className %>.vue') },<%
     } 
 } 
 
@@ -22,8 +24,8 @@ for (var i in tables) {
     var table = tables[i];
     if (table.inCrud && !table.isNtoNtable) {
 %>
-                    { path: '/persist<%= table.className %>', component: require('../controller/Persist<%= table.className %>.vue') },
-                    { path: '/persist<%= table.className %><% 
+          { path: '/persist<%= table.className %>', component: require('../controller/Persist<%= table.className %>.vue') },
+          { path: '/persist<%= table.className %><%
 if (table.primaryColumns.length == 1) {
     %>/:id<%
 } else {
@@ -35,20 +37,19 @@ if (table.primaryColumns.length == 1) {
     } 
 } 
 %>
-                ]
-            },
-            { path: '/', redirect: '/login' },
-            { path: '*', redirect: '/home' }
-        ]
-    });
+        ],
+      },
+      { path: '/', redirect: '/login' },
+      { path: '*', redirect: '/home' },
+    ],
+  });
 
-    router.beforeEach(function (to, from, next) {
-      window.scrollTo(0, 0);
-      next();
-    });
+  router.beforeEach((to, from, next) => {
+    window.scrollTo(0, 0);
+    next();
+  });
 
-    Vue.$router = router;
+  Object.assign(Vue, { $router: router });
 
-    return router;
-
+  return router;
 }

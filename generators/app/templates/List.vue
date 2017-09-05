@@ -134,33 +134,32 @@ for (var i in table.columns) {
 </template>
 
 <script>
-import moment from "moment";
-import downloadCsv from '../util/downloadCsv.js';
+  import downloadCsv from '../util/downloadCsv';
 
-export default {
-    name: "List<%= table.className %>",
+  export default {
+    name: 'List<%= table.className %>',
     data() {
-        return {
-            list: [], <%
+      return {
+        list: [],<%
 if (table.deactivableColumn) { %>
-            <%= table.classLowerCamel %>ToRemove: null,<%
+        <%= table.classLowerCamel %>ToRemove: null,<%
 }
 %>
-            adapStore: new this.$AdapStore("<%= table.primaryColumns[0].propertyName %>", (params) => this.populateList(params))
-        };
-    }, 
+        adapStore: new this.$AdapStore('<%= table.primaryColumns[0].propertyName %>', params => this.populateList(params)),
+      };
+    },
     mounted() {
-        this.adapStore.search();
+      this.adapStore.search();
     },
     methods: {
-        populateList(params) {
-            this.$resources.<%= table.classLowerCamel %>.query(params).then(resp => {
-                this.list = resp.body.list;
-                this.adapStore.setCount(resp.body.count);
-            });
-        },
-        openPersist(item) {
-            this.$router.push(`/persist<%= table.className %><%
+      populateList(params) {
+        this.$resources.<%= table.classLowerCamel %>.query(params).then((resp) => {
+          this.list = resp.body.list;
+          this.adapStore.setCount(resp.body.count);
+        });
+      },
+      openPersist(item) {
+        this.$router.push(`/persist<%= table.className %><%
 for (var k in table.primaryColumns) {
     var idp = table.primaryColumns[k];
     if (!idp.referencedTable) {
@@ -170,43 +169,43 @@ for (var k in table.primaryColumns) {
     }
 }
                 %>`);
-        },
-        downloadCsv() {
-            this.$resources.<%= table.classLowerCamel %>.query({
-                query: this.adapStore.query,
-                orderBy: this.adapStore.orderBy,
-                ascending: this.adapStore.asc
-            }).then(resp => {
-                downloadCsv("<%= table.classLowerCamel %>.csv",
-                  resp.body.list,
-                  this.$lang.classes.<%= table.className %>.columns);
-            });
-        }<%
-if (table.deactivableColumn) { %>,
-        openRemoveModal(item) {
-            this.<%= table.classLowerCamel %>ToRemove = item;
-        },
-        removeItem() {
-            this.$resources.<%= table.classLowerCamel %>.delete({<% 
+      },
+      downloadCsv() {
+        this.$resources.<%= table.classLowerCamel %>.query({
+          query: this.adapStore.query,
+          orderBy: this.adapStore.orderBy,
+          ascending: this.adapStore.asc,
+        }).then((resp) => {
+          downloadCsv('<%= table.classLowerCamel %>.csv',
+            resp.body.list,
+            this.$lang.classes.<%= table.className %>.columns);
+        });
+      },<%
+if (table.deactivableColumn) { %>
+      openRemoveModal(item) {
+        this.<%= table.classLowerCamel %>ToRemove = item;
+      },
+      removeItem() {
+        this.$resources.<%= table.classLowerCamel %>.delete({<%
 if (table.primaryColumns.length == 1) {
 %>
-                id: this.<%= table.classLowerCamel %>ToRemove.<%= table.primaryColumns[0].propertyName %><%
+          id: this.<%= table.classLowerCamel %>ToRemove.<%= table.primaryColumns[0].propertyName %>,<%
 } else {
     for (var k in table.primaryColumns) {
-        %><%= k > 0 ? ',' : '' %>
-            <%= table.primaryColumns[k].propertyName %>: this.<%= table.classLowerCamel %>ToRemove.<%= table.primaryColumns[k].propertyName %><%
+%>
+          <%= table.primaryColumns[k].propertyName %>: this.<%= table.classLowerCamel %>ToRemove.<%= table.primaryColumns[k].propertyName %>,<%
     } 
 }
 
 %>
-            }).then(resp => {
-                this.list.splice(this.list.indexOf(this.<%= table.classLowerCamel %>ToRemove), 1);
-                this.adapStore.count--;
-                this.<%= table.classLowerCamel %>ToRemove = null;
-            });
-        }<%
+        }).then(() => {
+          this.list.splice(this.list.indexOf(this.<%= table.classLowerCamel %>ToRemove), 1);
+          this.adapStore.count -= 1;
+          this.<%= table.classLowerCamel %>ToRemove = null;
+        });
+      },<%
 }
 %>
-    }
-}
+    },
+  };
 </script>

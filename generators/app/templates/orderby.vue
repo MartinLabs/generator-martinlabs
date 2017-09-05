@@ -8,8 +8,8 @@
 </template>
 
 <script>
-export default {
-    name: "adap-orderby",
-    props: ["store", "name"]
-}
+  export default {
+    name: 'adap-orderby',
+    props: ['store', 'name'],
+  };
 </script>

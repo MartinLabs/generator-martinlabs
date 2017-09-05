@@ -1,25 +1,25 @@
 import VueI18n from 'vue-i18n';
-import LangEn from '../const/LangEn';
-import LangPt from '../const/LangPt';
-     
+import LangEn from '../locale/LangEn';
+import LangPt from '../locale/LangPt';
+
 export default function buildTranslator(Vue) {
-    Vue.use(VueI18n);
+  Vue.use(VueI18n);
 
-    var i18n = new VueI18n({
-        locale: Vue.lang,
-        messages: {
-            en: LangEn,
-            pt: LangPt
-        }
-    });
+  const i18n = new VueI18n({
+    locale: Vue.lang,
+    messages: {
+      en: LangEn,
+      pt: LangPt,
+    },
+  });
 
-    if (Vue.lang === "en") {
-        Vue.$lang = LangEn;
-        Vue.prototype.$lang = LangEn;
-    } else {
-        Vue.$lang = LangPt;
-        Vue.prototype.$lang = LangPt;
-    }
-    
-    return i18n;
+  if (Vue.lang === 'en') {
+    Object.assign(Vue.prototype, { $lang: LangEn });
+    Object.assign(Vue, { $lang: LangEn });
+  } else {
+    Object.assign(Vue.prototype, { $lang: LangPt });
+    Object.assign(Vue, { $lang: LangPt });
+  }
+
+  return i18n;
 }

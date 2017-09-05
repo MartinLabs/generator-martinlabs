@@ -5,11 +5,11 @@ import SelectGroup from './SelectGroup.vue';
 import TextareaGroup from './TextareaGroup.vue';
 
 export default {
-    install(Vue) {
-        Vue.component('CheckboxGroup', CheckboxGroup);
-        Vue.component('InputGroup', InputGroup);
-        Vue.component('MultiselectGroup', MultiselectGroup);
-        Vue.component('SelectGroup', SelectGroup);
-        Vue.component('TextareaGroup', TextareaGroup);
-    }   
+  install(Vue) {
+    Vue.component('CheckboxGroup', CheckboxGroup);
+    Vue.component('InputGroup', InputGroup);
+    Vue.component('MultiselectGroup', MultiselectGroup);
+    Vue.component('SelectGroup', SelectGroup);
+    Vue.component('TextareaGroup', TextareaGroup);
+  },
 };

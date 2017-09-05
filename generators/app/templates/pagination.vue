@@ -32,48 +32,50 @@
       pageSize: Number,
       gap: {
         type: Number,
-        default: 2
-      }
+        default: 2,
+      },
     },
     computed: {
-      first () {
-        return 1
+      first() {
+        return 1;
       },
-      current () {
-        return this.store.currentPage + 1
+      current() {
+        return this.store.currentPage + 1;
       },
-      last () {
-        return this.store.pageCount + 1
-      }
+      last() {
+        return this.store.pageCount + 1;
+      },
     },
-    mounted () {
+    mounted() {
       if (this.pageSize) {
-        this.store.setPageSize(this.pageSize)
+        this.store.setPageSize(this.pageSize);
       }
     },
     methods: {
-      goto (n) {
-        this.store.setCurrentPage(n - 1)
+      goto(n) {
+        this.store.setCurrentPage(n - 1);
       },
 
-      next () {
-        this.store.nextPage()
+      next() {
+        this.store.nextPage();
       },
 
-      prev () {
-        this.store.previousPage()
+      prev() {
+        this.store.previousPage();
       },
 
-      index (n) {
-        var pos = this.current
+      index(n) {
+        let pos = this.current;
 
-        if (this.current < 1 + this.gap) pos = 1 + this.gap
-        else if (this.current > this.last - this.gap) pos = this.last - this.gap
+        if (this.current < 1 + this.gap) {
+          pos = 1 + this.gap;
+        } else if (this.current > this.last - this.gap) {
+          pos = this.last - this.gap;
+        }
 
-        return n + pos - this.gap - 1
-      }
+        return (n + pos) - this.gap - 1;
+      },
 
-    }
-  }
+    },
+  };
 </script>
-
