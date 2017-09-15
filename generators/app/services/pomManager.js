@@ -107,6 +107,8 @@ module.exports = {
             main.props.pom.project.build = [{}];
         }
 
+        main.props.pom.project.build[0].finalName = [main.props.projectName];
+
         if (!main.props.pom.project.build[0].plugins) {
             main.props.pom.project.build[0].plugins = [{}];
         }

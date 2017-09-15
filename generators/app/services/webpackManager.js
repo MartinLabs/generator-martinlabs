@@ -28,8 +28,9 @@ module.exports = {
                 scripts: {
                 	dev: "node build/dev-server.js",
             	    start: "node build/dev-server.js",
-                    build: "node build/build.js",
-                    lint: "eslint --ext .js,.vue src"
+                  build: "node build/build.js",
+                  beta: "BETA=true npm run build",
+                  lint: "eslint --ext .js,.vue src"
                 },
                 engines: {
                     node: ">= 4.0.0",

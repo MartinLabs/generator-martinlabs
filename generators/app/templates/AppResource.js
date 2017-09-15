@@ -30,15 +30,15 @@ export default {
       });
     });
 
-    const apiPath = 'http://localhost:8080/<%= projectName %>/ws';
+    const apiPath = process.env.SERVER;
     const resources = {
-      login: Vue.resource(`${apiPath}/<%= modulenameUpper %>/Login`),<%
+      login: Vue.resource(`${apiPath}<%= modulenameUpper %>/Login`),<%
 
     for (var i in tables) {
         var table = tables[i];
         if (table.inCrud && !table.isNtoNtable) {
     %>
-      <%= table.classLowerCamel %>: Vue.resource(`${apiPath}/<%= modulenameUpper %>/<%= table.className %><% 
+      <%= table.classLowerCamel %>: Vue.resource(`${apiPath}<%= modulenameUpper %>/<%= table.className %><% 
 if (table.primaryColumns.length == 1) {
     %>{/id}<%
 } else {

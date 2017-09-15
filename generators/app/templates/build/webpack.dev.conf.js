@@ -30,7 +30,7 @@ module.exports = merge(baseWebpackConfig, {
       // https://github.com/ampedandwired/html-webpack-plugin
       return new HtmlWebpackPlugin({
         filename: `${name}.html`,
-        template: 'index.html',
+        template: 'template.html',
         chunks: [name],
         inject: true
       });

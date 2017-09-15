@@ -1,7 +1,7 @@
 export default {
   language: 'en-us',
   app: {
-    title: 'Crud',
+    title: '<%= projectName %>',
     logout: 'Logout',
     menu: 'Menu',
     add: 'Add',

@@ -1,7 +1,7 @@
 export default {
   language: 'pt-br',
   app: {
-    title: 'Crud',
+    title: '<%= projectName %>',
     logout: 'Sair',
     menu: 'Menu',
     add: 'Cadastrar',

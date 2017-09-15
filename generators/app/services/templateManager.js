@@ -281,20 +281,27 @@ module.exports = {
             main.customDestinationPath("src/main/webapp/.postcssrc.js"));
 
         main.fs.copyTpl(
-            main.templatePath('index.html'),
-            main.customDestinationPath("src/main/webapp/index.html"),
+            main.templatePath('template.html'),
+            main.customDestinationPath("src/main/webapp/template.html"),
             main.props);
 
         main.directory("build", 
             main.customDestinationPath("src/main/webapp/build"));
 
-        main.fs.copy(
+        main.fs.copyTpl(
             main.templatePath('config/dev.env.js'),
-            main.customDestinationPath("src/main/webapp/config/dev.env.js"));
+            main.customDestinationPath("src/main/webapp/config/dev.env.js"),
+            main.props);
 
         main.fs.copyTpl(
             main.templatePath('config/prod.env.js'),
-            main.customDestinationPath("src/main/webapp/config/prod.env.js"));
+            main.customDestinationPath("src/main/webapp/config/prod.env.js"),
+            main.props);
+
+        main.fs.copyTpl(
+            main.templatePath('config/beta.env.js'),
+            main.customDestinationPath("src/main/webapp/config/beta.env.js"),
+            main.props);
 
         main.fs.copyTpl(
             main.templatePath('config/index.js'),

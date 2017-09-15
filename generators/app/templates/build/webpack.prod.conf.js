@@ -52,7 +52,7 @@ var webpackConfig = merge(baseWebpackConfig, {
     // see https://github.com/ampedandwired/html-webpack-plugin
     return new HtmlWebpackPlugin({
       filename: config.build.index(name),
-      template: 'index.html',
+      template: 'template.html',
       chunks: [name],
       inject: true,
       minify: {
