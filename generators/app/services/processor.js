@@ -1,10 +1,14 @@
 var lorem = require("./lorem");
 var moment = require("moment");
+var generatorPackage = require('../../../package.json');
 
 module.exports = {
 
 	projectProps: function(main) {
 
+        main.props.generatorVersion = generatorPackage.version;
+        main.props.generateDataForColumn = this.generateDataForColumn;
+        
 		main.props.javaFolder = "src/main/java/"+main.props.package.replace(/\./g, '\/');
         main.props.testFolder = "src/test/java/"+main.props.package.replace(/\./g, '\/');
         main.props.daoPackage = main.props.package + ".dao";

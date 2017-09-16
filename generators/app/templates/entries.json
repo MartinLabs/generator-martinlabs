@@ -1,0 +1,3 @@
+{
+    "<%= modulename %>": "./src/<%= modulename %>/main.js"
+}

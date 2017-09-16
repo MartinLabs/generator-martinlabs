@@ -1,5 +1,3 @@
-var processor = require("./processor");
-
 module.exports = {
 
 	javaClasses: function(main) {
@@ -240,7 +238,7 @@ module.exports = {
         }
     },
 
-    scssFiles: function(main) {
+    otherFiles: function(main) {
         main.fs.copy(
             main.templatePath('base.scss'),
             main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/scss/base.scss"));
@@ -248,9 +246,16 @@ module.exports = {
         main.fs.copy(
             main.templatePath('main.scss'),
             main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/scss/main.scss"));
-    },
 
-    otherFiles: function(main) {
+        main.fs.copyTpl(
+            main.templatePath('package.json'),
+            main.customDestinationPath("src/main/webapp/package.json"),
+            main.props);
+
+        main.fs.copyTpl(
+            main.templatePath('entries.json'),
+            main.customDestinationPath("src/main/webapp/config/entries.json"),
+            main.props);
 
         main.fs.copy(
             main.templatePath('logging.properties'),
@@ -317,8 +322,6 @@ module.exports = {
             main.templatePath('LangPt.js'),
             main.customDestinationPath("src/main/webapp/src/" + main.props.modulename + "/locale/LangPt.js"),
             main.props);
-
-        main.props.generateDataForColumn = processor.generateDataForColumn;
 
         main.fs.copyTpl(
             main.templatePath('data.sql'),

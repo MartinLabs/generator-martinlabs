@@ -33,6 +33,7 @@ hr {
 }
 
 table {
+    min-width: 100%;
     border-collapse: collapse;
     background-color: transparent;
 
@@ -57,6 +58,7 @@ input:not([type=submit]):not([type=checkbox]):not([type=radio]), select, textare
     padding: 2px 5px;
     background: white;
     vertical-align: middle;
+    font-size: 1.2em;
 
     &:focus {
         border-color: #888;

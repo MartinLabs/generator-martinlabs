@@ -1,4 +1,6 @@
 var mysql = require('mysql');
+var yosay = require('yosay');
+var chalk = require('chalk');
 
 module.exports = {
 
@@ -24,8 +26,19 @@ module.exports = {
             [main.props.database],
         function(err, results, fields) {
             if (err) {
-                console.log("*** Could not read specified database ***");
+                main.log(yosay(
+                    chalk.bgYellowBright.black.bold('Could not connect to informed database. Is it running?')
+                ));
+
                 throw err;
+            }
+
+            if (!results || !results.length) {
+                main.log(yosay(
+                    chalk.bgYellowBright.black.bold('Could not read ' + main.props.database + ' database.')
+                ));
+
+                throw new Error();
             }
 
             main.props.tables = [];
@@ -72,10 +85,6 @@ module.exports = {
                 + "AND c.table_name = ? ",
                 [main.props.database, table.name],
             function(err, results, fields) {
-                if (err) {
-                    console.log("*** Could not read "+ table.name +" table ***");
-                    throw err;
-                }
 
                 table.columns = results;
 

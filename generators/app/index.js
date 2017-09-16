@@ -5,9 +5,7 @@ var lorem = require("./services/lorem");
 var pomManager = require("./services/pomManager");
 var promptManager = require("./services/promptManager");
 var metaInfCtxManager = require("./services/metaInfCtxManager");
-var webpackManager = require("./services/webpackManager");
 var mysqlManager = require("./services/mysqlManager");
-var npmManager = require("./services/npmManager");
 var processor = require("./services/processor");
 var tplManager = require("./services/templateManager");
 
@@ -40,10 +38,6 @@ module.exports = yeoman.generators.Base.extend({
         metaInfCtxManager.readFromFile(this);
     },
 
-    readWebpackConfig: function() {
-        webpackManager.readFromFile(this);
-    },
-
     generateProjectProps: function() {
         processor.projectProps(this);
     },
@@ -54,10 +48,6 @@ module.exports = yeoman.generators.Base.extend({
 
     generateMetaInfCtx: function() {
         metaInfCtxManager.fillMissingContent(this);
-    },
-
-    generateWebpackConfig: function() {
-        webpackManager.fillMissingContent(this);
     },
 
     connectToDatabase: function(){
@@ -84,26 +74,13 @@ module.exports = yeoman.generators.Base.extend({
         tplManager.jsClasses(this);
     },
 
-    writeScssFiles: function() {
-        tplManager.scssFiles(this);
-    },
-
-    writeSomeFolders: function() {
-        webpackManager.writeToFile(this);
+    writeOtherFiles: function() {
         tplManager.otherFiles(this);
         pomManager.writeToFile(this);
         metaInfCtxManager.writeToFile(this);
     },
 
-    installDependencies: function() {
-        npmManager.install(this);
-    },
-
-    //everthing after npm install needs to be at `end`
     end: function() {
-        process.chdir("src/main/webapp/");
-        this.spawnCommand('npm run dev');
-        process.chdir("../../../");
         process.exit();
     }
 });

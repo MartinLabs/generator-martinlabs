@@ -3,35 +3,20 @@ var xml2js = require('xml2js');
 
 module.exports = {
 
-	readFromFile: function(main, fillPackageAndProjectName) {
+	readFromFile: function(main) {
         var done = main.async();
 
-        this.readFromFileAndCallback(main.customDestinationPath('pom.xml'), function(resp) {
-            if (resp) {
-                resp.pom = resp.pom;
-
-                if (fillPackageAndProjectName !== false) {
-                    resp.package = resp.package;
-                    resp.projectName = resp.projectName;
-                }
-            }
-
-            done();
-        });
-	},
-
-    readFromFileAndCallback: function(fullpathtofile, cb) {
-        fs.readFile(fullpathtofile, function(err, data) {
+        fs.readFile(main.customDestinationPath('pom.xml'), function(err, data) {
             xml2js.parseString(data, function (err, result) {
                 var resp = {};
 
                 if (result) {
-                    resp.pom = result;
-                    resp.package = result.project.groupId[0];
-                    resp.projectName = result.project.artifactId[0];
+                    main.props.pom = result;
+                    main.props.package = result.project.groupId[0];
+                    main.props.projectName = result.project.artifactId[0];
                 }
 
-                cb(resp);
+                done();
             });
         });
     },

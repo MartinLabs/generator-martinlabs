@@ -1,5 +1,4 @@
 var yosay = require('yosay');
-var chalk = require('chalk');
 
 module.exports = {
 
@@ -7,7 +6,7 @@ module.exports = {
 		var done = main.async();
 
         main.log(yosay(
-            'Welcome to ' + chalk.bgBlack.white(' Martinlabs ') + ' CRUD generator ;)'
+            'Welcome to Martinlabs CRUD generator ;)'
             ));
 
         var prompts = [{
@@ -36,11 +35,6 @@ module.exports = {
             message: 'Input the Tables Names separated by comma (or "all tables") ',
             default: main.props.tables ? main.props.tables : "all tables"
         },{
-            type: 'confirm',
-            name: 'runNpm',
-            message: 'Do you want to Install the NPM Dependencies?',
-            default: main.props.runNpm === true
-        },{
             type: 'input',
             name: 'logintablename',
             message: 'Input the Login Table Name',
@@ -63,7 +57,6 @@ module.exports = {
             main.props.password = props.password;
             main.props.database = props.database;
             main.props.tables = props.tables;
-            main.props.runNpm = props.runNpm;
             main.props.logintablename = props.logintablename;
             main.props.loginaccountcolumn = props.loginaccountcolumn;
             main.props.loginpasswordcolumn = props.loginpasswordcolumn;
