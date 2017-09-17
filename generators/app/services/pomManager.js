@@ -70,6 +70,11 @@ module.exports = {
             artifactId: ["javaee-web-api"],
             version: ["7.0"],
             scope: ["provided"]
+        }, {
+            groupId: ["io.swagger"],
+            artifactId: ["swagger-jersey2-jaxrs"],
+            version: ["1.5.10"],
+            scope: ["compile"]
         }];
         
         for (var i in dependenciesToAdd) {

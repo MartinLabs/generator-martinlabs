@@ -4,6 +4,8 @@ import br.com.martinlabs.commons.LanguageHolder;
 import br.com.martinlabs.commons.ResultSetWrapper;
 import br.com.martinlabs.commons.Validator;
 import br.com.martinlabs.commons.exceptions.RespException;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
@@ -11,11 +13,21 @@ import java.util.List;
 /**
  * <%= table.comment %>
  * @author martinlabs CRUD generator
- */
+ */<%
+if (table.comment) {%>
+@ApiModel(description="<%= table.comment %>")<%
+}
+%>
 public class <%= table.className %> {
 <% 
 for (var i in table.columns) { 
     var c = table.columns[i]; 
+    if (c.column_comment) {
+%>
+
+    @ApiModelProperty(value = "<%= c.column_comment %>")<%
+    }
+
     if (!c.referencedTable) {
 %>
     private <%= c.javaType %> <%= c.propertyName %>;<% 
@@ -23,7 +35,6 @@ for (var i in table.columns) {
 %>
     private <%= c.referencedTable.className %> <%= c.notIdPropertyName %>;<% 
     } 
-%><%= c.column_comment ? " //" + c.column_comment : "" %><% 
 } 
 %>
 

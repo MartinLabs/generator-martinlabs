@@ -13,6 +13,11 @@ module.exports = {
             main.props);
 
         main.fs.copyTpl(
+            main.templatePath('SwaggerInit.java'),
+            main.customDestinationPath(main.props.javaFolder+"/SwaggerInit.java"), 
+            main.props);
+
+        main.fs.copyTpl(
             main.templatePath('Router.java'),
             main.customDestinationPath(main.props.moduleFolder+"/Router.java"), 
             main.props);
@@ -289,6 +294,9 @@ module.exports = {
             main.templatePath('template.html'),
             main.customDestinationPath("src/main/webapp/template.html"),
             main.props);
+
+        main.directory("docs", 
+            main.customDestinationPath("src/main/webapp/docs"));
 
         main.directory("build", 
             main.customDestinationPath("src/main/webapp/build"));

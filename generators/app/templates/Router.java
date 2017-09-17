@@ -23,6 +23,7 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import javax.ws.rs.HeaderParam;
+import io.swagger.annotations.Api;
 import <%= processPackage %>.LoginServices;
 import <%= processPackage %>.LoginServices.LoginHolder;
 import <%= responsePackage %>.LoginResp;<%
@@ -43,6 +44,7 @@ import <%= modelPackage %>.<%= table.className %>;<%
  * @author martinlabs CRUD generator
  */
 @Path("/<%= modulenameUpper %>")
+@Api(tags = {"Crud"})
 @Produces(MediaType.APPLICATION_JSON)
 public class Router implements ExceptionMapper<Throwable> {
 
