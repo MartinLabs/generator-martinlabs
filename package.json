@@ -1,6 +1,6 @@
 {
   "name": "generator-martinlabs",
-  "version": "7.2.2",
+  "version": "7.3.0",
   "description": "Generates a fullstack CRUD using Java and Vue.js, check the features list",
   "homepage": "https://github.com/martinlabs/generator-martinlabs",
   "author": {
