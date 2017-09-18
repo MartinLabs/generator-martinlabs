@@ -18,6 +18,11 @@ module.exports = {
             main.props);
 
         main.fs.copyTpl(
+            main.templatePath('RouterWrapper.java'),
+            main.customDestinationPath(main.props.javaFolder+"/RouterWrapper.java"), 
+            main.props);
+
+        main.fs.copyTpl(
             main.templatePath('Router.java'),
             main.customDestinationPath(main.props.moduleFolder+"/Router.java"), 
             main.props);

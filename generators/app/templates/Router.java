@@ -1,12 +1,7 @@
 package <%= modulePackage %>;
 
-import br.com.martinlabs.commons.LanguageHolder;
-import br.com.martinlabs.commons.TransactionPipe;
 import br.com.martinlabs.commons.PagedResp;
-import br.com.martinlabs.commons.exceptions.RespException;
-import br.com.martinlabs.commons.OauthHelper;
-import br.com.martinlabs.commons.EnglishLanguage;
-import br.com.martinlabs.commons.PortugueseLanguage;
+import br.com.martinlabs.usecase.RouterWrapper;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.DELETE;
@@ -15,15 +10,11 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.ext.ExceptionMapper;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
 import javax.ws.rs.HeaderParam;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
 import <%= processPackage %>.LoginServices;
 import <%= processPackage %>.LoginServices.LoginHolder;
 import <%= responsePackage %>.LoginResp;<%
@@ -40,29 +31,25 @@ import <%= modelPackage %>.<%= table.className %>;<%
 %>
 
 /**
- *
+ * Routes of <%= modulenameUpper %> module
  * @author martinlabs CRUD generator
  */
 @Path("/<%= modulenameUpper %>")
-@Api(tags = {"Crud"})
+@Api(tags = {"<%= modulenameUpper %>"})
 @Produces(MediaType.APPLICATION_JSON)
-public class Router implements ExceptionMapper<Throwable> {
-
-    private TransactionPipe pipe = new TransactionPipe("<%= datasource %>");
-
-    private HashMap<String, LanguageHolder> langs = new HashMap<String, LanguageHolder>() {{
-        put("en", new EnglishLanguage());
-        put("pt", new PortugueseLanguage());
-    }};
-
+public class Router extends RouterWrapper {
 
     @POST
     @Path("/Login")
+    @ApiOperation(value = "Makes user authentication")
     public LoginResp login(
-        @HeaderParam("Accept-Language") String lang, 
-        @HeaderParam("X-Client-Version") String clientVersion, 
-        
-        LoginHolder body) {
+        @HeaderParam("Accept-Language") @ApiParam(required = true, allowableValues = "en, pt") 
+            String lang, 
+        @HeaderParam("X-Client-Version") @ApiParam(required = true, example = "w1.1.0") 
+            String clientVersion, 
+
+        @ApiParam(required = true)
+            LoginHolder body) {
         //TODO: review generated method
         return pipe.handle(con -> {
             return new LoginServices(con, langs.get(lang), clientVersion)
@@ -84,21 +71,27 @@ if (table.primaryColumns.length == 1) {
     } 
 }
         %>")
+    @ApiOperation(value = "Gets <%= table.className %> of informed id")
     public <%= table.className %>Resp get<%= table.className %>(<% 
 if (table.primaryColumns.length == 1) {
 %>
-            @PathParam("id") Long id,<%
+        @PathParam("id") @ApiParam(required = true)
+            Long id,<%
 } else {
     for (var k in table.primaryColumns) {
 %>
-            @PathParam("<%= table.primaryColumns[k].propertyName %>") Long <%= table.primaryColumns[k].propertyName %>,<%
+        @PathParam("<%= table.primaryColumns[k].propertyName %>") @ApiParam(required = true)
+            Long <%= table.primaryColumns[k].propertyName %>,<%
     }
 } 
 %>
 
-        @HeaderParam("Accept-Language") String lang, 
-        @HeaderParam("X-Client-Version") String clientVersion, 
-        @Context HttpServletRequest req) {
+        @HeaderParam("Accept-Language") @ApiParam(required = true, allowableValues = "en, pt") 
+            String lang, 
+        @HeaderParam("X-Client-Version") @ApiParam(required = true, example = "w1.1.0") 
+            String clientVersion, 
+        @HeaderParam("Authorization") @ApiParam(required = true, example = "Bearer mytokenhere") 
+            String authorization) {
         //TODO: review generated method
         return pipe.handle(con -> {
             return new <%= table.className %>Process(con, langs.get(lang), clientVersion)
@@ -110,41 +103,55 @@ if (table.primaryColumns.length == 1) {
         %><%= table.primaryColumns[k].propertyName %>, <%
     } 
 }
-                %>OauthHelper.getToken(req));
+                %>extractToken(authorization));
         });
     }
 
     @GET
     @Path("/<%= table.className %>")
+    @ApiOperation(value = "List <%= table.className %> informations")
     public PagedResp<<%= table.className %>> list<%= table.className %>(
-            @HeaderParam("Accept-Language") String lang, 
-            @HeaderParam("X-Client-Version") String clientVersion, 
-            @Context HttpServletRequest req,
+        @HeaderParam("Accept-Language") @ApiParam(required = true, allowableValues = "en, pt") 
+            String lang, 
+        @HeaderParam("X-Client-Version") @ApiParam(required = true, example = "w1.1.0") 
+            String clientVersion, 
+        @HeaderParam("Authorization") @ApiParam(required = true, example = "Bearer mytokenhere") 
+            String authorization,
 
-            @QueryParam("query") String query,
-            @QueryParam("page") Integer page,
-            @QueryParam("limit") Integer limit,
-            @QueryParam("orderBy") String orderRequest,
-            @QueryParam("ascending") Boolean asc) {
+        @QueryParam("query") @ApiParam(value = "Query of search")
+            String query,
+        @QueryParam("page") @ApiParam(value = "Page index, null to not paginate")
+            Integer page,
+        @QueryParam("limit") @ApiParam(value = "Page size, null to not paginate")
+            Integer limit,
+        @QueryParam("orderBy") @ApiParam(value = "Identifier for sorting, usually a property name", example = "<%= table.columns[0].propertyName %>")
+            String orderRequest,
+        @QueryParam("ascending") @ApiParam(value = "True for ascending order", defaultValue = "false")
+            Boolean asc) {
         //TODO: review generated method
         return pipe.handle(con -> {
             return new <%= table.className %>Process(con, langs.get(lang), clientVersion)
-                .list(OauthHelper.getToken(req), query, page, limit, orderRequest, asc != null && asc);
+                .list(extractToken(authorization), query, page, limit, orderRequest, asc != null && asc);
         });
     }
 
     @POST
     @Path("/<%= table.className %>")
+    @ApiOperation(value = "Persist a new or existing <%= table.className %>", notes = "1 - Informed <%= table.className %> have an ID editing the existing <%= table.className %>; 2 - Informed <%= table.className %> don't have an ID creating a new <%= table.className %>")
     public Long persist<%= table.className %>(
-        @HeaderParam("Accept-Language") String lang, 
-        @HeaderParam("X-Client-Version") String clientVersion, 
-        @Context HttpServletRequest req,
+        @HeaderParam("Accept-Language") @ApiParam(required = true, allowableValues = "en, pt") 
+            String lang, 
+        @HeaderParam("X-Client-Version") @ApiParam(required = true, example = "w1.1.0") 
+            String clientVersion, 
+        @HeaderParam("Authorization") @ApiParam(required = true, example = "Bearer mytokenhere") 
+            String authorization,
 
-        <%= table.className %> <%= table.classLowerCamel %>) {
+        @ApiParam(required = true)
+            <%= table.className %> <%= table.classLowerCamel %>) {
         //TODO: review generated method
         return pipe.handle(con -> {
             return new <%= table.className %>Process(con, langs.get(lang), clientVersion)
-                .persist(<%= table.classLowerCamel %>, OauthHelper.getToken(req));
+                .persist(<%= table.classLowerCamel %>, extractToken(authorization));
         });
     }
 <%
@@ -152,25 +159,31 @@ if (table.primaryColumns.length == 1) {
 %>
     @DELETE
     @Path("/<%= table.className %>/{id}")
+    @ApiOperation(value = "Deletes the <%= table.className %> of informed id")
     public Object remove<%= table.className %>(<% 
             if (table.primaryColumns.length == 1) {
 %>
-            @PathParam("id") Long id,<%
+        @PathParam("id") @ApiParam(required = true)
+            Long id,<%
             } else {
             for (var k in table.primaryColumns) {
 %>
-            @PathParam("<%= table.primaryColumns[k].propertyName %>") Long <%= table.primaryColumns[k].propertyName %>,<%
+        @PathParam("<%= table.primaryColumns[k].propertyName %>") @ApiParam(required = true)
+            Long <%= table.primaryColumns[k].propertyName %>,<%
     }
 } 
 %>
 
-            @HeaderParam("Accept-Language") String lang, 
-            @HeaderParam("X-Client-Version") String clientVersion, 
-            @Context HttpServletRequest req) {
+        @HeaderParam("Accept-Language") @ApiParam(required = true, allowableValues = "en, pt") 
+            String lang, 
+        @HeaderParam("X-Client-Version") @ApiParam(required = true, example = "w1.1.0") 
+            String clientVersion, 
+        @HeaderParam("Authorization") @ApiParam(required = true, example = "Bearer mytokenhere") 
+            String authorization) {
         //TODO: review generated method
         return pipe.handle(con -> {
             new <%= table.className %>Process(con, langs.get(lang), clientVersion)
-                .remove(id, OauthHelper.getToken(req));
+                .remove(id, extractToken(authorization));
             return null;
         });
     }
@@ -178,29 +191,5 @@ if (table.primaryColumns.length == 1) {
         }
 	}
 }
-%>  
-    @Override
-    public Response toResponse(Throwable e) {
-        Logger.getLogger(Router.class.getName()).log(Level.SEVERE, e.getMessage(), e);
-        
-        if (e instanceof RespException) {
-            RespException re = (RespException) e;
-            
-            String code = "";
-            if (re.getCode() != null) {
-                code = "\"code\": " + re.getCode() + ", ";
-            }
-            
-            return Response.status(403)
-            .entity("{"+code+" \"message\": \""+e.getMessage()+"\"}")
-            .type(MediaType.APPLICATION_JSON)
-            .build();
-        } else {
-            return Response.status(500)
-                .entity("{\"message\": \"Invalid Entry\"}")
-                .type(MediaType.APPLICATION_JSON)
-                .build();
-        }
-    }
-
+%>
 }

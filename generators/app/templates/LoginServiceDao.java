@@ -5,8 +5,8 @@ import br.com.martinlabs.commons.LanguageHolder;
 import java.sql.Connection;
 
 /**
- *
- * @author ricardoakiokobayashi
+ * Responsible for database login operations
+ * @author martinlabs CRUD generator
  */
 public class LoginServiceDao extends DaoWrapper{
     
@@ -14,7 +14,7 @@ public class LoginServiceDao extends DaoWrapper{
         super(con, lang);
     }
     
-    public long getId(String account, String password) {
+    public long getIdOf<%= table.className %>(String account, String password) {
         return nullToZero(selectFirstLong(""
                 + "SELECT <%= table.primaryColumns[0].column_name %> "
                 + "FROM <%= table.name %> "

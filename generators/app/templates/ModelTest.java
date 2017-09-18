@@ -8,7 +8,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- *
+ * Tests <%= table.className %>
  * @author martinlabs CRUD generator
  */
 public class <%= table.className %>Test {

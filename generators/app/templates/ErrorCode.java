@@ -1,7 +1,7 @@
 package <%= package %>;
 
 /**
- *
+ * Contains all error codes
  * @author martinlabs CRUD generator
  */
 public class ErrorCode {

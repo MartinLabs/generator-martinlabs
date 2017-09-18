@@ -18,7 +18,7 @@ import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
 
 /**
- *
+ * Provides rules for all requests
  * @author martinlabs CRUD generator
  */
 @Provider

@@ -7,7 +7,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- *
+ * Test other services
  * @author martinlabs CRUD generator
  */
 public class OtherTest {

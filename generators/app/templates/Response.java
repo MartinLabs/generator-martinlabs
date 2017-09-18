@@ -1,6 +1,8 @@
 package <%= props.responsePackage %>;
 
 import java.util.List;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import <%= props.modelPackage %>.<%= table.className %>;<% 
 var antiRepeat = [];
 for (var i in table.columns) { 
@@ -22,20 +24,18 @@ import <%= props.modelPackage %>.<%= c.otherTable.className %>;<%
 }
 %>
 
-/**
- *
- * @author martinlabs CRUD generator
- */
+@ApiModel(value = "Contains the <%= table.className %> and possible values for it's properties")
 public class <%= table.className %>Resp {
 
-    private <%= table.className %> <%= table.classLowerCamel %>;
-    <% 
+    private <%= table.className %> <%= table.classLowerCamel %>;<% 
     antiRepeat = [];
     for (var i in table.columns) { 
 	    var c = table.columns[i]; 
 	    if (c.referencedTable && antiRepeat.indexOf(c.referencedTable.className) < 0) {
             antiRepeat.push(c.referencedTable.className);
 	%>
+
+    @ApiModelProperty(value = "Possible <%= c.referencedTable.className %> values")
     private List<<%= c.referencedTable.className %>> all<%= c.referencedTable.className %>;<% 
         }
     }
@@ -46,6 +46,8 @@ public class <%= table.className %>Resp {
         if (antiRepeat.indexOf(c.otherTable.className) < 0) {
             antiRepeat.push(c.otherTable.className);
     %>
+
+    @ApiModelProperty(value = "Possible <%= c.otherTable.className %> values")
     private List<<%= c.otherTable.className %>> all<%= c.otherTable.className %>;<% 
         }
     } 

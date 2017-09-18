@@ -13,7 +13,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- *
+ * Tests the login service
  * @author martinlabs CRUD generator
  */
 public class LoginServicesTest extends DaoUnitTestWrapper {

@@ -10,11 +10,7 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
-/**
- * <%= table.comment %>
- * @author martinlabs CRUD generator
- */<%
-if (table.comment) {%>
+<% if (table.comment) { %>
 @ApiModel(description="<%= table.comment %>")<%
 }
 %>
@@ -22,22 +18,28 @@ public class <%= table.className %> {
 <% 
 for (var i in table.columns) { 
     var c = table.columns[i]; 
-    if (c.column_comment) {
+    if (c.is_nullable === "NO" && c.column_comment) {
 %>
-
+    @ApiModelProperty(required = true, value = "<%= c.column_comment %>")<%
+    } else if (c.is_nullable === "NO") {
+%>
+    @ApiModelProperty(required = true)<%
+    } else if (c.column_comment) {
+%>
     @ApiModelProperty(value = "<%= c.column_comment %>")<%
     }
 
     if (!c.referencedTable) {
 %>
-    private <%= c.javaType %> <%= c.propertyName %>;<% 
+    private <%= c.javaType %> <%= c.propertyName %>;
+<% 
     } else { 
 %>
-    private <%= c.referencedTable.className %> <%= c.notIdPropertyName %>;<% 
+    private <%= c.referencedTable.className %> <%= c.notIdPropertyName %>;
+<% 
     } 
 } 
 %>
-
 <% 
 for (var i in table.NtoNcolumns) { 
     var cn = table.NtoNcolumns[i]; 

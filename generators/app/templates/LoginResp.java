@@ -1,9 +1,8 @@
 package <%= responsePackage %>;
 
-/**
- *
- * @author martinlabs CRUD generator
- */
+import io.swagger.annotations.ApiModel;
+
+@ApiModel(value = "Contains a valid login information")
 public class LoginResp {
     
     private String token;

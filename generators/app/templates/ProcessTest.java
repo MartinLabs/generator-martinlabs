@@ -29,7 +29,7 @@ import org.junit.Test;
 import org.junit.Before;
 
 /**
- *
+ * Tests <%= table.className %> business logic
  * @author martinlabs CRUD generator
  */
 public class <%= table.className %>ProcessTest extends DaoUnitTestWrapper {

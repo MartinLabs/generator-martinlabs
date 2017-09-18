@@ -12,7 +12,7 @@ import <%= props.responsePackage %>.LoginResp;
 
 
 /**
- *
+ * <%= table.className %> Login Services
  * @author martinlabs CRUD generator
  */
 public class LoginServices {
@@ -57,7 +57,7 @@ public class LoginServices {
     protected long getId(String account, String password) {
         LoginServiceDao dao = new LoginServiceDao(con, lang);
         
-        return dao.getId(account, password);
+        return dao.getIdOf<%= table.className %>(account, password);
     }
     
     protected String loginToToken(String account, String password) {

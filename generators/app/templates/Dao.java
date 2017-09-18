@@ -10,7 +10,7 @@ import java.util.HashMap;
 import br.com.martinlabs.commons.LanguageHolder;
 
 /**
- *
+ * Responsible for <%= table.className %> database operations
  * @author martinlabs CRUD generator
  */
 public class <%= table.className %>Dao extends DaoWrapper {

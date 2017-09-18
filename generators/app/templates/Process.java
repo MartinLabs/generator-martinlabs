@@ -41,7 +41,7 @@ import br.com.martinlabs.commons.PagedResp;
 import java.sql.Connection;
 
 /**
- *
+ * <%= table.className %> business logic
  * @author martinlabs CRUD generator
  */
 public class <%= table.className %>Process {
