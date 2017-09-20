@@ -1,5 +1,7 @@
 # generator-martinlabs [![NPM version][npm-image]][npm-url]
-> Generates a CRUD based on a MySQL database schema located on your computer, using Java and Vue, we use this generator for production comercial large systems, open a issue to suggest an improvement :)
+> Generates a CRUD based on a MySQL database schema located on your computer, with Java and Vue. 
+
+This generator is used to build comercial large systems, open a issue to suggest an improvement :)
 
 ## Installation
 
@@ -10,7 +12,7 @@ npm install -g yo
 npm install -g generator-martinlabs
 ```
 
-Then, you only need to create a folder, open it on terminal and use this command:
+Then, you only need to create the project folder, open it on terminal and use this command:
 
 ```bash
 yo martinlabs
@@ -23,29 +25,25 @@ Today we are using martinlabs-commons dependency, which is on MavenCentral but i
 
 ## Features
 
-First of all, the code is clean, you will understand what is happening, I will make a video later to show everything you need to know.
-- A server that is ready for use in a Native Mobile App, no server-side rendering, it is all a Rest API
+First of all, the code is clean, you will understand what is happening.
+- A server that is ready for use in a Native Mobile App, no server-side rendering, it is all a Rest API using Jersey
 - Simple Login system with a criptographed token storing credentials
 - Transactions: when something throws an exception all database rollsback to it's original state before the operation begin
-- Pure MySQL connection, No ORM. Why? It's easiest to make powerful queries with high performance without ORM, and since we have a generator, we do not need an ORM to create simple queries for us
-- UnitTests of EVERYTHING! 100% of code coverage, now you are sure that all methods are working, the server will not build if it reaches less than 96% of coverage of tests, you can disable this on `pom.xml`
+- Pure MySQL connection, No ORM. Why? It's easier to make powerful queries with high performance without ORM, and since we have a generator, we do not need an ORM to create simple queries for us
+- UnitTests of EVERYTHING! 100% of code coverage, now you are sure that all methods are working
 - Validation of null, empty, length, numeric and date types, e-mail fields and more.
 - Compiling Server with Maven
 - Vue.JS for client because it's the cleanest solution for this kind of software, Angular and React were evaluated, but Vue won the job
-- Vue plugins like: v-mask (input mask), vue-i18n (translation), vue-moment (show dates), vue-resource (fetch data to our server), vue-router (to make a single page app), vue-strap (just for alert, I am considering to remove it)
-- Sass with bootstrap for general styling
+- Vue plugins like: v-mask (input mask), vue-i18n (translation), vue-moment (show dates), vue-resource (fetch data to our server), vue-router (to make a single page app), 
+- Sass with flex box for layout and simple-line-icons
 - Other libraries: js-sha1 (for passwords), lodash (object manipulation), moment (working with dates), simplestorage.js (local storage)
-- Compiling javascript with grunt, browserify, babel and vueify
+- Compiling javascript with webpack with hotreload
+- Airbnb Eslint
 
 **WOW!** Seems a lot! Well, we are working on it and are trying a lot of technologies for a long time, improving and updating this generator constantly. 
 
 ## Martinlabs
 www.martinlabs.com.br
-
-## License
-
-Apache-2.0 © [Gil Lopes Bueno]()
-
 
 [npm-image]: https://badge.fury.io/js/generator-martinlabs.svg
 [npm-url]: https://npmjs.org/package/generator-martinlabs
