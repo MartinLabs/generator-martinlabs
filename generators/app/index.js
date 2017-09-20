@@ -66,16 +66,11 @@ module.exports = yeoman.generators.Base.extend({
         processor.tablesProps(this);
     },
 
-    writeJavaClasses: function () {
-        tplManager.javaClasses(this);
+    write: function () {
+        tplManager.write(this);
     },
 
-    writeJsClasses: function() {
-        tplManager.jsClasses(this);
-    },
-
-    writeOtherFiles: function() {
-        tplManager.otherFiles(this);
+    writeXml: function() {
         pomManager.writeToFile(this);
         metaInfCtxManager.writeToFile(this);
     },

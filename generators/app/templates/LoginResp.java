@@ -1,4 +1,4 @@
-package <%= responsePackage %>;
+package <%= props.responsePackage %>;
 
 import io.swagger.annotations.ApiModel;
 

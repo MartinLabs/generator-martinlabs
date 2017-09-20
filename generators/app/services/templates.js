@@ -1,0 +1,91 @@
+module.exports = {
+	general: {
+		// general templates, uses project props, not table
+		'ErrorCode.java': function(props) { 			return props.javaFolder+"/ErrorCode.java" },
+		'AppProvider.java': function(props) { 			return props.javaFolder+"/AppProvider.java" },
+		'SwaggerInit.java': function(props) { 			return props.javaFolder+"/SwaggerInit.java" },
+		'RouterWrapper.java': function(props) { 		return props.javaFolder+"/RouterWrapper.java" },
+		'Router.java': function(props) { 				return props.moduleFolder+"/Router.java" },
+		'OtherTest.java': function(props) { 			return props.testFolder+"/OtherTest.java" },
+		'Default.vue': function(props) { 				return "src/main/webapp/src/" + props.modulename + "/controller/fragment/Default.vue" },
+		'Login.vue': function(props) { 					return "src/main/webapp/src/" + props.modulename + "/controller/Login.vue" },
+        'AppResource.js': function(props) { 			return "src/main/webapp/src/" + props.modulename + "/service/AppResource.js" },
+        'AppRouter.js': function(props) { 				return "src/main/webapp/src/" + props.modulename + "/service/AppRouter.js" },
+		'LangEn.js': function(props) { 					return "src/main/webapp/src/" + props.modulename + "/locale/LangEn.js" },
+		'LangPt.js': function(props) { 					return "src/main/webapp/src/" + props.modulename + "/locale/LangPt.js" },
+        'package.json': function(props) { 				return "src/main/webapp/package.json" },
+		'template.html': function(props) { 				return "src/main/webapp/template.html" },
+		'entries.json': function(props) { 				return "src/main/webapp/config/entries.json" },
+		'config/dev.env.js': function(props) { 			return "src/main/webapp/config/dev.env.js" },
+		'config/prod.env.js': function(props) { 		return "src/main/webapp/config/prod.env.js" },
+		'config/beta.env.js': function(props) { 		return "src/main/webapp/config/beta.env.js" },
+		'config/index.js': function(props) { 			return "src/main/webapp/config/index.js" },
+		'web.xml': function(props) { 					return "src/main/webapp/WEB-INF/web.xml" },
+		'data.sql': function(props) { 					return "src/test/resources/database/data.sql" },
+	},
+	copy: {
+		// only copy the file
+        'main.js': function(props) { 					return "src/main/webapp/src/" + props.modulename + "/main.js" },
+		'AppBus.js': function(props) { 					return "src/main/webapp/src/" + props.modulename + "/service/AppBus.js" },
+		'AppTranslator.js': function(props) { 			return "src/main/webapp/src/" + props.modulename + "/service/AppTranslator.js" },
+		'AppFilter.js': function(props) { 				return "src/main/webapp/src/" + props.modulename + "/service/AppFilter.js" },
+		'App.vue': function(props) { 					return "src/main/webapp/src/" + props.modulename + "/controller/App.vue" },
+		'Home.vue': function(props) { 					return "src/main/webapp/src/" + props.modulename + "/controller/Home.vue" },
+		'fragment_index.js': function(props) { 			return "src/main/webapp/src/" + props.modulename + "/controller/fragment/index.js" },
+		'LineChart.vue': function(props) { 				return "src/main/webapp/src/" + props.modulename + "/controller/fragment/LineChart.vue" },
+		'Modal.vue': function(props) { 					return "src/main/webapp/src/" + props.modulename + "/controller/fragment/Modal.vue" },
+		'adap-table_index.js': function(props) { 		return "src/main/webapp/src/" + props.modulename + "/controller/fragment/adap-table/index.js" },
+		'pagination.vue': function(props) { 			return "src/main/webapp/src/" + props.modulename + "/controller/fragment/adap-table/pagination.vue" },
+		'orderby.vue': function(props) { 				return "src/main/webapp/src/" + props.modulename + "/controller/fragment/adap-table/orderby.vue" },
+		'searchfield.vue': function(props) { 			return "src/main/webapp/src/" + props.modulename + "/controller/fragment/adap-table/searchfield.vue" },
+		'Store.js': function(props) { 					return "src/main/webapp/src/" + props.modulename + "/controller/fragment/adap-table/Store.js" },
+		'form-group_index.js': function(props) { 		return "src/main/webapp/src/" + props.modulename + "/controller/fragment/form-group/index.js" },
+		'CheckboxGroup.vue': function(props) { 			return "src/main/webapp/src/" + props.modulename + "/controller/fragment/form-group/CheckboxGroup.vue" },
+		'SelectGroup.vue': function(props) { 			return "src/main/webapp/src/" + props.modulename + "/controller/fragment/form-group/SelectGroup.vue" },
+		'MultiselectGroup.vue': function(props) { 		return "src/main/webapp/src/" + props.modulename + "/controller/fragment/form-group/MultiselectGroup.vue" },
+		'TextareaGroup.vue': function(props) { 			return "src/main/webapp/src/" + props.modulename + "/controller/fragment/form-group/TextareaGroup.vue" },
+		'InputGroup.vue': function(props) { 			return "src/main/webapp/src/" + props.modulename + "/controller/fragment/form-group/InputGroup.vue" },
+		'InputGroupMixin.js': function(props) { 		return "src/main/webapp/src/" + props.modulename + "/controller/fragment/form-group/InputGroupMixin.js" },
+		'downloadCsv.js': function(props) { 			return "src/main/webapp/src/" + props.modulename + "/util/downloadCsv.js" },
+		'base.scss': function(props) { 					return "src/main/webapp/src/" + props.modulename + "/scss/base.scss" },
+		'main.scss': function(props) { 					return "src/main/webapp/src/" + props.modulename + "/scss/main.scss" },
+		'logging.properties': function(props) { 		return "src/main/resources/logging.properties" },
+		'version.properties': function(props) { 		return "src/main/resources/version.properties" },
+		'.babelrc': function(props) { 					return "src/main/webapp/.babelrc" },
+		'.eslintignore': function(props) { 				return "src/main/webapp/.eslintignore" },
+		'.eslintrc.js': function(props) { 				return "src/main/webapp/.eslintrc.js" },
+		'.postcssrc.js': function(props) { 				return "src/main/webapp/.postcssrc.js" },
+		'.gitignore': function(props) { 				return ".gitignore" },
+	},
+	directory: {
+		// only copy the directory
+		'docs': function(props) { 						return "src/main/webapp/docs" },
+		'build': function(props) { 						return "src/main/webapp/build" },
+	},
+	login: {
+		// templates for login, uses project props and login table
+		'LoginServiceDao.java': function(props) { 		return props.daoFolder+"/LoginServiceDao.java" },
+		'LoginServices.java': function(props) { 		return props.processFolder+"/LoginServices.java" },
+		'LoginServicesTest.java': function(props) { 	return props.processTestFolder+"/LoginServicesTest.java" },
+		'LoginResp.java': function(props) { 			return props.responseFolder+"/LoginResp.java" },
+	},
+	table: {
+		// templates for each table
+		'Model.java': function(props, table) { 			return props.modelFolder+"/"+table.className+".java" },
+		'ModelTest.java': function(props, table) {		return props.modelTestFolder+"/"+table.className+"Test.java" },
+		'Dao.java': function(props, table) { 			return props.daoFolder+"/"+table.className+"Dao.java" },
+	},
+	inCrud: {
+		// templates for each table, but only that ones selected by the user
+		'Process.java': function(props, table) { 		return props.processFolder+"/"+table.className+"Process.java" },
+		'ProcessTest.java': function(props, table) { 	return props.processTestFolder+"/"+table.className+"ProcessTest.java" },
+		'Response.java': function(props, table) { 		return props.responseFolder+"/"+table.className+"Resp.java" },
+		'List.vue': function(props, table) { 			return "src/main/webapp/src/" + props.modulename + "/controller/List"+table.className+".vue" },
+		'Persist.vue': function(props, table) { 		return "src/main/webapp/src/" + props.modulename + "/controller/Persist"+table.className+".vue" },
+		'Model.js': function(props, table) { 			return "src/main/webapp/src/" + props.modulename + "/model/"+table.className+".js" },
+	},
+	NtoNtable: {
+		// templates for each table, but only NtoN tables
+		'DaoNtoN.java': function(props, table) { 		return props.daoFolder+"/"+table.className+"Dao.java" },
+	}
+};

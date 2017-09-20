@@ -1,11 +1,11 @@
-package <%= processPackage %>;
+package <%= props.processPackage %>;
 
 import br.com.martinlabs.commons.DaoUnitTestWrapper;
 import br.com.martinlabs.commons.EnglishLanguage;
 import br.com.martinlabs.commons.LanguageHolder;
 import br.com.martinlabs.commons.SecurityUtils;
 import br.com.martinlabs.commons.exceptions.RespException;
-import <%= responsePackage %>.LoginResp;
+import <%= props.responsePackage %>.LoginResp;
 import java.sql.Connection;
 import java.sql.SQLException;
 import javax.naming.NamingException;
@@ -22,7 +22,7 @@ public class LoginServicesTest extends DaoUnitTestWrapper {
     private String token;
     
     public LoginServicesTest() throws NamingException, SQLException {
-        super("<%= datasource %>", "<%= database %>");
+        super("<%= props.datasource %>", "<%= props.database %>");
         Connection con = getConnection();
         LanguageHolder lang = new EnglishLanguage();
         String clientVersion = "w1.0.0";
