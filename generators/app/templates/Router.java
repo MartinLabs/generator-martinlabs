@@ -1,7 +1,7 @@
 package <%= modulePackage %>;
 
 import br.com.martinlabs.commons.PagedResp;
-import br.com.martinlabs.usecase.RouterWrapper;
+import <%= package %>.RouterWrapper;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.DELETE;

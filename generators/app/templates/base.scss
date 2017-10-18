@@ -98,7 +98,7 @@ button, input[type=submit], .btn {
     }
 }
 
-.accent:not(div):not(input):not(button):not(select):not(.btn) {
+.accent:not(input):not(button):not(select):not(.btn) {
     color: $accent-color;
 }
 

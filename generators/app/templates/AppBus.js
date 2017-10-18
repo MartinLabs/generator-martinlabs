@@ -8,16 +8,16 @@ export default {
       emit(...args) { return bus.$emit(...args); },
       on(...args) { return bus.$on(...args); },
 
-      success(message, closeable, duration) {
-        this.emit('alert', message, 'success', closeable, duration);
+      success(message, duration) {
+        this.emit('alert', message, 'success', duration);
       },
 
-      warning(message, closeable, duration) {
-        this.emit('alert', message, 'warning', closeable, duration);
+      warning(message, duration) {
+        this.emit('alert', message, 'warning', duration);
       },
 
-      error(message, closeable, duration) {
-        this.emit('alert', message, 'error', closeable, duration);
+      error(message, duration) {
+        this.emit('alert', message, 'error', duration);
       },
     };
 

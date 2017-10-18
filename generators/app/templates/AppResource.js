@@ -19,7 +19,7 @@ export default {
 
       next((resp) => {
         if (!resp.ok) {
-          Vue.$bus.error(resp.body.message, true, 3000);
+          Vue.$bus.error(resp.body.message, 3000);
 
           if (resp.body.code === 33) {
             simpleStorage.deleteKey('token<%= modulenameUpper %>');

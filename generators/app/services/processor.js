@@ -282,8 +282,8 @@ module.exports = {
         if (["char", "varchar", "text"].indexOf(column.data_type) > -1) {
             if (index % 10) { //others will have half of maximum capacity (100 max)
                 return "\"" + lorem(Math.min(100, column.character_maximum_length / 2), false) + "\"";
-            } else { //0th, 10th, 20th, 30th... line will have maximum capacity (2000 max)
-                return "\"" + lorem(Math.min(2000, column.character_maximum_length), index === 0) + "\"";
+            } else { //0th, 10th, 20th, 30th... line will have maximum capacity (500 max)
+                return "\"" + lorem(Math.min(500, column.character_maximum_length), index === 0) + "\"";
             }
         }
 

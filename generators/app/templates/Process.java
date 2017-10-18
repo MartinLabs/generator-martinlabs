@@ -138,12 +138,10 @@ if (table.NtoNcolumns && table.NtoNcolumns.length) { %>
         for (var k in table.primaryColumns) {
                     %><%= k > 0 ? ', ' : '' %><%= table.primaryColumns[k].propertyName %><%
         } 
-%>));
+%>));<%
+    } %>
             }
-<% 
-    } 
-}
-%>
+<% } %>
         }<% 
 antiRepeat = [];
 for (var j in table.columns) { 

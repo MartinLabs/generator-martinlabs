@@ -127,7 +127,7 @@ for (var i in table.NtoNcolumns) {
                     :items="all<%= col.otherTable.className %>"
                     propname="<%= col.otherTable.primaryColumns[0].propertyName %>">
                     <span slot="label">{{ $t("classes.<%= col.NtoNtable.className %>.title") }}</span>
-                    <template slot="item" scope="props"><%
+                    <template slot="item" slot-scope="props"><%
     if (col.otherTable.nameColumn) { %>
                         {{ props.item.<%= col.otherTable.nameColumn.propertyName %> }}<%
     } else { 
@@ -247,7 +247,7 @@ for (var i in table.columns) {
 %>
         if (this.<%= table.classLowerCamel %>.<%= c.propertyName %>NotEncrypted && this.<%= table.classLowerCamel %>.<%= c.propertyName %>NotEncrypted.length) {
           if (this.<%= table.classLowerCamel %>.<%= c.propertyName %>NotEncrypted.length < 6) {
-            this.$bus.error(this.$lang.app.passwordMustHaveAtleast6Chars, true, 3000);
+            this.$bus.error(this.$lang.app.passwordMustHaveAtleast6Chars, 3000);
             return;
           }
 
@@ -258,7 +258,7 @@ for (var i in table.columns) {
 } 
 %>
         this.$resources.<%= table.classLowerCamel %>.save(this.<%= table.classLowerCamel %>).then(() => {
-          this.$bus.success(this.$lang.app.persistedSuccessfully, true, 3000);
+          this.$bus.success(this.$lang.app.persistedSuccessfully, 3000);
           this.$router.push('/list<%= table.className %>');
         });
       },

@@ -11,6 +11,10 @@ var tplManager = require("./services/templateManager");
 
 module.exports = yeoman.generators.Base.extend({
 
+    loadingMessage: function() {
+        console.info("Loading...");
+    },
+
     readConfig: function() {
         this.customDestinationPath = this.destinationPath;
 
