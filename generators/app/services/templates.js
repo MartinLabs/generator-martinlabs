@@ -1,12 +1,12 @@
 module.exports = {
 	general: {
 		// general templates, uses project props, not table
-		'ErrorCode.java': function(props) { 			return props.javaFolder+"/ErrorCode.java" },
-		'AppProvider.java': function(props) { 			return props.javaFolder+"/AppProvider.java" },
-		'SwaggerInit.java': function(props) { 			return props.javaFolder+"/SwaggerInit.java" },
-		'RouterWrapper.java': function(props) { 		return props.javaFolder+"/RouterWrapper.java" },
-		'Router.java': function(props) { 				return props.moduleFolder+"/Router.java" },
-		'OtherTest.java': function(props) { 			return props.testFolder+"/OtherTest.java" },
+		'ErrorCode.kt': function(props) { 				return props.javaFolder+"/ErrorCode.kt" },
+		'AppProvider.kt': function(props) { 			return props.javaFolder+"/AppProvider.kt" },
+		'SwaggerInit.kt': function(props) { 			return props.javaFolder+"/SwaggerInit.kt" },
+		'RouterWrapper.kt': function(props) { 			return props.javaFolder+"/RouterWrapper.kt" },
+		'Router.kt': function(props) { 					return props.moduleFolder+"/Router.kt" },
+		'OtherTest.kt': function(props) { 				return props.testFolder+"/OtherTest.kt" },
 		'Default.vue': function(props) { 				return "src/main/webapp/src/" + props.modulename + "/controller/fragment/Default.vue" },
 		'Login.vue': function(props) { 					return "src/main/webapp/src/" + props.modulename + "/controller/Login.vue" },
         'AppResource.js': function(props) { 			return "src/main/webapp/src/" + props.modulename + "/service/AppResource.js" },
@@ -64,28 +64,28 @@ module.exports = {
 	},
 	login: {
 		// templates for login, uses project props and login table
-		'LoginServiceDao.java': function(props) { 		return props.daoFolder+"/LoginServiceDao.java" },
-		'LoginServices.java': function(props) { 		return props.processFolder+"/LoginServices.java" },
-		'LoginServicesTest.java': function(props) { 	return props.processTestFolder+"/LoginServicesTest.java" },
-		'LoginResp.java': function(props) { 			return props.responseFolder+"/LoginResp.java" },
+		'LoginServiceDao.kt': function(props) { 		return props.daoFolder+"/LoginServiceDao.kt" },
+		'LoginServices.kt': function(props) { 			return props.processFolder+"/LoginServices.kt" },
+		'LoginServicesTest.kt': function(props) { 		return props.processTestFolder+"/LoginServicesTest.kt" },
+		'LoginResp.kt': function(props) { 				return props.responseFolder+"/LoginResp.kt" },
 	},
 	table: {
 		// templates for each table
-		'Model.java': function(props, table) { 			return props.modelFolder+"/"+table.className+".java" },
-		'ModelTest.java': function(props, table) {		return props.modelTestFolder+"/"+table.className+"Test.java" },
-		'Dao.java': function(props, table) { 			return props.daoFolder+"/"+table.className+"Dao.java" },
+		'Model.kt': function(props, table) { 			return props.modelFolder+"/"+table.className+".kt" },
+		'ModelTest.kt': function(props, table) {		return props.modelTestFolder+"/"+table.className+"Test.kt" },
+		'Dao.kt': function(props, table) { 				return props.daoFolder+"/"+table.className+"Dao.kt" },
 	},
 	inCrud: {
 		// templates for each table, but only that ones selected by the user
-		'Process.java': function(props, table) { 		return props.processFolder+"/"+table.className+"Process.java" },
-		'ProcessTest.java': function(props, table) { 	return props.processTestFolder+"/"+table.className+"ProcessTest.java" },
-		'Response.java': function(props, table) { 		return props.responseFolder+"/"+table.className+"Resp.java" },
+		'Process.kt': function(props, table) { 			return props.processFolder+"/"+table.className+"Process.kt" },
+		'ProcessTest.kt': function(props, table) { 		return props.processTestFolder+"/"+table.className+"ProcessTest.kt" },
+		'Response.kt': function(props, table) { 		return props.responseFolder+"/"+table.className+"Resp.kt" },
 		'List.vue': function(props, table) { 			return "src/main/webapp/src/" + props.modulename + "/controller/List"+table.className+".vue" },
 		'Persist.vue': function(props, table) { 		return "src/main/webapp/src/" + props.modulename + "/controller/Persist"+table.className+".vue" },
 		'Model.js': function(props, table) { 			return "src/main/webapp/src/" + props.modulename + "/model/"+table.className+".js" },
 	},
 	NtoNtable: {
 		// templates for each table, but only NtoN tables
-		'DaoNtoN.java': function(props, table) { 		return props.daoFolder+"/"+table.className+"Dao.java" },
+		'DaoNtoN.kt': function(props, table) { 			return props.daoFolder+"/"+table.className+"Dao.kt" },
 	}
 };

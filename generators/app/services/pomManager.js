@@ -38,7 +38,8 @@ module.exports = {
                     name: [main.props.projectName],
                     properties: [{
                         "endorsed.dir": ["${project.build.directory}/endorsed"],
-                        "project.build.sourceEncoding": ["UTF-8"]
+                        "project.build.sourceEncoding": ["UTF-8"],
+                        "kotlin.version": "1.1.51"
                     }]
                 }
             };
@@ -75,6 +76,24 @@ module.exports = {
             artifactId: ["swagger-jersey2-jaxrs"],
             version: ["1.5.10"],
             scope: ["compile"]
+        }, {
+            groupId: ["org.jetbrains.kotlin"],
+            artifactId: ["kotlin-runtime"],
+            version: ["${kotlin.version}"],
+            scope: ["compile"]
+        }, {
+            groupId: ["org.jetbrains.kotlin"],
+            artifactId: ["kotlin-stdlib-jre8"],
+            version: ["${kotlin.version}"]
+        }, {
+            groupId: ["org.jetbrains.kotlin"],
+            artifactId: ["kotlin-test"],
+            version: ["${kotlin.version}"],
+            scope: ["test"]
+        }, {
+            groupId: ["org.jetbrains.kotlin"],
+            artifactId: ["kotlin-reflect"],
+            version: ["${kotlin.version}"]
         }];
         
         for (var i in dependenciesToAdd) {
@@ -183,7 +202,35 @@ module.exports = {
                     }
                 ]
             }]
-        }];
+        },
+        {
+            groupId: ["org.jetbrains.kotlin"],
+            artifactId: ["kotlin-maven-plugin"],
+            version: ["${kotlin.version}"],
+            executions: [{
+                execution: [
+                    {
+                        id: ["compile"],
+                        goals: [{ goal: ["compile"] }],
+                        configuration: [{
+                            sourceDirs: [{
+                                sourceDir: ["${project.basedir}/src/main/kotlin", "${project.basedir}/src/main/java"]
+                            }]
+                        }]
+                    },
+                    {
+                        id: ["test-compile"],
+                        goals: [{ goal: ["test-compile"] }],
+                        configuration: [{
+                            sourceDirs: [{
+                                sourceDir: ["${project.basedir}/src/test/kotlin", "${project.basedir}/src/test/java"]
+                            }]
+                        }]
+                    }
+                ]
+            }]
+        }
+];
 
         for (var i in pluginsToAdd) {
             var bta = pluginsToAdd[i];

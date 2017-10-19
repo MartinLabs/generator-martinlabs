@@ -69,6 +69,7 @@ module.exports = {
                 }
 
                 col.javaType = this.generateJavaType(col);
+                col.kotlinType = this.generateKotlinType(col);
                 col.resultSetGetter = this.generateResultSetGetter(col);
                 col.propertyName = this.lowerCamelCase(col.column_name);
                 col.propertyNameUpper = this.capitalizeFirstLetter(col.propertyName);
@@ -146,6 +147,31 @@ module.exports = {
 
         else if (["date", "time", "datetime", "timestamp"].indexOf(column.data_type) > -1) {
             return "Date";
+        }
+
+        throw new Error("Unkown type " + column.data_type + " for " + column.column_name);
+
+    },
+
+    generateKotlinType: function(column) {
+        if (["char", "varchar", "text"].indexOf(column.data_type) > -1) {
+            return "String?";
+        }
+
+        else if (["float", "double", "real", "double precision", "numeric", "decimal"].indexOf(column.data_type) > -1) {
+            return column.is_nullable === "YES" ? "Double?" : "Double";
+        }
+
+        else if (["int", "integer", "smallint", "mediumint", "bigint"].indexOf(column.data_type) > -1) {
+            return column.is_nullable === "YES" ? "Long?" : "Long";
+        }
+
+        else if ("tinyint" === column.data_type) {
+            return column.is_nullable === "YES" ? "Boolean?" : "Boolean";
+        }
+
+        else if (["date", "time", "datetime", "timestamp"].indexOf(column.data_type) > -1) {
+            return "Date?";
         }
 
         throw new Error("Unkown type " + column.data_type + " for " + column.column_name);
