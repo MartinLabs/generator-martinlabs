@@ -1,5 +1,5 @@
 # generator-martinlabs [![NPM version][npm-image]][npm-url]
-> Generates a CRUD based on a MySQL database schema located on your computer, with Java and Vue. 
+> Generates a CRUD based on a MySQL database schema located on your computer, with Kotlin and Vue. 
 
 This generator is used to build comercial large systems, open a issue to suggest an improvement :)
 
