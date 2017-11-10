@@ -1,10 +1,9 @@
 package <%= props.processPackage %>
 
-import br.com.martinlabs.commons.DaoUnitTestWrapper
-import br.com.martinlabs.commons.EnglishLanguage
-import br.com.martinlabs.commons.LanguageHolder
-import br.com.martinlabs.commons.SecurityUtils
-import br.com.martinlabs.commons.exceptions.RespException
+import com.simpli.model.EnglishLanguage
+import com.simpli.model.RespException
+import com.simpli.sql.DaoTest
+import com.simpli.tools.SecurityUtils
 import <%= props.responsePackage %>.LoginResp
 import java.sql.Connection
 import java.sql.SQLException
@@ -17,13 +16,13 @@ import org.junit.Assert.*
  * @author martinlabs CRUD generator
  */
 class LoginServicesTest @Throws(NamingException::class, SQLException::class)
-constructor() : DaoUnitTestWrapper("<%= props.datasource %>", "<%= props.database %>") {
+constructor() : DaoTest("<%= props.datasource %>", "<%= props.database %>") {
 
     private val subject: LoginServices
     private val token: String?
 
     init {
-        val con = connection
+        val con = getConnection()
         val lang = EnglishLanguage()
         val clientVersion = "w1.0.0"
         subject = LoginServices(con, lang, clientVersion)
@@ -79,7 +78,7 @@ constructor() : DaoUnitTestWrapper("<%= props.datasource %>", "<%= props.databas
     fun testTokenToLoginWithTokenNotACoolJson() {
         var tokenOtherObject = SecurityUtils.encrypt("Hey", LoginServices.CRIPTOGRAPHY_HASH)
 
-        tokenOtherObject = SecurityUtils.encode(tokenOtherObject, "UTF-8")
+        tokenOtherObject = SecurityUtils.encode(tokenOtherObject!!, "UTF-8")
 
         val result = subject.tokenToLogin(tokenOtherObject)
         assertNull(result)

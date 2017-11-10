@@ -22,6 +22,7 @@ module.exports = {
 		'config/index.js': function(props) { 			return "src/main/webapp/config/index.js" },
 		'web.xml': function(props) { 					return "src/main/webapp/WEB-INF/web.xml" },
 		'data.sql': function(props) { 					return "src/test/resources/database/data.sql" },
+		'.gitignore': function(props) { 				return ".gitignore" },
 	},
 	copy: {
 		// only copy the file
@@ -55,7 +56,6 @@ module.exports = {
 		'.eslintignore': function(props) { 				return "src/main/webapp/.eslintignore" },
 		'.eslintrc.js': function(props) { 				return "src/main/webapp/.eslintrc.js" },
 		'.postcssrc.js': function(props) { 				return "src/main/webapp/.postcssrc.js" },
-		'.gitignore': function(props) { 				return ".gitignore" },
 	},
 	directory: {
 		// only copy the directory

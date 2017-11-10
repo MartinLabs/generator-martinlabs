@@ -1,16 +1,16 @@
 package <%= props.daoPackage %>
 <% for (var i in table.columns) { var c = table.columns[i]; %>
 import <%= props.modelPackage %>.<%= c.referencedTable.className %><% } %>
-import br.com.martinlabs.commons.DaoWrapper
+import com.simpli.model.LanguageHolder
+import com.simpli.sql.Dao
 import java.sql.Connection
-import br.com.martinlabs.commons.LanguageHolder
 
 
 /**
  * Responsible for <%= table.className %> database operations
  * @author martinlabs CRUD generator
  */
-class <%= table.className %>Dao(con: Connection, lang: LanguageHolder) : DaoWrapper(con, lang) {
+class <%= table.className %>Dao(con: Connection, lang: LanguageHolder) : Dao(con, lang) {
     
     fun insert(<% 
 for (var i in table.columns) { 
@@ -70,7 +70,7 @@ if (c.referencedTable.deactivableColumn) {
 }
 %>
             """, 
-            ResultCallback { rs -> <%= c.referencedTable.className %>.buildAll(rs) }, 
+            { rs -> <%= c.referencedTable.className %>.buildAll(rs) }, 
             <%= other.propertyName %>)
     } 
 <% 
@@ -90,7 +90,7 @@ if (c.referencedTable.deactivableColumn) {
 }
 %>
             """, 
-            ResultCallback { rs -> <%= c.referencedTable.className %>.buildAll(rs) }, 
+            { rs -> <%= c.referencedTable.className %>.buildAll(rs) }, 
             <%= other.propertyName %>)
     }
 

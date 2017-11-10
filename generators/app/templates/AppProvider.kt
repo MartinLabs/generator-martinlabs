@@ -24,7 +24,7 @@ import javax.ws.rs.ext.Provider
 class AppProvider : ParamConverterProvider, ContextResolver<Gson>, ContainerResponseFilter {
 
     override fun <T> getConverter(type: Class<T>?, type1: Type?, antns: Array<Annotation>?): ParamConverter<T>? {
-        return if (Date::class.java == type) {
+        return if (type is Date || Date::class.java == type) {
             DateParameterConverter() as ParamConverter<T>
         } else null
     }

@@ -2,13 +2,14 @@ package <%= props.processPackage %>
 
 
 import <%= props.daoPackage %>.LoginServiceDao
-import br.com.martinlabs.commons.SecurityUtils
-import br.com.martinlabs.commons.exceptions.RespException
 import com.google.gson.Gson
 import java.sql.Connection
-import br.com.martinlabs.commons.LanguageHolder
 import <%= props.package %>.ErrorCode
 import <%= props.responsePackage %>.LoginResp
+import com.simpli.model.LanguageHolder
+import com.simpli.model.RespException
+import com.simpli.tools.SecurityUtils
+
 
 
 /**
@@ -56,9 +57,8 @@ class LoginServices(private val con: Connection, private val lang: LanguageHolde
     fun tokenToLogin(tokenP: String?): LoginHolder? {
         var token: String? = tokenP ?: return null
 
-        token = SecurityUtils.decode(token, "UTF-8")
-
-        token = SecurityUtils.decrypt(token, CRIPTOGRAPHY_HASH)
+        token = SecurityUtils.decode(token ?: "", "UTF-8")
+        token = SecurityUtils.decrypt(token ?: "", CRIPTOGRAPHY_HASH)
 
         if (token == null) {
             return null

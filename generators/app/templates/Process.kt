@@ -33,10 +33,10 @@ import <%= props.daoPackage %>.<%= c.otherTable.className %>Dao<%
     }
 } 
 %>
-import br.com.martinlabs.commons.exceptions.RespException
 import com.google.common.base.Strings
-import br.com.martinlabs.commons.LanguageHolder
-import br.com.martinlabs.commons.PagedResp
+import com.simpli.model.LanguageHolder
+import com.simpli.model.PagedResp
+import com.simpli.model.RespException
 import java.sql.Connection
 
 /**
@@ -71,11 +71,11 @@ class <%= table.className %>Process(private val con: Connection, private val lan
 
         if (!Strings.isNullOrEmpty(query)) {
             dao.count(query)?.let {
-                count -> resp.setCount(count)
+                count -> resp.recordsTotal = count
             }
         } else {
             dao.count()?.let{
-                count -> resp.setCount(count)
+                count -> resp.recordsTotal = count
             }
         }
 

@@ -54,10 +54,26 @@ module.exports = {
         }
 
         var dependenciesToAdd = [{
-            groupId: ["br.com.martinlabs"],
-            artifactId: ["martinlabs-commons"],
-            version: ["3.4"],
-            type: ["jar"]
+            groupId: ["junit"],
+            artifactId: ["junit"],
+            version: ["4.12"],
+            scope: ["test"]
+        }, {
+            groupId: ["com.simpli.model"],
+            artifactId: ["simpli-model"],
+            version: ["1.0.0"]
+        }, {
+            groupId: ["com.simpli.tools"],
+            artifactId: ["simpli-tools"],
+            version: ["1.0.0"]
+        }, {
+            groupId: ["com.simpli.sql"],
+            artifactId: ["simpli-sql"],
+            version: ["1.0.0"]
+        }, {
+            groupId: ["com.google.api.client"],
+            artifactId: ["google-api-client-util"],
+            version: ["1.2.3-alpha"]
         }, {
             groupId: ["org.glassfish.jersey.containers"],
             artifactId: ["jersey-container-servlet"],

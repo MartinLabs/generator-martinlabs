@@ -1,11 +1,11 @@
 package <%= package %>
 
-import br.com.martinlabs.commons.EnglishLanguage
-import br.com.martinlabs.commons.LanguageHolder
-import br.com.martinlabs.commons.PortugueseLanguage
-import br.com.martinlabs.commons.TransactionPipe
-import br.com.martinlabs.commons.exceptions.RespException
-import com.google.api.client.util.Strings
+import com.google.common.base.Strings
+import com.simpli.model.EnglishLanguage
+import com.simpli.model.LanguageHolder
+import com.simpli.model.PortugueseLanguage
+import com.simpli.model.RespException
+import com.simpli.sql.TransactionPipe
 import java.util.HashMap
 import java.util.logging.Level
 import java.util.logging.Logger

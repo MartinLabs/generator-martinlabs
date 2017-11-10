@@ -1,7 +1,7 @@
 package <%= props.modelPackage %>
 
-import br.com.martinlabs.commons.EnglishLanguage
-import br.com.martinlabs.commons.exceptions.RespException
+import com.simpli.model.EnglishLanguage
+import com.simpli.model.RespException
 import java.util.ArrayList
 import java.util.Date
 import org.junit.Test

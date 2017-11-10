@@ -4,7 +4,7 @@ import <%= package %>.AppProvider.DateParameterConverter
 import com.google.gson.Gson
 import java.util.Date
 import org.junit.Test
-import org.junit.Assert.*
+import kotlin.test.assertNotNull
 
 /**
  * Test other services

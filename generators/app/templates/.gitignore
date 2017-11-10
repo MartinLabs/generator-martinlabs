@@ -3,3 +3,4 @@ src/main/webapp/.idea
 src/main/webapp/node_modules
 /target/
 .idea
+<%= projectName %>.iml

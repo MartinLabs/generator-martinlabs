@@ -1,6 +1,8 @@
 /**
- * <%= table.className %>
- * <%= table.comment %>
+ * <%= table.className %><%
+ if (table.comment && table.comment.length) { %>
+ * <%= table.comment %><%
+ } %>
  * @author martinlabs CRUD generator
  */
 export default class {

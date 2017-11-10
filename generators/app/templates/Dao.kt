@@ -1,18 +1,18 @@
 package <%= props.daoPackage %>
 
 import <%= props.modelPackage %>.<%= table.className %>
-import br.com.martinlabs.commons.DaoWrapper
 import com.google.common.base.Strings
 import java.sql.Connection
 import java.util.ArrayList
 import java.util.HashMap
-import br.com.martinlabs.commons.LanguageHolder
+import com.simpli.model.LanguageHolder
+import com.simpli.sql.Dao
 
 /**
  * Responsible for <%= table.className %> database operations
  * @author martinlabs CRUD generator
  */
-class <%= table.className %>Dao(con: Connection, lang: LanguageHolder) : DaoWrapper(con, lang) {
+class <%= table.className %>Dao(con: Connection, lang: LanguageHolder) : Dao(con, lang) {
     
     fun getOne(<% 
 for (var k in table.primaryColumns) {
@@ -30,7 +30,7 @@ for (var j = 1; j < table.primaryColumns.length; j++) {
 }
 %>
             """,
-            ResultCallback { rs -> <%= table.className %>.buildAll(rs) }<% 
+            { rs -> <%= table.className %>.buildAll(rs) }<% 
 for (var k in table.primaryColumns) {
         %>, 
             <%= table.primaryColumns[k].propertyName %><%
@@ -50,7 +50,7 @@ if (table.isReferenced) {
     }
 %>
             """,
-            ResultCallback { rs -> <%= table.className %>.buildAll(rs) })
+            { rs -> <%= table.className %>.buildAll(rs) })
     }
 <% 
 } 
@@ -111,7 +111,7 @@ for (var i in table.columns) {
             ${(if (orderColumn != null && asc != null) "ORDER BY " + orderColumn + " " + (if (asc) "ASC " else "DESC ") else "")}
             $limitQuery
             """,
-            ResultCallback { rs -> <%= table.className %>.buildAll(rs) }, 
+            { rs -> <%= table.className %>.buildAll(rs) }, 
             *params.toTypedArray())
     }
     

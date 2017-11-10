@@ -1,14 +1,16 @@
 package <%= props.modelPackage %>
 
-import br.com.martinlabs.commons.LanguageHolder
-import br.com.martinlabs.commons.ResultSetWrapper
-import br.com.martinlabs.commons.Validator
-import br.com.martinlabs.commons.exceptions.RespException
 import com.google.common.base.Strings
 import io.swagger.annotations.ApiModel
 import io.swagger.annotations.ApiModelProperty
 import java.sql.SQLException
 import java.util.Date
+import com.simpli.model.LanguageHolder
+import com.simpli.model.RespException
+import com.simpli.sql.*
+import java.sql.ResultSet
+import com.simpli.tools.Validator
+
 
 <% if (table.comment) { %>
 @ApiModel(description="<%= table.comment %>")<%
@@ -173,12 +175,12 @@ for (var i in table.columns) {
         } else if (c.smartType === "cnpj") {
             if (c.is_nullable === "NO") {
 %>
-        if (!Validator.isCNPJ(<%= c.propertyName %>)) {
+        if (!Validator.isCNPJ(<%= c.propertyName %> ?: "")) {
             throw RespException(<%= c.ordinal_position %>, lang.isNotAValidCNPJ("<%= c.propertyNatural %>"))
         }<%
             } else {
 %>
-        if (<%= c.propertyName %> != null && !Validator.isCNPJ(<%= c.propertyName%>)) {
+        if (<%= c.propertyName %> != null && !Validator.isCNPJ(<%= c.propertyName%> ?: "")) {
             throw RespException(<%= c.ordinal_position %>, lang.isNotAValidCNPJ("<%= c.propertyNatural %>"))
         }<%
             }
@@ -199,7 +201,7 @@ for (var i in table.columns) {
 
         @Throws(SQLException::class)
         @JvmOverloads
-        fun buildAll(rs: ResultSetWrapper, alias: String = "<%= table.name %>"): <%= table.className %> {
+        fun buildAll(rs: ResultSet, alias: String = "<%= table.name %>"): <%= table.className %> {
             val <%= table.classLowerCamel %> = <%= table.className %>()
 <% 
 for (var i in table.columns) { 

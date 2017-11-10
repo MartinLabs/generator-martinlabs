@@ -1,14 +1,14 @@
 package <%= props.daoPackage %>
 
-import br.com.martinlabs.commons.DaoWrapper
-import br.com.martinlabs.commons.LanguageHolder
+import com.simpli.model.LanguageHolder
+import com.simpli.sql.Dao
 import java.sql.Connection
 
 /**
  * Responsible for database login operations
  * @author martinlabs CRUD generator
  */
-class LoginServiceDao(con: Connection, lang: LanguageHolder) : DaoWrapper(con, lang) {
+class LoginServiceDao(con: Connection, lang: LanguageHolder) : Dao(con, lang) {
 
     fun getIdOfUser(account: String?, password: String?): Long {
         return nullToZero(selectFirstLong("""

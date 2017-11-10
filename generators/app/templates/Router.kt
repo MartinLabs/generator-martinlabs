@@ -1,6 +1,6 @@
 package <%= modulePackage %>
 
-import br.com.martinlabs.commons.PagedResp
+import com.simpli.model.PagedResp
 import <%= package %>.RouterWrapper
 import javax.ws.rs.GET
 import javax.ws.rs.POST
@@ -148,7 +148,7 @@ if (table.primaryColumns.length == 1) {
         @ApiParam(required = true)
             <%= table.classLowerCamel %>: <%= table.className %>): Long? {
         //TODO: review generated method
-        return pipe.handle<Long> { con ->
+        return pipe.handle<Long?> { con ->
             <%= table.className %>Process(con, getLang(lang), clientVersion)
                     .persist(<%= table.classLowerCamel %>, extractToken(authorization))
         }

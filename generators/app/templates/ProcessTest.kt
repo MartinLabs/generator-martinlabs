@@ -1,9 +1,5 @@
 package <%= props.processPackage %>
 
-import br.com.martinlabs.commons.DaoUnitTestWrapper
-import br.com.martinlabs.commons.DaoWrapper
-import br.com.martinlabs.commons.EnglishLanguage
-import br.com.martinlabs.commons.LanguageHolder
 import <%= props.modelPackage %>.<%= table.className %><% 
 var antiRepeat = [];
 for (var i in table.NtoNcolumns) { 
@@ -16,9 +12,11 @@ import <%= props.modelPackage %>.<%= cn.otherTable.className %><%
 }
 %>
 import <%= props.responsePackage %>.<%= table.className %>Resp
-import br.com.martinlabs.commons.PagedResp
-import br.com.martinlabs.commons.SecurityUtils
-import br.com.martinlabs.commons.exceptions.RespException
+import com.simpli.model.EnglishLanguage
+import com.simpli.model.RespException
+import com.simpli.sql.Dao
+import com.simpli.sql.DaoTest
+import com.simpli.tools.SecurityUtils
 import java.sql.Connection
 import java.sql.SQLException
 import javax.naming.NamingException
@@ -33,14 +31,14 @@ import org.junit.Before
  * @author martinlabs CRUD generator
  */
 class <%= table.className %>ProcessTest @Throws(NamingException::class, SQLException::class)
-constructor() : DaoUnitTestWrapper("jdbc/usecaseDS", "usecase") {
+constructor() : DaoTest("jdbc/usecaseDS", "usecase") {
 
     private val con: Connection
     private val loginS: LoginServices
     private val subject: <%= table.className %>Process
 
     init {
-        con = connection
+        con = getConnection()
         val lang = EnglishLanguage()
         val clientVersion = "w1.0.0"
         subject = <%= table.className %>Process(con, lang, clientVersion)
@@ -59,7 +57,7 @@ constructor() : DaoUnitTestWrapper("jdbc/usecaseDS", "usecase") {
         val result = subject.list(token, query, page, limit, orderRequest, asc)
         assertNotNull(result)
         assertNotNull(result.list)
-        assertNotEquals(result.count.toLong(), 0)
+        assertNotEquals(result.recordsTotal.toLong(), 0)
         assertFalse(result.list.isEmpty())
         assertNotNull(result.list[0])
     }
@@ -92,7 +90,7 @@ if (existPureStringColumn) {
         val result = subject.list(token, query, page, limit, orderRequest, asc)
         assertNotNull(result)
         assertNotNull(result.list)
-        assertNotEquals(result.count.toLong(), 0)
+        assertNotEquals(result.recordsTotal.toLong(), 0)
         assertFalse(result.list.isEmpty())
         assertNotNull(result.list[0])
     }
@@ -315,7 +313,7 @@ if (!table.primaryColumns[0].referencedTable) {
     for (var i in table.primaryColumns) {
         var primaryCol = table.primaryColumns[i]
 %>
-        val <%= primaryCol.propertyName %> = DaoWrapper.updateForTest(con, """
+        val <%= primaryCol.propertyName %> = Dao.updateForTest(con, """
             INSERT INTO <%= primaryCol.referencedTable.name %> ( <% 
         var colocarVirgula = false;
         for (var i in primaryCol.referencedTable.columns) { 
