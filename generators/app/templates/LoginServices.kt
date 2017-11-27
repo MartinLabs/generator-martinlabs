@@ -22,7 +22,9 @@ class LoginServices(private val con: Connection, private val lang: LanguageHolde
         val token = loginToToken(account, password)
         val id = getId(account, password)
 
-        allowAccess(token)
+        if (id == 0L) {
+            throw RespException(lang.invalidLogin())
+        }
 
         return LoginResp(token, id)
     }

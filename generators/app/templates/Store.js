@@ -30,7 +30,7 @@ class AdapStore {
     this.count = count;
     if (this.pageSize) {
       this.pageCount = Math.floor((this.count - 1) / this.pageSize);
-      if (this.currentPage > this.pageCount) {
+      if (this.currentPage > this.pageCount && this.currentPage !== 0) {
         this.setCurrentPage(0);
       }
     }

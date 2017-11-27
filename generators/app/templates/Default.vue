@@ -23,7 +23,7 @@
             	} %>
                 <li><a @click="logout">{{ $t("app.logout") }}</a></li>
             </ul>
-            <footer class="h-wrap p-10 desktop-tablet">
+            <footer class="p-10 desktop-tablet">
                 <small><b>{{ $t("app.version") }}</b> {{ version }}</small>
             </footer>
         </aside>

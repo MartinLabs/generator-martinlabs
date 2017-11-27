@@ -1,7 +1,7 @@
 <template>
 
     <div class="verti w-window h-window items-center">
-        <form @submit="login" class="verti w-300 elevated p-30">
+        <form @submit.prevent="login" class="verti w-300 elevated p-30">
             <h2 class="mt-0">{{ $t("login.subtitle") }}</h2>
             <input v-model="account" class="mb-10" type="text" :placeholder="$t('login.account')" required autofocus/>
             <input v-model="password" class="mb-10" type="password" :placeholder="$t('login.password')" required>
@@ -29,9 +29,7 @@
       }
     },
     methods: {
-      login(e) {
-        e.preventDefault();
-
+      login() {
         this.$resources.login.save({
           account: this.account,
           password: sha256(this.password),

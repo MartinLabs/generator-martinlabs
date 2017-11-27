@@ -71,7 +71,7 @@
     "chart.js": "^2.6.0",
     "debounce-promise": "^3.0.1",
     "js-sha256": "^0.6.0",
-    "linelay": "^1.0.3",
+    "linelay": "^1.1.0",
     "lodash": "^4.17.4",
     "moment": "^2.18.1",
     "normalize-scss": "^7.0.0",

@@ -58,24 +58,6 @@ aside.menu {
     }
 }
 
-.horiz > .offset-1 {
-    @include horiz();
-    @include weight(1);
-    &::before {
-        @include weight(1);
-        content: '';
-    }
-}
-
-.verti > .offset-1 {
-    @include verti();
-    @include weight(1);
-    &::before {
-        @include weight(1);
-        content: '';
-    }
-}
-
 .pagination {
     display: flex;
     padding-left: 0;

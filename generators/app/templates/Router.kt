@@ -118,13 +118,13 @@ if (table.primaryColumns.length == 1) {
             authorization: String,
 
         @QueryParam("query") @ApiParam(value = "Query of search")
-            query: String,
+            query: String?,
         @QueryParam("page") @ApiParam(value = "Page index, null to not paginate")
             page: Int?,
         @QueryParam("limit") @ApiParam(value = "Page size, null to not paginate")
             limit: Int?,
         @QueryParam("orderBy") @ApiParam(value = "Identifier for sorting, usually a property name", example = "<%= table.columns[0].propertyName %>")
-            orderRequest: String,
+            orderRequest: String?,
         @QueryParam("ascending") @ApiParam(value = "True for ascending order", defaultValue = "false")
             asc: Boolean?): PagedResp<<%= table.className %>> {
         //TODO: review generated method

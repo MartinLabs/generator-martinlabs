@@ -3,11 +3,11 @@
     <div class="y-scroll">
         <div class="verti">
         
-            <div class="horiz h-wrap">
+            <div class="horiz">
                 <h1 class="weight-1">
                     {{ $t("classes.<%= table.className %>.title") }}
                 </h1>
-                <div class="w-wrap">
+                <div>
                     <button @click="downloadCsv()">{{ $t("app.downloadCsv") }}</button>
                     <router-link to="/persist<%= table.className %>" class="btn accent">{{ $t("app.add") }}</router-link>
                 </div>
@@ -15,9 +15,9 @@
 
             <section class="verti">
 
-               <div class="horiz mb-10">
+               <div class="horiz items-space-between mb-10">
                     <adap-searchfield :store="adapStore" :placeholder="$t('app.search')" class="w-200"/>
-                    <small v-if="list && list.length" class="offset-1 self-center">{{ $t("app.totalLines", { total: adapStore.count }) }}</small>
+                    <small v-if="list && list.length" class="self-center">{{ $t("app.totalLines", { total: adapStore.count }) }}</small>
                 </div>
 
                 <p v-if="!list || !list.length" class="text-center">
@@ -155,7 +155,7 @@ if (table.deactivableColumn) { %>
       populateList(params) {
         this.$resources.<%= table.classLowerCamel %>.query(params).then((resp) => {
           this.list = resp.body.list;
-          this.adapStore.setCount(resp.body.count);
+          this.adapStore.setCount(resp.body.recordsTotal);
         });
       },
       openPersist(item) {
