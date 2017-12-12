@@ -1,12 +1,13 @@
 <template>
 
-    <div class="y-scroll">
-        <div class="verti">
-            <h1>
-                {{ $t("classes.<%= table.className %>.title") }}
-            </h1>
+    <div class="verti">
+        <h1 class="header px-30 py-10 m-0">
+            {{ $t("classes.<%= table.className %>.title") }}
+        </h1>
 
-            <form @submit.prevent="persist" class="elevated p-20">
+        <section class="verti scroll weight-1 items-center-top p-30">
+
+            <form @submit.prevent="persist" class="elevated w-full max-w-650 p-20">
 
 <% 
 for (var i in table.columns) { 
@@ -155,7 +156,7 @@ for (var i in table.NtoNcolumns) {
                     <button type="submit" class="accent">{{ $t("persist.submit") }}</button>
                 </div>
             </form> 
-        </div>
+        </section>
     </div>
 
 </template>

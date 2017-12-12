@@ -4,6 +4,7 @@ $body-bg: #fbfbfb;
 
 @import "~normalize-scss/sass/normalize";
 @import "~simple-line-icons/scss/simple-line-icons.scss";
+@import "~animate.css";
 @import "base.scss";
 @import "~linelay/build.scss";
 
@@ -25,11 +26,9 @@ td .icon {
 }
 
 aside.menu {
-    ul {
-        @media #{$only-phone} {
-            background: darken($body-bg, 10);
-        }
-    }
+    background: white;
+    border-right: 1px solid #dfdfdf;
+    z-index: 2;
     
     li {
         list-style-type: none;
@@ -37,17 +36,16 @@ aside.menu {
 
         a {
             text-decoration: none;
-            color: #888;
+            color: black;
             width: 100%;
             display: block;
             padding: 10px;
+            font-size: 15px;
+            @extend .transition;
 
             &:hover, &.router-link-active {
-                border-left: 3px solid $accent-color;
-                padding-left: 7px;
-                color: black;
-                font-weight: bold;
-                background: white;
+                border-left: 5px solid $accent-color;
+                background: $body-bg;
             }
         }
     }
@@ -56,6 +54,14 @@ aside.menu {
         font-size: 1.5em;
         margin-left: 10px;
     }
+}
+
+.header {
+    background: white;
+    -webkit-box-shadow: 2px 4px 20px -4px rgba(0,0,0,.1);
+    -moz-box-shadow: 2px 4px 20px -4px rgba(0,0,0,.1);
+    box-shadow: 2px 4px 20px -4px rgba(0,0,0,.1);
+    z-index: 1;
 }
 
 .pagination {
@@ -102,7 +108,7 @@ aside.menu {
 
 .close {
     text-decoration: none;
-    font-size: 1.5em;
+    font-size: 18px;
     line-height: .7em;
     opacity: 0.4;
     
@@ -149,6 +155,7 @@ aside.menu {
 
 .orderby {
     @include horiz();
+    @include nowrap();
 }
 
 .caret {
@@ -185,4 +192,9 @@ aside.menu {
     .multiselect-label {
         font-weight: bold;
     }
+}
+
+input:not([type=submit]):not([type=checkbox]):not([type=radio]).search, textarea.search, select.search {
+    border-radius: 16px;
+    padding-left: 10px;
 }

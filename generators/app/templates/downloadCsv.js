@@ -42,7 +42,7 @@ export default function (filename, rows, headers) {
     });
     return `${finalVal}\n`;
   }
-  let csvFile = '';
+  let csvFile = '\uFEFF'; // fix special character problems
   rows.forEach((field, i) => {
     csvFile += processRow(field, i);
   });

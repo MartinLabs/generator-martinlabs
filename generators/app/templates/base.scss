@@ -56,12 +56,21 @@ input:not([type=submit]):not([type=checkbox]):not([type=radio]), select, textare
     border-radius: 3px;
     outline: none;
     padding: 2px 5px;
-    background: white;
+    background: $body-bg;
     vertical-align: middle;
     font-size: 1.2em;
+    @extend .transition;
+
+    &::placeholder {
+        color: darken($body-bg, 30%);
+    }
 
     &:focus {
-        border-color: #888;
+        background: white;
+        border-color: $accent-color;
+        -webkit-box-shadow: 0px 0px 6px 0px rgba(0,0,0,0.07);
+        -moz-box-shadow:    0px 0px 6px 0px rgba(0,0,0,0.07);
+        box-shadow:         0px 0px 6px 0px rgba(0,0,0,0.07);
     }
 }
 
@@ -82,7 +91,7 @@ button, input[type=submit], .btn {
     line-height: 35px;
     border: 1px solid #ddd;
     background: transparent;
-    border-radius: 4px;
+    border-radius: 8px;
     min-width: 90px;
     outline: none;
     cursor: pointer;
@@ -92,9 +101,12 @@ button, input[type=submit], .btn {
     display: inline-block;
     text-decoration: none;
     text-align: center;
+    @extend .transition;
 
     &:hover {
-        background: #f6f6f6;
+        -webkit-box-shadow: 0px 0px 6px 0px rgba(0,0,0,0.15);
+        -moz-box-shadow:    0px 0px 6px 0px rgba(0,0,0,0.15);
+        box-shadow:         0px 0px 6px 0px rgba(0,0,0,0.15);
     }
 }
 
@@ -109,6 +121,9 @@ button.accent, input[type=submit].accent, .btn.accent {
 
     &:hover {
         background-color: $dark-accent;
+        -webkit-box-shadow: 0px 0px 6px 0px rgba(0,0,0,0.35);
+        -moz-box-shadow:    0px 0px 6px 0px rgba(0,0,0,0.35);
+        box-shadow:         0px 0px 6px 0px rgba(0,0,0,0.35);
     }
 }
 
@@ -150,14 +165,16 @@ input:not([type=submit]):not([type=checkbox]):not([type=radio]).accent, textarea
 }
 
 .elevated {
+    border-radius: 6px;
     padding: 10px;
-    -webkit-box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.4);
-    -moz-box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.4);
-    box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.4);
+    -webkit-box-shadow: 0px 1px 2px 0px rgba(0,0,0,0.3);
+    -moz-box-shadow: 0px 1px 2px 0px rgba(0,0,0,0.3);
+    box-shadow: 0px 1px 2px 0px rgba(0,0,0,0.3);
     background: white;
 }
 
 .poped {
+    border-radius: 18px;
     padding: 15px;
     -webkit-box-shadow: 0px 9px 30px 0px rgba(0,0,0,0.4);
     -moz-box-shadow: 0px 9px 30px 0px rgba(0,0,0,0.4);
@@ -181,15 +198,16 @@ div.accent-bg {
 
 .scrim {
     background: rgba(0,0,0,0.4);
+    z-index: 99999;
 }
 
 .transition {
-    -webkit-transition: 500ms all;
-    -moz-transition: 500ms all;
-    -o-transition: 500ms all;
-    transition: 500ms all;
-    -webkit-transition-timing-function: all;
-    -moz-transition-timing-function: all;
-    -o-transition-timing-function: all;
-    transition-timing-function: all;
+    -webkit-transition: 200ms all;
+    -moz-transition: 200ms all;
+    -o-transition: 200ms all;
+    transition: 200ms all;
+    -webkit-transition-timing-function: ease-in;
+    -moz-transition-timing-function: ease-in;
+    -o-transition-timing-function: ease-in;
+    transition-timing-function: ease-in;
 }

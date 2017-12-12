@@ -68,6 +68,7 @@
     "webpack-merge": "^4.1.0"
   },
   "dependencies": {
+    "animate.css": "^3.5.2",
     "chart.js": "^2.6.0",
     "debounce-promise": "^3.0.1",
     "js-sha256": "^0.6.0",
