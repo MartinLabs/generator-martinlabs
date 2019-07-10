@@ -1,7 +1,8 @@
 # generator-martinlabs [![NPM version][npm-image]][npm-url]
 > Generates a CRUD based on a MySQL database schema located on your computer, with Kotlin and Vue. 
 
-This generator is used to build comercial large systems, open a issue to suggest an improvement :)
+⚠ THIS PROJECT IS DEPRECATED, WE REFACTORED IT INTO A MORE ROBUST SOLUTION:
+https://github.com/simplitech/simpli-cli
 
 ## Installation
 
