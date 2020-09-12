@@ -1,3 +1,8 @@
+# 📣 DEPRECATED
+This project is deprecated. It was continued on [simpli-cli](https://github.com/simplitech/simpli-cli)
+
+---
+
 # generator-martinlabs [![NPM version][npm-image]][npm-url]
 > Generates a CRUD based on a MySQL database schema located on your computer, with Kotlin and Vue. 
 
